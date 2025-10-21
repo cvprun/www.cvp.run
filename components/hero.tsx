@@ -46,16 +46,41 @@ export function Hero() {
         </Button>
       </div>
 
-      {/* Code Preview */}
-      <div className="mx-auto max-w-md">
-        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-          <pre className="text-sm">
-            <code className="text-muted-foreground">
-              <span className="text-primary">$</span> pip install cvp
-              {'\n'}
-              <span className="text-primary">$</span> cvp --help
-            </code>
-          </pre>
+      {/* Terminal Code Preview */}
+      <div className="mx-auto max-w-2xl">
+        <div className="rounded-lg border bg-card shadow-lg overflow-hidden">
+          {/* Terminal Header */}
+          <div className="flex items-center justify-between px-4 py-3 bg-muted/50 border-b">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <span className="text-xs text-muted-foreground font-mono">cvp-demo.py</span>
+          </div>
+
+          {/* Terminal Content */}
+          <div className="p-4 bg-card">
+            <pre className="text-sm font-mono text-card-foreground">
+              <code>
+                <span className="text-muted-foreground"># Install CVP</span>
+                {'\n'}
+                <span className="text-primary">$</span> pip install cvp
+                {'\n\n'}
+                <span className="text-muted-foreground"># Basic usage</span>
+                {'\n'}
+                <span className="text-blue-400">from</span> <span className="text-yellow-400">cvp</span> <span className="text-blue-400">import</span> <span className="text-yellow-400">Player</span>
+                {'\n\n'}
+                <span className="text-muted-foreground"># Create player instance</span>
+                {'\n'}
+                <span className="text-green-400">player</span> <span className="text-blue-400">=</span> <span className="text-yellow-400">Player</span><span className="text-white">()</span>
+                {'\n\n'}
+                <span className="text-muted-foreground"># Process your data</span>
+                {'\n'}
+                <span className="text-green-400">player</span><span className="text-white">.</span><span className="text-yellow-400">run</span><span className="text-white">()</span>
+              </code>
+            </pre>
+          </div>
         </div>
       </div>
     </section>
