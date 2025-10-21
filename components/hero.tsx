@@ -56,7 +56,7 @@ export function Hero() {
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">cvp-demo.py</span>
+            <span className="text-xs text-muted-foreground font-mono">shell</span>
           </div>
 
           {/* Terminal Content */}
@@ -64,20 +64,15 @@ export function Hero() {
             <pre className="text-sm font-mono text-card-foreground">
               <code>
                 <span className="text-muted-foreground"># Install CVP</span>
-                {'\n'}
+                <br />
                 <span className="text-primary">$</span> pip install cvp
-                {'\n\n'}
-                <span className="text-muted-foreground"># Basic usage</span>
-                {'\n'}
-                <span className="text-blue-400">from</span> <span className="text-yellow-400">cvp</span> <span className="text-blue-400">import</span> <span className="text-yellow-400">Player</span>
-                {'\n\n'}
-                <span className="text-muted-foreground"># Create player instance</span>
-                {'\n'}
-                <span className="text-green-400">player</span> <span className="text-blue-400">=</span> <span className="text-yellow-400">Player</span><span className="text-white">()</span>
-                {'\n\n'}
-                <span className="text-muted-foreground"># Process your data</span>
-                {'\n'}
-                <span className="text-green-400">player</span><span className="text-white">.</span><span className="text-yellow-400">run</span><span className="text-white">()</span>
+                <br />
+                <br />
+                <span className="text-muted-foreground">
+                  # Launch the CVP application
+                </span>
+                <br />
+                <span className="text-primary">$</span> cvp player
               </code>
             </pre>
           </div>
