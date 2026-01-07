@@ -24,10 +24,10 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/docs"
+                  href="/features"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Documentation
+                  Features
                 </Link>
               </li>
               <li>
