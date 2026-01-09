@@ -93,7 +93,7 @@ export function Footer() {
 
         {/* Bottom Section */}
         <div className="border-t mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">© 2025 CVP. MIT License.</p>
+          <p className="text-sm text-muted-foreground">© 2025 CVP. PolyForm Noncommercial License 1.0.0.</p>
           <Link
             href="https://github.com/cvprun/cvp"
             target="_blank"
@@ -101,7 +101,7 @@ export function Footer() {
             className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4 sm:mt-0"
           >
             <Github className="h-4 w-4" />
-            <span>Open Source on GitHub</span>
+            <span>Source Available on GitHub</span>
           </Link>
         </div>
       </div>

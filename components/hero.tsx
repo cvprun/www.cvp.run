@@ -8,7 +8,7 @@ export function Hero() {
       {/* Badge */}
       <div className="flex items-center space-x-2 rounded-full border border-border bg-muted px-3 py-1 text-sm">
         <Github className="h-4 w-4" />
-        <span>Open Source • MIT License</span>
+        <span>PolyForm Noncommercial License 1.0.0</span>
       </div>
 
       {/* Main Heading */}

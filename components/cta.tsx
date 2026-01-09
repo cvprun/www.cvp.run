@@ -13,7 +13,7 @@ export function CTA() {
 
         {/* Subheadline */}
         <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Open source and MIT licensed. Start building computer vision applications in
+          Open source and PolyForm Noncommercial License 1.0.0. Start building computer vision applications in
           minutes.
         </p>
 
