@@ -140,6 +140,49 @@ export const translations = {
       description:
         '비주얼 프로그래밍, FFmpeg 통합, 컴퓨터 비전 알고리즘, 네트워크 유틸리티, 종합 개발 도구를 포함한 CVP의 35개 이상의 전문 도구를 살펴보세요.',
     },
+
+    // Download page
+    download: {
+      title: '다운로드 - CVP',
+      description: 'CVP를 다운로드하고 설치하세요. pip, GitHub 또는 소스에서 설치할 수 있습니다.',
+      hero: {
+        title: 'CVP 다운로드',
+        description: '몇 가지 간단한 단계로 CVP를 설치하고 컴퓨터 비전 프로젝트를 시작하세요.',
+      },
+      requirements: {
+        title: '시스템 요구사항',
+        items: [
+          'Python 3.10 이상',
+          'pip 패키지 매니저',
+          'Windows, macOS 또는 Linux',
+          '최소 4GB RAM (8GB 권장)',
+        ],
+      },
+      methods: {
+        pip: {
+          title: 'pip로 설치 (권장)',
+          description: '가장 쉽고 빠른 설치 방법입니다.',
+          steps: ['터미널 또는 명령 프롬프트 열기', '다음 명령어 실행:'],
+        },
+        github: {
+          title: 'GitHub에서 설치',
+          description: '최신 개발 버전을 사용하려면 GitHub에서 직접 설치하세요.',
+          steps: ['저장소 클론:', '디렉토리 이동 후 설치:'],
+        },
+      },
+      quickStart: {
+        title: '빠른 시작',
+        description: '설치 후 다음 명령어로 CVP를 실행하세요:',
+        commands: {
+          player: 'CVP 플레이어 실행',
+          help: '도움말 보기',
+        },
+      },
+      cta: {
+        viewDocs: '문서 보기',
+        viewOnGithub: 'GitHub에서 보기',
+      },
+    },
   },
 
   en: {
@@ -282,6 +325,49 @@ export const translations = {
       title: 'Features - CVP Computer Vision Player',
       description:
         "Explore CVP's 35+ specialized tools including visual programming, FFmpeg integration, computer vision algorithms, network utilities, and comprehensive development tools.",
+    },
+
+    // Download page
+    download: {
+      title: 'Download - CVP',
+      description: 'Download and install CVP. Available via pip, GitHub, or from source.',
+      hero: {
+        title: 'Download CVP',
+        description: 'Install CVP in a few simple steps and start your computer vision projects.',
+      },
+      requirements: {
+        title: 'System Requirements',
+        items: [
+          'Python 3.10 or higher',
+          'pip package manager',
+          'Windows, macOS, or Linux',
+          'Minimum 4GB RAM (8GB recommended)',
+        ],
+      },
+      methods: {
+        pip: {
+          title: 'Install with pip (Recommended)',
+          description: 'The easiest and fastest way to install.',
+          steps: ['Open your terminal or command prompt', 'Run the following command:'],
+        },
+        github: {
+          title: 'Install from GitHub',
+          description: 'Install directly from GitHub for the latest development version.',
+          steps: ['Clone the repository:', 'Navigate to directory and install:'],
+        },
+      },
+      quickStart: {
+        title: 'Quick Start',
+        description: 'After installation, run CVP with the following commands:',
+        commands: {
+          player: 'Launch CVP player',
+          help: 'View help',
+        },
+      },
+      cta: {
+        viewDocs: 'View Documentation',
+        viewOnGithub: 'View on GitHub',
+      },
     },
   },
 } as const;
