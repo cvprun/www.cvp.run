@@ -1,57 +1,33 @@
 import {Eye, Play, Zap, Code, Puzzle, Layers} from 'lucide-react';
+import {getTranslations} from '@/lib/translations';
+import type {Language} from '@/lib/i18n';
 
-const features = [
-  {
-    icon: Eye,
-    title: 'Visual Processing',
-    description:
-      'Advanced computer vision algorithms for image and video processing with real-time analysis capabilities.',
-  },
-  {
-    icon: Play,
-    title: 'Interactive Player',
-    description:
-      'Built-in media player with frame-by-frame navigation, annotation tools, and visualization overlays.',
-  },
-  {
-    icon: Zap,
-    title: 'High Performance',
-    description:
-      'Optimized for speed with GPU acceleration, multi-threading, and efficient memory management.',
-  },
-  {
-    icon: Code,
-    title: 'Python Native',
-    description:
-      'Pure Python implementation with familiar APIs, seamless integration with NumPy, OpenCV, and scikit-learn.',
-  },
-  {
-    icon: Puzzle,
-    title: 'Modular Design',
-    description:
-      'Flexible architecture allowing you to use individual components or the complete processing pipeline.',
-  },
-  {
-    icon: Layers,
-    title: 'Extensible',
-    description:
-      'Plugin system for custom algorithms, filters, and processing modules to extend functionality.',
-  },
-];
+const featureIcons = [Eye, Play, Zap, Code, Puzzle, Layers];
 
-export function Features() {
+interface FeaturesProps {
+  lang: Language;
+}
+
+export function Features({lang}: FeaturesProps) {
+  const t = getTranslations(lang);
+  const features = t.featuresSection.items.map((item, index) => ({
+    icon: featureIcons[index],
+    ...item,
+  }));
+
   return (
     <section className="bg-muted/30 py-16 md:py-24 lg:py-32">
       <div className="container mx-auto max-w-6xl">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <p className="text-sm font-semibold text-primary mb-2">FEATURES</p>
+          <p className="text-sm font-semibold text-primary mb-2">
+            {t.featuresSection.label}
+          </p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-            Everything you need for computer vision
+            {t.featuresSection.title}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            CVP provides a comprehensive suite of tools for computer vision tasks, from
-            basic image processing to advanced machine learning workflows.
+            {t.featuresSection.description}
           </p>
         </div>
 

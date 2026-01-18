@@ -1,28 +1,16 @@
 import Link from 'next/link';
 import {Check, Github, Building2} from 'lucide-react';
 import {Button} from '@/components/ui/button';
+import {getTranslations} from '@/lib/translations';
+import type {Language} from '@/lib/i18n';
 
-const freeTierFeatures = [
-  'All 35+ features included',
-  'Visual programming with Flow Mode',
-  'FFmpeg video player',
-  'ONVIF camera support',
-  'Computer vision algorithms',
-  'Community support',
-  'Regular updates',
-];
+interface PricingTiersProps {
+  lang: Language;
+}
 
-const enterpriseFeatures = [
-  'Everything in Free',
-  'Commercial use license',
-  'Priority support',
-  'Custom integrations',
-  'SLA guarantees',
-  'Dedicated account manager',
-  'On-premise deployment',
-];
+export function PricingTiers({lang}: PricingTiersProps) {
+  const t = getTranslations(lang);
 
-export function PricingTiers() {
   return (
     <section className="container mx-auto pb-16 md:pb-24 lg:pb-32">
       <div className="mx-auto max-w-5xl">
@@ -32,20 +20,19 @@ export function PricingTiers() {
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <Github className="h-5 w-5 text-primary" />
-                <h3 className="text-xl font-semibold">Free</h3>
+                <h3 className="text-xl font-semibold">{t.pricing.free.name}</h3>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">$0</span>
-                <span className="text-muted-foreground">/forever</span>
+                <span className="text-4xl font-bold">{t.pricing.free.price}</span>
+                <span className="text-muted-foreground">{t.pricing.free.period}</span>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">
-                For personal and non-commercial use. Get started instantly from
-                GitHub.
+                {t.pricing.free.description}
               </p>
             </div>
 
             <ul className="mb-8 space-y-3">
-              {freeTierFeatures.map((feature) => (
+              {t.pricing.free.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-sm">{feature}</span>
@@ -60,12 +47,12 @@ export function PricingTiers() {
                 rel="noreferrer"
               >
                 <Github className="mr-2 h-4 w-4" />
-                Get from GitHub
+                {t.pricing.free.button}
               </Link>
             </Button>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              Licensed under PolyForm Noncommercial License 1.0.0
+              {t.pricing.free.license}
             </p>
           </div>
 
@@ -73,26 +60,25 @@ export function PricingTiers() {
           <div className="relative rounded-2xl border-2 border-primary bg-card p-8 shadow-lg">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                Commercial Use
+                {t.pricing.enterprise.badge}
               </span>
             </div>
 
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <Building2 className="h-5 w-5 text-primary" />
-                <h3 className="text-xl font-semibold">Enterprise</h3>
+                <h3 className="text-xl font-semibold">{t.pricing.enterprise.name}</h3>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">Custom</span>
+                <span className="text-4xl font-bold">{t.pricing.enterprise.price}</span>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">
-                For commercial and enterprise use with dedicated support and
-                custom solutions.
+                {t.pricing.enterprise.description}
               </p>
             </div>
 
             <ul className="mb-8 space-y-3">
-              {enterpriseFeatures.map((feature) => (
+              {t.pricing.enterprise.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-sm">{feature}</span>
@@ -101,11 +87,11 @@ export function PricingTiers() {
             </ul>
 
             <Button className="w-full" size="lg" asChild>
-              <Link href="mailto:contact@cvp.run">Contact Sales</Link>
+              <Link href="mailto:contact@cvp.run">{t.pricing.enterprise.button}</Link>
             </Button>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              Custom commercial license agreement
+              {t.pricing.enterprise.license}
             </p>
           </div>
         </div>

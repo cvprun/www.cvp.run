@@ -1,7 +1,15 @@
 import Link from 'next/link';
 import {Github} from 'lucide-react';
+import {getTranslations} from '@/lib/translations';
+import type {Language} from '@/lib/i18n';
 
-export function Footer() {
+interface FooterProps {
+  lang: Language;
+}
+
+export function Footer({lang}: FooterProps) {
+  const t = getTranslations(lang);
+
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto max-w-6xl py-12 md:py-16">
@@ -9,25 +17,24 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-4">
+            <Link href={`/${lang}`} className="flex items-center space-x-2 mb-4">
               <span className="font-bold text-xl text-primary">CVP</span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-xs">
-              Computer Vision Player - An open source tool for processing, analyzing,
-              and visualizing visual data.
+              {t.footer.description}
             </p>
           </div>
 
           {/* Resources */}
           <div>
-            <h3 className="font-semibold mb-3">Resources</h3>
+            <h3 className="font-semibold mb-3">{t.footer.resources}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/features"
+                  href={`/${lang}/features`}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Features
+                  {t.footer.features}
                 </Link>
               </li>
               <li>
@@ -37,7 +44,7 @@ export function Footer() {
                   rel="noreferrer"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  GitHub
+                  {t.footer.github}
                 </Link>
               </li>
               <li>
@@ -47,7 +54,7 @@ export function Footer() {
                   rel="noreferrer"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  License
+                  {t.footer.license}
                 </Link>
               </li>
             </ul>
@@ -55,7 +62,7 @@ export function Footer() {
 
           {/* Community */}
           <div>
-            <h3 className="font-semibold mb-3">Community</h3>
+            <h3 className="font-semibold mb-3">{t.footer.community}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -64,7 +71,7 @@ export function Footer() {
                   rel="noreferrer"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Issues
+                  {t.footer.issues}
                 </Link>
               </li>
               <li>
@@ -74,7 +81,7 @@ export function Footer() {
                   rel="noreferrer"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Discussions
+                  {t.footer.discussions}
                 </Link>
               </li>
               <li>
@@ -84,7 +91,7 @@ export function Footer() {
                   rel="noreferrer"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Contributing
+                  {t.footer.contributing}
                 </Link>
               </li>
             </ul>
@@ -92,22 +99,22 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="font-semibold mb-3">Legal</h3>
+            <h3 className="font-semibold mb-3">{t.footer.legal}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/ko/privacy-policy"
+                  href={`/${lang}/privacy-policy`}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Privacy Policy
+                  {t.footer.privacyPolicy}
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/ko/terms-of-service"
+                  href={`/${lang}/terms-of-service`}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Terms of Service
+                  {t.footer.termsOfService}
                 </Link>
               </li>
             </ul>
@@ -116,7 +123,7 @@ export function Footer() {
 
         {/* Bottom Section */}
         <div className="border-t mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">© 2025 CVP. PolyForm Noncommercial License 1.0.0.</p>
+          <p className="text-sm text-muted-foreground">{t.footer.copyright}</p>
           <Link
             href="https://github.com/cvprun/cvp"
             target="_blank"
@@ -124,7 +131,7 @@ export function Footer() {
             className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-4 sm:mt-0"
           >
             <Github className="h-4 w-4" />
-            <span>Source Available on GitHub</span>
+            <span>{t.footer.sourceOnGithub}</span>
           </Link>
         </div>
       </div>

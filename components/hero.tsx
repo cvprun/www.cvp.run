@@ -1,23 +1,31 @@
 import Link from 'next/link';
 import {Download, Github} from 'lucide-react';
 import {Button} from '@/components/ui/button';
+import {getTranslations} from '@/lib/translations';
+import type {Language} from '@/lib/i18n';
 
-export function Hero() {
+interface HeroProps {
+  lang: Language;
+}
+
+export function Hero({lang}: HeroProps) {
+  const t = getTranslations(lang);
+
   return (
     <section className="container flex mx-auto flex-col items-center justify-center space-y-8 py-16 md:py-24 lg:py-32">
       {/* Badge */}
       <div className="flex items-center space-x-2 rounded-full border border-border bg-muted px-3 py-1 text-sm">
         <Github className="h-4 w-4" />
-        <span>PolyForm Noncommercial License 1.0.0</span>
+        <span>{t.hero.badge}</span>
       </div>
 
       {/* Main Heading */}
       <div className="mx-auto max-w-4xl text-center">
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-          <span>The open source</span>
+          <span>{t.hero.titleLine1}</span>
           <br />
           <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Computer Vision Player
+            {t.hero.titleLine2}
           </span>
         </h1>
       </div>
@@ -25,8 +33,7 @@ export function Hero() {
       {/* Subheading */}
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-lg text-muted-foreground sm:text-xl">
-          A powerful, flexible computer vision tool that helps you process, analyze, and
-          visualize visual data—all in one place.
+          {t.hero.description}
         </p>
       </div>
 
@@ -35,13 +42,13 @@ export function Hero() {
         <Button size="lg" asChild>
           <Link href="https://pypi.org/project/cvp/" target="_blank" rel="noreferrer">
             <Download className="mr-2 h-4 w-4" />
-            Install with pip
+            {t.hero.installButton}
           </Link>
         </Button>
         <Button variant="outline" size="lg" asChild>
           <Link href="https://github.com/cvprun/cvp" target="_blank" rel="noreferrer">
             <Github className="mr-2 h-4 w-4" />
-            View on GitHub
+            {t.hero.viewOnGithub}
           </Link>
         </Button>
       </div>
@@ -63,14 +70,12 @@ export function Hero() {
           <div className="p-4 bg-card">
             <pre className="text-sm font-mono text-card-foreground">
               <code>
-                <span className="text-muted-foreground"># Install CVP</span>
+                <span className="text-muted-foreground">{t.hero.terminalComment1}</span>
                 <br />
                 <span className="text-primary">$</span> pip install cvp
                 <br />
                 <br />
-                <span className="text-muted-foreground">
-                  # Launch the CVP application
-                </span>
+                <span className="text-muted-foreground">{t.hero.terminalComment2}</span>
                 <br />
                 <span className="text-primary">$</span> cvp player
               </code>

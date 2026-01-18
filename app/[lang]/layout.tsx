@@ -1,6 +1,5 @@
 import {notFound} from 'next/navigation';
 import type {ReactNode} from 'react';
-import {Footer} from '@/components/footer';
 import {isValidLanguage, languages} from '@/lib/i18n';
 
 interface LangLayoutProps {
@@ -19,10 +18,5 @@ export default async function LangLayout({children, params}: LangLayoutProps) {
     notFound();
   }
 
-  return (
-    <>
-      {children}
-      <Footer />
-    </>
-  );
+  return <>{children}</>;
 }

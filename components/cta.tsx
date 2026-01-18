@@ -1,20 +1,27 @@
 import Link from 'next/link';
 import {Github, BookOpen} from 'lucide-react';
 import {Button} from '@/components/ui/button';
+import {getTranslations} from '@/lib/translations';
+import type {Language} from '@/lib/i18n';
 
-export function CTA() {
+interface CTAProps {
+  lang: Language;
+}
+
+export function CTA({lang}: CTAProps) {
+  const t = getTranslations(lang);
+
   return (
     <section className="py-16 md:py-24 lg:py-32">
       <div className="container mx-auto max-w-4xl text-center">
         {/* Headline */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          Get started for free today
+          {t.cta.title}
         </h2>
 
         {/* Subheadline */}
         <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Open source and PolyForm Noncommercial License 1.0.0. Start building computer vision applications in
-          minutes.
+          {t.cta.description}
         </p>
 
         {/* CTA Buttons */}
@@ -22,7 +29,7 @@ export function CTA() {
           <Button size="lg" asChild>
             <Link href="https://github.com/cvprun/cvp" target="_blank" rel="noreferrer">
               <Github className="mr-2 h-4 w-4" />
-              Get Started
+              {t.cta.getStarted}
             </Link>
           </Button>
           <Button variant="outline" size="lg" asChild>
@@ -32,7 +39,7 @@ export function CTA() {
               rel="noreferrer"
             >
               <BookOpen className="mr-2 h-4 w-4" />
-              Read Documentation
+              {t.cta.readDocs}
             </Link>
           </Button>
         </div>

@@ -1,17 +1,6 @@
-import {Hero} from '@/components/hero';
-import {Features} from '@/components/features';
-import {CTA} from '@/components/cta';
-import {Footer} from '@/components/footer';
+import {redirect} from 'next/navigation';
+import {defaultLanguage} from '@/lib/i18n';
 
-export default function Home() {
-  return (
-    <div>
-      <main>
-        <Hero />
-        <Features />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
-  );
+export default function RootPage() {
+  redirect(`/${defaultLanguage}`);
 }
