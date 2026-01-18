@@ -10,7 +10,7 @@ interface HomePageProps {
 }
 
 export function generateStaticParams() {
-  return languages.map((lang) => ({lang}));
+  return languages.map(lang => ({lang}));
 }
 
 export default async function HomePage({params}: HomePageProps) {

@@ -45,7 +45,7 @@ interface FeaturesPageProps {
 }
 
 export function generateStaticParams() {
-  return languages.map((lang) => ({lang}));
+  return languages.map(lang => ({lang}));
 }
 
 export async function generateMetadata({params}: FeaturesPageProps): Promise<Metadata> {
@@ -187,8 +187,7 @@ export default async function FeaturesPage({params}: FeaturesPageProps) {
               description:
                 'Generate realistic test data using the Faker library. Create names, addresses, emails, and custom datasets for testing and development.',
               screenshot: '/screenshots/cvp-faker.png',
-              screenshotAlt:
-                'Test data generator interface with faker library options',
+              screenshotAlt: 'Test data generator interface with faker library options',
             },
             {
               icon: Hash,
@@ -213,8 +212,7 @@ export default async function FeaturesPage({params}: FeaturesPageProps) {
               description:
                 'Text transformation utilities for various case formats. Convert between camelCase, snake_case, PascalCase, kebab-case, and more.',
               screenshot: '/screenshots/cvp-case-converter.png',
-              screenshotAlt:
-                'Case converter showing different text formatting options',
+              screenshotAlt: 'Case converter showing different text formatting options',
             },
             {
               icon: Settings,

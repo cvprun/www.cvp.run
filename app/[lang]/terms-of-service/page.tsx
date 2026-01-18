@@ -9,10 +9,12 @@ interface TermsOfServicePageProps {
 }
 
 export function generateStaticParams() {
-  return languages.map((lang) => ({lang}));
+  return languages.map(lang => ({lang}));
 }
 
-export async function generateMetadata({params}: TermsOfServicePageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: TermsOfServicePageProps): Promise<Metadata> {
   const {lang} = await params;
   const title = lang === 'ko' ? '이용약관' : 'Terms of Service';
   return {

@@ -8,7 +8,7 @@ interface LangLayoutProps {
 }
 
 export function generateStaticParams() {
-  return languages.map((lang) => ({lang}));
+  return languages.map(lang => ({lang}));
 }
 
 export default async function LangLayout({children, params}: LangLayoutProps) {

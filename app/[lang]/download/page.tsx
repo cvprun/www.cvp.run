@@ -13,7 +13,7 @@ interface DownloadPageProps {
 }
 
 export function generateStaticParams() {
-  return languages.map((lang) => ({lang}));
+  return languages.map(lang => ({lang}));
 }
 
 export async function generateMetadata({params}: DownloadPageProps): Promise<Metadata> {

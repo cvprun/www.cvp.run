@@ -9,10 +9,12 @@ interface PrivacyPolicyPageProps {
 }
 
 export function generateStaticParams() {
-  return languages.map((lang) => ({lang}));
+  return languages.map(lang => ({lang}));
 }
 
-export async function generateMetadata({params}: PrivacyPolicyPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PrivacyPolicyPageProps): Promise<Metadata> {
   const {lang} = await params;
   const title = lang === 'ko' ? '개인정보처리방침' : 'Privacy Policy';
   return {
