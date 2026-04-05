@@ -1,12 +1,14 @@
-import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
+
 import {DownloadHero} from '@/components/download-page/download-hero';
-import {SystemRequirements} from '@/components/download-page/system-requirements';
 import {InstallMethods} from '@/components/download-page/install-methods';
 import {QuickStart} from '@/components/download-page/quick-start';
+import {SystemRequirements} from '@/components/download-page/system-requirements';
 import {Footer} from '@/components/footer';
 import {isValidLanguage, languages, type Language} from '@/lib/i18n';
 import {getTranslations} from '@/lib/translations';
+
+import type {Metadata} from 'next';
 
 interface DownloadPageProps {
   params: Promise<{lang: string}>;

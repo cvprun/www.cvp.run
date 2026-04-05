@@ -1,8 +1,10 @@
-import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
+
 import {LegalPage} from '@/components/legal-page';
 import {isValidLanguage, languages, type Language} from '@/lib/i18n';
 import {getLegalContent} from '@/lib/markdown';
+
+import type {Metadata} from 'next';
 
 interface TermsOfServicePageProps {
   params: Promise<{lang: string}>;

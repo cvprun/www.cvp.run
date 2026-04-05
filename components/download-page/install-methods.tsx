@@ -1,6 +1,7 @@
 import {Terminal, Github} from 'lucide-react';
-import {getTranslations} from '@/lib/translations';
+
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 interface InstallMethodsProps {
   lang: Language;

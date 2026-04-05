@@ -1,6 +1,7 @@
 import type {Language} from '@/lib/i18n';
-import {LanguageSwitcher} from './language-switcher';
+
 import {Footer} from './footer';
+import {LanguageSwitcher} from './language-switcher';
 
 interface LegalPageProps {
   title: string;
@@ -10,14 +11,20 @@ interface LegalPageProps {
   slug: string;
 }
 
-export function LegalPage({title, lastUpdated, contentHtml, currentLang, slug}: LegalPageProps) {
+export function LegalPage({
+  title,
+  lastUpdated,
+  contentHtml,
+  currentLang,
+  slug,
+}: LegalPageProps) {
   const formattedDate = new Date(lastUpdated).toLocaleDateString(
     currentLang === 'ko' ? 'ko-KR' : 'en-US',
     {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    }
+    },
   );
 
   const lastUpdatedLabel = currentLang === 'ko' ? '최종 수정일' : 'Last updated';

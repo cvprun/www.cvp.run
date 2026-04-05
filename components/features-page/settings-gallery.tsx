@@ -1,8 +1,9 @@
 'use client';
 
 import {useState} from 'react';
-import Image from 'next/image';
+
 import {ChevronDown} from 'lucide-react';
+import Image from 'next/image';
 
 const settingsScreenshots = [
   {
@@ -69,10 +70,9 @@ export function SettingsGallery() {
             Comprehensive Configuration Center
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
-            CVP includes a powerful preference center with extensive
-            customization options for every aspect of the application. Configure
-            themes, workflows, integrations, and system behavior to match your
-            needs.
+            CVP includes a powerful preference center with extensive customization
+            options for every aspect of the application. Configure themes, workflows,
+            integrations, and system behavior to match your needs.
           </p>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -104,9 +104,7 @@ export function SettingsGallery() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">{setting.title}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {setting.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{setting.description}</p>
                 </div>
               </div>
             ))}

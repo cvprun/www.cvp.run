@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import {Github, BookOpen} from 'lucide-react';
+import Link from 'next/link';
+
 import {Button} from '@/components/ui/button';
-import {getTranslations} from '@/lib/translations';
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 interface CTAProps {
   lang: Language;

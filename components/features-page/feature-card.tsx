@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import {LucideIcon} from 'lucide-react';
+import Image from 'next/image';
 
 interface FeatureCardProps {
   icon: LucideIcon;
@@ -34,9 +34,7 @@ export function FeatureCard({
       </div>
       <div>
         <h3 className="font-semibold mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {description}
-        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import {notFound} from 'next/navigation';
-import {Hero} from '@/components/hero';
-import {Features} from '@/components/features';
+
 import {CTA} from '@/components/cta';
+import {Features} from '@/components/features';
 import {Footer} from '@/components/footer';
+import {Hero} from '@/components/hero';
 import {isValidLanguage, languages, type Language} from '@/lib/i18n';
 
 interface HomePageProps {

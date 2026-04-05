@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import {Check, Github, Building2} from 'lucide-react';
+import Link from 'next/link';
+
 import {Button} from '@/components/ui/button';
-import {getTranslations} from '@/lib/translations';
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 interface PricingTiersProps {
   lang: Language;
@@ -32,7 +33,7 @@ export function PricingTiers({lang}: PricingTiersProps) {
             </div>
 
             <ul className="mb-8 space-y-3">
-              {t.pricing.free.features.map((feature) => (
+              {t.pricing.free.features.map(feature => (
                 <li key={feature} className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-sm">{feature}</span>
@@ -78,7 +79,7 @@ export function PricingTiers({lang}: PricingTiersProps) {
             </div>
 
             <ul className="mb-8 space-y-3">
-              {t.pricing.enterprise.features.map((feature) => (
+              {t.pricing.enterprise.features.map(feature => (
                 <li key={feature} className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-sm">{feature}</span>

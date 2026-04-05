@@ -1,7 +1,8 @@
-import Link from 'next/link';
 import {Github} from 'lucide-react';
-import {getTranslations} from '@/lib/translations';
+import Link from 'next/link';
+
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 interface FooterProps {
   lang: Language;

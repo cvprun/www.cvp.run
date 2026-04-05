@@ -1,4 +1,5 @@
 import {LucideIcon} from 'lucide-react';
+
 import {FeatureCard} from './feature-card';
 
 interface Feature {

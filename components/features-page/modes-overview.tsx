@@ -37,15 +37,13 @@ export function ModesOverview() {
       <div className="container mx-auto max-w-6xl">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <p className="text-sm font-semibold text-primary mb-2">
-            APPLICATION MODES
-          </p>
+          <p className="text-sm font-semibold text-primary mb-2">APPLICATION MODES</p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
             Four Ways to Use CVP
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            CVP operates through four primary application modes, each designed
-            for specific use cases and workflows.
+            CVP operates through four primary application modes, each designed for
+            specific use cases and workflows.
           </p>
         </div>
 

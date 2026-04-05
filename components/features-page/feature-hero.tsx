@@ -12,10 +12,10 @@ export function FeatureHero() {
           Comprehensive Computer Vision Toolkit
         </h1>
         <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground sm:text-xl">
-          CVP combines computer vision capabilities, visual programming tools,
-          media playback, and desktop GUI components into a unified platform.
-          Built with Python 3.12+, featuring hardware-accelerated rendering and
-          over 80 specialized modules.
+          CVP combines computer vision capabilities, visual programming tools, media
+          playback, and desktop GUI components into a unified platform. Built with
+          Python 3.12+, featuring hardware-accelerated rendering and over 80 specialized
+          modules.
         </p>
       </div>
 

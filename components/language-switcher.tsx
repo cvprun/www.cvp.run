@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+
 import type {Language} from '@/lib/i18n';
 import {languages} from '@/lib/i18n';
 
@@ -12,7 +13,7 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({currentLang, slug}: LanguageSwitcherProps) {
   return (
     <div className="flex gap-2">
-      {languages.map((lang) => (
+      {languages.map(lang => (
         <Link
           key={lang}
           href={`/${lang}/${slug}`}

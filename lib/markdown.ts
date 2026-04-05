@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+
 import matter from 'gray-matter';
 import {remark} from 'remark';
 import html from 'remark-html';
+
 import type {Language} from './i18n';
 
 const contentDirectory = path.join(process.cwd(), 'app/_content');
@@ -13,7 +15,10 @@ export interface LegalContent {
   contentHtml: string;
 }
 
-export async function getLegalContent(slug: string, lang: Language): Promise<LegalContent> {
+export async function getLegalContent(
+  slug: string,
+  lang: Language,
+): Promise<LegalContent> {
   const filePath = path.join(contentDirectory, `${slug}.${lang}.md`);
   const fileContents = fs.readFileSync(filePath, 'utf8');
 

@@ -1,9 +1,11 @@
-import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
+
+import {Footer} from '@/components/footer';
 import {PricingHero} from '@/components/pricing-page/pricing-hero';
 import {PricingTiers} from '@/components/pricing-page/pricing-tiers';
-import {Footer} from '@/components/footer';
 import {isValidLanguage, languages, type Language} from '@/lib/i18n';
+
+import type {Metadata} from 'next';
 
 interface PricingPageProps {
   params: Promise<{lang: string}>;

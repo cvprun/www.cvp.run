@@ -1,5 +1,3 @@
-import type {Metadata} from 'next';
-import {notFound} from 'next/navigation';
 import {
   Network,
   Wifi,
@@ -30,15 +28,19 @@ import {
   FileType,
   Gamepad,
 } from 'lucide-react';
-import {FeatureHero} from '@/components/features-page/feature-hero';
-import {ModesOverview} from '@/components/features-page/modes-overview';
-import {FeatureShowcase} from '@/components/features-page/feature-showcase';
-import {FeatureCategory} from '@/components/features-page/feature-category';
-import {SettingsGallery} from '@/components/features-page/settings-gallery';
+import {notFound} from 'next/navigation';
+
 import {CTA} from '@/components/cta';
+import {FeatureCategory} from '@/components/features-page/feature-category';
+import {FeatureHero} from '@/components/features-page/feature-hero';
+import {FeatureShowcase} from '@/components/features-page/feature-showcase';
+import {ModesOverview} from '@/components/features-page/modes-overview';
+import {SettingsGallery} from '@/components/features-page/settings-gallery';
 import {Footer} from '@/components/footer';
 import {isValidLanguage, languages, type Language} from '@/lib/i18n';
 import {getTranslations} from '@/lib/translations';
+
+import type {Metadata} from 'next';
 
 interface FeaturesPageProps {
   params: Promise<{lang: string}>;

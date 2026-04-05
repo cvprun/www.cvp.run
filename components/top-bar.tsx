@@ -1,8 +1,9 @@
 'use client';
 
+import {Star, Globe} from 'lucide-react';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {Star, Globe} from 'lucide-react';
+
 import {ModeToggle} from '@/components/mode-toggle';
 import {Button} from '@/components/ui/button';
 import {
@@ -11,8 +12,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {getTranslations} from '@/lib/translations';
 import {type Language, languages, defaultLanguage} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 function getLanguageFromPathname(pathname: string): Language {
   const segment = pathname.split('/')[1];
@@ -95,7 +96,7 @@ export function TopBar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {languages.map((lang) => (
+                {languages.map(lang => (
                   <DropdownMenuItem key={lang} asChild>
                     <Link
                       href={`/${lang}${pathWithoutLang}`}

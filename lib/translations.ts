@@ -42,8 +42,7 @@ export const translations = {
         },
         {
           title: '고성능',
-          description:
-            'GPU 가속, 멀티스레딩, 효율적인 메모리 관리로 속도에 최적화.',
+          description: 'GPU 가속, 멀티스레딩, 효율적인 메모리 관리로 속도에 최적화.',
         },
         {
           title: 'Python 네이티브',
@@ -144,10 +143,12 @@ export const translations = {
     // Download page
     download: {
       title: '다운로드 - CVP',
-      description: 'CVP를 다운로드하고 설치하세요. pip, GitHub 또는 소스에서 설치할 수 있습니다.',
+      description:
+        'CVP를 다운로드하고 설치하세요. pip, GitHub 또는 소스에서 설치할 수 있습니다.',
       hero: {
         title: 'CVP 다운로드',
-        description: '몇 가지 간단한 단계로 CVP를 설치하고 컴퓨터 비전 프로젝트를 시작하세요.',
+        description:
+          '몇 가지 간단한 단계로 CVP를 설치하고 컴퓨터 비전 프로젝트를 시작하세요.',
       },
       requirements: {
         title: '시스템 요구사항',
@@ -330,10 +331,12 @@ export const translations = {
     // Download page
     download: {
       title: 'Download - CVP',
-      description: 'Download and install CVP. Available via pip, GitHub, or from source.',
+      description:
+        'Download and install CVP. Available via pip, GitHub, or from source.',
       hero: {
         title: 'Download CVP',
-        description: 'Install CVP in a few simple steps and start your computer vision projects.',
+        description:
+          'Install CVP in a few simple steps and start your computer vision projects.',
       },
       requirements: {
         title: 'System Requirements',
@@ -352,7 +355,8 @@ export const translations = {
         },
         github: {
           title: 'Install from GitHub',
-          description: 'Install directly from GitHub for the latest development version.',
+          description:
+            'Install directly from GitHub for the latest development version.',
           steps: ['Clone the repository:', 'Navigate to directory and install:'],
         },
       },

@@ -1,6 +1,7 @@
 import {Eye, Play, Zap, Code, Puzzle, Layers} from 'lucide-react';
-import {getTranslations} from '@/lib/translations';
+
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 const featureIcons = [Eye, Play, Zap, Code, Puzzle, Layers];
 

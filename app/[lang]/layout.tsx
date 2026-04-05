@@ -1,5 +1,7 @@
-import {notFound} from 'next/navigation';
 import type {ReactNode} from 'react';
+
+import {notFound} from 'next/navigation';
+
 import {isValidLanguage, languages} from '@/lib/i18n';
 
 interface LangLayoutProps {

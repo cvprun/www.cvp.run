@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import {Download, Github} from 'lucide-react';
+import Link from 'next/link';
+
 import {Button} from '@/components/ui/button';
-import {getTranslations} from '@/lib/translations';
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 interface HeroProps {
   lang: Language;
@@ -32,9 +33,7 @@ export function Hero({lang}: HeroProps) {
 
       {/* Subheading */}
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-lg text-muted-foreground sm:text-xl">
-          {t.hero.description}
-        </p>
+        <p className="text-lg text-muted-foreground sm:text-xl">{t.hero.description}</p>
       </div>
 
       {/* CTA Buttons */}

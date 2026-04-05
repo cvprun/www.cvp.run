@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import {Rocket, Github, BookOpen} from 'lucide-react';
+import Link from 'next/link';
+
 import {Button} from '@/components/ui/button';
-import {getTranslations} from '@/lib/translations';
 import type {Language} from '@/lib/i18n';
+import {getTranslations} from '@/lib/translations';
 
 interface QuickStartProps {
   lang: Language;
@@ -39,11 +40,15 @@ export function QuickStart({lang}: QuickStartProps) {
             <div className="p-4">
               <pre className="text-sm font-mono text-foreground">
                 <code>
-                  <span className="text-muted-foreground"># {t.download.quickStart.commands.player}</span>
+                  <span className="text-muted-foreground">
+                    # {t.download.quickStart.commands.player}
+                  </span>
                   {'\n'}
                   <span className="text-primary">$</span> cvp player
                   {'\n\n'}
-                  <span className="text-muted-foreground"># {t.download.quickStart.commands.help}</span>
+                  <span className="text-muted-foreground">
+                    # {t.download.quickStart.commands.help}
+                  </span>
                   {'\n'}
                   <span className="text-primary">$</span> cvp --help
                 </code>
