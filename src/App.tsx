@@ -1,24 +1,28 @@
-import {AppShowcase} from '@/components/app-showcase';
-import {Cta} from '@/components/cta';
-import {Features} from '@/components/features';
-import {Footer} from '@/components/footer';
-import {Hero} from '@/components/hero';
-import {Modules} from '@/components/modules';
-import {TopBar} from '@/components/top-bar';
+import {useEffect} from 'react';
+import {Route, Routes, useLocation} from 'react-router-dom';
+
+import {DetailPage} from '@/pages/detail';
+import {LandingPage} from '@/pages/landing';
+
+function ScrollToTop() {
+  const {pathname} = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function App() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <TopBar />
-      <main className="flex-1">
-        <Hero />
-        <Features />
-        <Modules />
-        <AppShowcase />
-        <Cta />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/features/:slug" element={<DetailPage kind="feature" />} />
+        <Route path="/modules/:slug" element={<DetailPage kind="module" />} />
+        <Route path="*" element={<DetailPage kind="feature" />} />
+      </Routes>
+    </>
   );
 }
 

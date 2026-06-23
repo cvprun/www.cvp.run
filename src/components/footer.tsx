@@ -20,17 +20,17 @@ export function Footer() {
               <h3 className="text-sm font-semibold">{t.footer.productTitle}</h3>
               <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
                 <li>
-                  <a href="#features" className="transition-colors hover:text-foreground">
+                  <a href="/#features" className="transition-colors hover:text-foreground">
                     {t.footer.features}
                   </a>
                 </li>
                 <li>
-                  <a href="#modules" className="transition-colors hover:text-foreground">
+                  <a href="/#modules" className="transition-colors hover:text-foreground">
                     {t.footer.modules}
                   </a>
                 </li>
                 <li>
-                  <a href="#preview" className="transition-colors hover:text-foreground">
+                  <a href="/#preview" className="transition-colors hover:text-foreground">
                     {t.footer.preview}
                   </a>
                 </li>

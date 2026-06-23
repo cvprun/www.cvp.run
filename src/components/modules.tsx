@@ -9,6 +9,7 @@ import {
   ScanEye,
   type LucideIcon,
 } from 'lucide-react';
+import {Link} from 'react-router-dom';
 
 import {useLanguage} from '@/lib/i18n';
 
@@ -43,18 +44,19 @@ export function Modules() {
           {t.modules.items.map((item, i) => {
             const Icon = ICONS[i % ICONS.length];
             return (
-              <div
-                key={item.name}
-                className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-transform hover:-translate-y-0.5"
+              <Link
+                key={item.slug}
+                to={`/modules/${item.slug}`}
+                className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-transform hover:-translate-y-0.5"
               >
-                <Icon className="size-6 text-foreground/80" />
+                <Icon className="size-6 text-foreground/80 transition-colors group-hover:text-brand-violet dark:group-hover:text-brand-pink" />
                 <div>
                   <h3 className="font-mono text-sm font-semibold">{item.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {item.description}
                   </p>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

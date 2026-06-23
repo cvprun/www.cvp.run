@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 
 import {LanguageSwitcher} from '@/components/language-switcher';
 import {Logo} from '@/components/logo';
@@ -19,9 +20,9 @@ export function TopBar() {
   }, []);
 
   const links = [
-    {href: '#features', label: t.nav.features},
-    {href: '#modules', label: t.nav.modules},
-    {href: '#preview', label: t.nav.preview},
+    {href: '/#features', label: t.nav.features},
+    {href: '/#modules', label: t.nav.modules},
+    {href: '/#preview', label: t.nav.preview},
   ];
 
   return (
@@ -34,9 +35,9 @@ export function TopBar() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <a href="#top" className="flex items-center" aria-label="CVP">
+        <Link to="/" className="flex items-center" aria-label="CVP">
           <Logo />
-        </a>
+        </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
           {links.map(link => (
@@ -58,7 +59,7 @@ export function TopBar() {
           <LanguageSwitcher />
           <ModeToggle />
           <Button asChild size="sm" className="ml-1 hidden sm:inline-flex">
-            <a href="#features">{t.hero.secondaryCta}</a>
+            <a href="/#features">{t.hero.secondaryCta}</a>
           </Button>
         </div>
       </div>
