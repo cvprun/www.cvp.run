@@ -30,8 +30,8 @@ export function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#platform" className="transition-colors hover:text-foreground">
-                    {t.footer.platform}
+                  <a href="#preview" className="transition-colors hover:text-foreground">
+                    {t.footer.preview}
                   </a>
                 </li>
               </ul>

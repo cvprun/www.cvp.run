@@ -21,7 +21,7 @@ export function TopBar() {
   const links = [
     {href: '#features', label: t.nav.features},
     {href: '#modules', label: t.nav.modules},
-    {href: '#platform', label: t.nav.platform},
+    {href: '#preview', label: t.nav.preview},
   ];
 
   return (
