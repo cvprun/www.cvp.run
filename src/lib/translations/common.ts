@@ -4,6 +4,7 @@ export const common = {
     nav: {
       labeling: '라벨링',
       platform: '플랫폼',
+      more: '더 보기',
       pricing: '가격',
       login: '로그인',
       getStarted: '무료로 시작',
@@ -49,6 +50,56 @@ export const common = {
         nav: '개발자',
         tagline: '토큰 API · 제품키 라이선싱',
       },
+      apps: {
+        label: '어플리케이션',
+        nav: '어플리케이션',
+        tagline: '50+ CV 유틸리티 도구 모음',
+      },
+      graphs: {
+        label: '그래프',
+        nav: '그래프',
+        tagline: '노드 기반 비전 파이프라인',
+      },
+      agents: {
+        label: '에이전트',
+        nav: '에이전트',
+        tagline: '엣지 장비 원격 실행',
+      },
+      clusters: {
+        label: '클러스터',
+        nav: '클러스터',
+        tagline: 'Kubernetes 클러스터 제어',
+      },
+      vms: {
+        label: '관제 (VMS)',
+        nav: '관제 (VMS)',
+        tagline: 'CCTV 통합 관제',
+      },
+      manufacturing: {
+        label: '제조 (MES)',
+        nav: '제조 (MES)',
+        tagline: '작업지시 · 추적성 · 설비',
+      },
+      mlflow: {
+        label: 'MLOps',
+        nav: 'MLOps',
+        tagline: 'MLflow 실험 추적 · 모델 레지스트리',
+      },
+      grids: {
+        label: '그리드',
+        nav: '그리드',
+        tagline: '스프레드시트형 데이터베이스',
+      },
+      maps: {
+        label: '지도',
+        nav: '지도',
+        tagline: 'GIS 레이어 · 피처 드로잉',
+      },
+      meetings: {
+        label: '회의록',
+        nav: '회의록',
+        tagline: '녹음 → 전사 → 요약 자동화',
+      },
     },
 
     cta: {
@@ -65,6 +116,7 @@ export const common = {
         'CVP — 이미지, 비디오, 3D 포인트클라우드를 하나의 워크스페이스에서 라벨링하고 관리하는 비전 데이터 플랫폼.',
       labelingTitle: '라벨링',
       platformTitle: '플랫폼',
+      moreTitle: '더 보기',
       companyTitle: '제품',
       pricing: '가격',
       roadmapNote: '에이전트 · MLOps · 관제 등 더 많은 기능을 준비하고 있습니다.',
@@ -87,6 +139,7 @@ export const common = {
     nav: {
       labeling: 'Labeling',
       platform: 'Platform',
+      more: 'More',
       pricing: 'Pricing',
       login: 'Sign in',
       getStarted: 'Start for free',
@@ -131,6 +184,56 @@ export const common = {
         nav: 'Developers',
         tagline: 'Token API and license keys',
       },
+      apps: {
+        label: 'Applications',
+        nav: 'Applications',
+        tagline: '50+ CV utility tools',
+      },
+      graphs: {
+        label: 'Graphs',
+        nav: 'Graphs',
+        tagline: 'Node-based vision pipelines',
+      },
+      agents: {
+        label: 'Agents',
+        nav: 'Agents',
+        tagline: 'Remote execution on edge devices',
+      },
+      clusters: {
+        label: 'Clusters',
+        nav: 'Clusters',
+        tagline: 'Kubernetes cluster control',
+      },
+      vms: {
+        label: 'Monitoring (VMS)',
+        nav: 'Monitoring (VMS)',
+        tagline: 'Unified CCTV monitoring',
+      },
+      manufacturing: {
+        label: 'Manufacturing (MES)',
+        nav: 'Manufacturing (MES)',
+        tagline: 'Work orders · traceability · equipment',
+      },
+      mlflow: {
+        label: 'MLOps',
+        nav: 'MLOps',
+        tagline: 'MLflow tracking · model registry',
+      },
+      grids: {
+        label: 'Grids',
+        nav: 'Grids',
+        tagline: 'Spreadsheet-style database',
+      },
+      maps: {
+        label: 'Maps',
+        nav: 'Maps',
+        tagline: 'GIS layers · feature drawing',
+      },
+      meetings: {
+        label: 'Meetings',
+        nav: 'Meetings',
+        tagline: 'Record → transcribe → summarize',
+      },
     },
 
     cta: {
@@ -147,6 +250,7 @@ export const common = {
         'CVP — the vision data platform for labeling and managing images, video, and 3D point clouds in one workspace.',
       labelingTitle: 'Labeling',
       platformTitle: 'Platform',
+      moreTitle: 'More',
       companyTitle: 'Product',
       pricing: 'Pricing',
       roadmapNote: 'Agents, MLOps, monitoring, and more are on the roadmap.',

@@ -24,6 +24,7 @@ function App() {
         <Route path={paths.pricing} element={<PricingPage />} />
         <Route path="/labeling/:slug" element={<FeaturePage category="labeling" />} />
         <Route path="/platform/:slug" element={<FeaturePage category="platform" />} />
+        <Route path="/more/:slug" element={<FeaturePage category="more" />} />
 
         {/* legacy marketing routes → new IA */}
         {Object.entries(LEGACY_REDIRECTS).map(([from, to]) => (

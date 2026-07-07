@@ -29,8 +29,11 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
   const kicker =
     def.category === 'labeling'
       ? t.featurePage.labelingKicker
-      : t.featurePage.platformKicker;
-  const HeroMock = MOCKS[def.heroMock];
+      : def.category === 'platform'
+        ? t.featurePage.platformKicker
+        : t.featurePage.moreKicker;
+  const HeroMock = def.heroMock ? MOCKS[def.heroMock] : null;
+  const inDevelopment = def.status === 'development';
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -41,8 +44,14 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
           <div className="pointer-events-none absolute inset-0 -z-10 bg-mesh-glow opacity-40" />
           <div className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24 sm:pb-16">
             <div className="mx-auto max-w-3xl text-center">
-              <p className="text-sm font-semibold tracking-wide text-brand-cyan uppercase">
+              <p className="flex items-center justify-center gap-2 text-sm font-semibold tracking-wide text-brand-cyan uppercase">
                 {kicker} · {meta.label}
+                {inDevelopment && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium tracking-normal text-amber-600 normal-case dark:text-amber-400">
+                    <span className="size-1.5 animate-pulse rounded-full bg-amber-500" />
+                    {t.featurePage.statusInDevelopment}
+                  </span>
+                )}
               </p>
               <h1 className="mt-4 text-3xl leading-[1.12] font-extrabold tracking-tight text-balance sm:text-5xl">
                 {page.title}
@@ -50,18 +59,26 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
               <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
                 {page.intro}
               </p>
-              <div className="mt-8">
-                <CtaButtons withNote={false} />
-              </div>
+              {inDevelopment ? (
+                <p className="mx-auto mt-6 max-w-xl text-xs text-muted-foreground">
+                  {t.featurePage.developmentNote}
+                </p>
+              ) : (
+                <div className="mt-8">
+                  <CtaButtons withNote={false} />
+                </div>
+              )}
             </div>
 
-            <Reveal className="relative mx-auto mt-12 max-w-5xl" delay={100}>
-              <div className="pointer-events-none absolute -inset-x-8 -top-8 bottom-0 -z-10 bg-mesh-glow opacity-30" />
-              <HeroMock />
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                {t.misc.mockNote}
-              </p>
-            </Reveal>
+            {HeroMock && (
+              <Reveal className="relative mx-auto mt-12 max-w-5xl" delay={100}>
+                <div className="pointer-events-none absolute -inset-x-8 -top-8 bottom-0 -z-10 bg-mesh-glow opacity-30" />
+                <HeroMock />
+                <p className="mt-3 text-center text-xs text-muted-foreground">
+                  {t.misc.mockNote}
+                </p>
+              </Reveal>
+            )}
           </div>
         </section>
 
@@ -152,9 +169,16 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
                     to={related.path}
                     className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-brand-cyan/60"
                   >
-                    <span className="flex items-center justify-between text-sm font-semibold">
-                      {t.pageMeta[slug].label}
-                      <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                    <span className="flex items-center justify-between gap-2 text-sm font-semibold">
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span className="truncate">{t.pageMeta[slug].label}</span>
+                        {related.status === 'development' && (
+                          <span className="shrink-0 rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
+                            {t.featurePage.statusInDevelopment}
+                          </span>
+                        )}
+                      </span>
+                      <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
                     </span>
                     <p className="mt-1.5 text-xs text-muted-foreground">
                       {t.pageMeta[slug].tagline}

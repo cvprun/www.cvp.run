@@ -11,6 +11,11 @@ export const features = {
       relatedTitle: '함께 보기',
       ctaTitle: '직접 그려보는 게 가장 빠릅니다',
       ctaDescription: '무료 플랜에는 카드 등록이 필요 없습니다.',
+      moreKicker: '더 보기',
+      statusAvailable: '사용 가능',
+      statusInDevelopment: '개발 중',
+      developmentNote:
+        '이 기능은 현재 개발 중이며, 정식 출시 전까지 내용이 바뀔 수 있습니다.',
     },
 
     pages: {
@@ -237,6 +242,244 @@ export const features = {
           ],
         },
       },
+
+      apps: {
+        title: '라벨링 사이의 모든 잡일을 위한 CV 유틸리티.',
+        intro:
+          '카메라 FOV 계산부터 왜곡 보정, 바코드 인식, JSON 포매터까지 — 50종 이상의 유틸리티 앱이 프로젝트 안에 들어 있습니다. 따로 설치할 것도, 탭을 옮겨 다닐 것도 없습니다.',
+        sections: [
+          {
+            title: '광학 계산기부터 개발 도구까지.',
+            body: '화각(FOV) 계산기, 렌즈 픽커, 피사계 심도 같은 광학 도구와 카메라 캘리브레이션, 왜곡 보정, 바코드 인식 같은 비전 도구, 그리고 HTTP 클라이언트, JSON 포매터, JWT 뷰어, 헥스 에디터 같은 개발 도구가 한 갤러리에 모여 있습니다.',
+          },
+          {
+            title: '파일에서 바로 열립니다.',
+            body: '파일 페이지의 "다른 앱으로 열기"로 이미지와 데이터를 알맞은 앱에 즉시 전달합니다. 다운로드해서 다른 프로그램에 붙여 넣는 왕복이 사라집니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['광학', 'FOV 계산기 · 렌즈 픽커 · 피사계 심도(DOF)'],
+            ['비전', '카메라 캘리브레이션 · 왜곡 보정 · 바코드 · 3D 모델러'],
+            ['개발자', 'HTTP 클라이언트 · JSON 포매터 · JWT 뷰어 · 헥스 에디터'],
+            ['통합', '파일 페이지 "다른 앱으로 열기" 연동'],
+          ],
+        },
+      },
+
+      graphs: {
+        title: '블루프린트처럼 잇는 비전 파이프라인.',
+        intro:
+          '언리얼 블루프린트 스타일의 비주얼 스크립팅입니다. 이벤트, 제어 흐름, 수학, 그리고 컴퓨터 비전(CVP) 노드를 exec 핀으로 이어 파이프라인을 만들고, 실행 로그로 결과를 바로 확인합니다.',
+        sections: [
+          {
+            title: '이벤트에서 시작하는 실행 흐름.',
+            body: '시작 이벤트에서 출발한 실행 흐름이 분기·For 루프 같은 제어 노드를 지나 이미지 로드 → 모델 실행 → 어노테이션 저장으로 이어집니다. 실행 중인 노드는 노랗게 빛나고, 하단 로그 패널에 출력이 쌓입니다.',
+          },
+          {
+            title: '팔레트에서 끌어다 놓고, 인스펙터로 다듬고.',
+            body: '카테고리별 노드 팔레트에서 검색해 드래그로 추가하고, 인스펙터에서 라벨과 입력 값을 조정합니다. 그래프는 30초마다 자동 저장되고 템플릿으로 만들어 재사용할 수 있습니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            [
+              '노드',
+              '이벤트 · 제어 흐름 · 변수 · 수학 · 비교 · 논리 · 문자열 · 배열 · 형변환 · 디버그 · CVP(비전)',
+            ],
+            ['실행', 'exec 핀 흐름 · 실행 로그 · 실행 중 노드 하이라이트'],
+            ['편집', '팔레트 검색 · 인스펙터 · 자동 저장 · 템플릿'],
+            ['배포', '엣지 에이전트 원격 실행 (준비 중)'],
+          ],
+        },
+      },
+
+      agents: {
+        title: '엣지 장비에서 돌아가는 CVP의 손발.',
+        intro:
+          '현장 장비와 엣지 노드에 에이전트를 설치해 그래프 실행, 데이터 수집, 장비 연동을 맡깁니다. 플랫폼에서 상태를 모니터링하고 원격으로 작업을 내립니다.',
+        sections: [
+          {
+            title: '원격 실행과 스케줄링.',
+            body: '에이전트는 하트비트로 상태를 보고하고, cron 스케줄에 따라 작업을 실행합니다. 추론 앱(예: RF-DETR 감지)의 실행과 학습도 에이전트가 담당합니다.',
+          },
+          {
+            title: '산업 장비와의 연결.',
+            body: 'Modbus 같은 산업 프로토콜로 PLC·센서와 통신하고, 수집한 데이터를 프로젝트로 올립니다. 현장과 클라우드 사이의 다리 역할입니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['실행', '그래프 · 추론/학습 앱 (RF-DETR 등)'],
+            ['스케줄', 'cron 기반 로컬 스케줄러'],
+            ['프로토콜', 'Modbus 등 산업 장비 연동'],
+            ['모니터링', '하트비트 · 버전 · 원격 작업'],
+          ],
+        },
+      },
+
+      clusters: {
+        title: 'Kubernetes 클러스터를 프로젝트 안에서.',
+        intro:
+          '학습·추론 워크로드가 도는 Kubernetes 클러스터를 등록하고, 워크로드·노드·이벤트를 프로젝트 화면에서 직접 제어합니다.',
+        sections: [
+          {
+            title: 'Portainer처럼, 프로젝트에 붙어서.',
+            body: '파드, 디플로이먼트, 서비스 상태를 탭 UI로 살펴보고 제어합니다. 클러스터 자원이 어떤 프로젝트의 어떤 작업에 쓰이는지 맥락을 잃지 않습니다.',
+          },
+          {
+            title: '안전한 프록시 연결.',
+            body: '클러스터 API에는 플랫폼의 리버스 프록시를 거쳐 접근합니다. 자격 증명을 브라우저에 두지 않고도 제어 화면을 쓸 수 있습니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['리소스', '파드 · 디플로이먼트 · 서비스 · 노드 · 이벤트'],
+            ['연결', '플랫폼 리버스 프록시 경유'],
+            ['UI', '클러스터 상세 탭 · 상태 대시보드'],
+          ],
+        },
+      },
+
+      vms: {
+        title: '카메라 등록부터 인시던트까지, 통합 관제.',
+        intro:
+          'CCTV 카메라를 카탈로그로 관리하고 라이브 뷰, 재생, 이벤트·인시던트 워크플로를 하나의 관제 화면에서 처리합니다.',
+        sections: [
+          {
+            title: '보고, 돌려보고, 움직이고.',
+            body: '멀티 채널 라이브 레이아웃과 타임라인 재생, PTZ 제어를 지원합니다. 카메라는 카탈로그로 등록해 권한과 설정을 일괄 관리합니다.',
+          },
+          {
+            title: '이벤트가 인시던트가 되기까지.',
+            body: '규칙에 걸린 이벤트는 인시던트로 승격해 담당자에게 배정하고, 웹훅으로 외부 시스템에 알립니다. 감사 로그와 영상 내보내기로 사후 조사를 지원합니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['카메라', '카탈로그 · PTZ · 레이아웃'],
+            ['모니터링', '멀티 채널 라이브 · 타임라인 재생'],
+            ['워크플로', '규칙 · 이벤트 → 인시던트 · 웹훅'],
+            ['기록', '감사 로그 · 영상 내보내기'],
+          ],
+        },
+      },
+
+      manufacturing: {
+        title: '비전 검사와 생산 데이터를 잇는 MES.',
+        intro:
+          '작업 지시, 추적성, 설비 모니터링을 담당하는 제조 실행 모듈입니다. MESA-11 모델을 기반으로 검사 결과를 생산 맥락과 연결합니다.',
+        sections: [
+          {
+            title: '주문에서 스케줄까지.',
+            body: '제품 카탈로그와 생산 주문, 작업 스케줄을 관리하고 진행 상황을 대시보드로 봅니다.',
+          },
+          {
+            title: '토폴로지로 보는 공장.',
+            body: '설비와 작업 단위를 그래프 토폴로지로 시각화하고, 작업 단위에 엣지 에이전트를 연결해 현장 데이터를 수집합니다. 추적성 조회로 언제 어떤 설비에서 무엇이 생산됐는지 따라갑니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['모델', 'MESA-11 기반 기능 구성'],
+            ['기능', '생산 주문 · 카탈로그 · 스케줄 · 추적성 · 설비'],
+            ['시각화', '아키텍처 다이어그램 · 그래프 토폴로지'],
+          ],
+        },
+      },
+
+      mlflow: {
+        title: '라벨링한 데이터가 모델이 되는 길.',
+        intro:
+          'MLflow 호환 실험 추적과 모델 레지스트리, 아티팩트 저장소를 프로젝트에 내장합니다. 기존 MLflow 클라이언트 코드를 그대로 씁니다.',
+        sections: [
+          {
+            title: 'MLflow 클라이언트 그대로.',
+            body: 'tracking URI를 프로젝트 주소로 바꾸고 액세스 토큰만 넣으면 기존 학습 스크립트가 그대로 동작합니다. 실험, 런, 메트릭이 프로젝트에 쌓입니다.',
+          },
+          {
+            title: '레지스트리에서 엔드포인트까지.',
+            body: '검증된 모델을 레지스트리에 등록하고 버전을 관리합니다. 아티팩트는 프로젝트 스토리지에 저장됩니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['추적', 'MLflow 호환 실험 · 런 · 메트릭'],
+            ['레지스트리', '모델 등록 · 버전 관리'],
+            ['아티팩트', '프로젝트 스토리지 저장'],
+            ['인증', '프로젝트 액세스 토큰'],
+          ],
+        },
+      },
+
+      grids: {
+        title: '프로젝트 데이터를 위한 스프레드시트형 DB.',
+        intro:
+          'Airtable처럼 테이블을 만들고 행과 필드를 관리합니다. 실험 조건표, 장비 목록, 검수 체크리스트 — 스프레드시트로 하던 일을 프로젝트 안으로.',
+        sections: [
+          {
+            title: '필드 타입이 있는 테이블.',
+            body: '텍스트, 숫자, 선택, 날짜 등 타입 있는 필드로 데이터를 구조화하고, 뷰로 필터·정렬을 저장합니다.',
+          },
+          {
+            title: 'AI 에이전트가 읽고 쓰는 데이터.',
+            body: '프로젝트의 원격 MCP 서버를 통해 그리드가 도구로 노출됩니다. AI 에이전트가 테이블을 조회하고 갱신하는 자동화를 만들 수 있습니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['필드', '텍스트 · 숫자 · 선택 · 날짜 등 타입 필드'],
+            ['뷰', '필터 · 정렬 저장'],
+            ['연동', '원격 MCP 서버 도구 노출'],
+          ],
+        },
+      },
+
+      maps: {
+        title: '비전 데이터에 위치를 더하다.',
+        intro:
+          '드론 측량, 시설 점검, 현장 카메라 배치 — 위치가 중요한 프로젝트를 위해 지도 위에 레이어와 피처를 그리고 관리합니다.',
+        sections: [
+          {
+            title: '자체 서빙 베이스맵.',
+            body: 'PMTiles 기반 베이스맵을 플랫폼이 직접 서빙해 외부 지도 API 키 없이 동작합니다. 레이어를 겹쳐 프로젝트의 공간 데이터를 구성합니다.',
+          },
+          {
+            title: '그리는 대로 GeoJSON.',
+            body: '점·선·폴리곤 드로잉 도구로 피처를 그리면 GeoJSON으로 저장됩니다. 카메라 위치, 점검 구역, 비행 경로를 데이터로 남기세요.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['베이스맵', 'PMTiles 자체 서빙 · MapLibre 렌더링'],
+            ['피처', 'GeoJSON 점 · 선 · 폴리곤'],
+            ['드로잉', 'terra-draw 기반 편집 도구'],
+          ],
+        },
+      },
+
+      meetings: {
+        title: '회의가 끝나면 회의록이 위키에 있습니다.',
+        intro:
+          '회의를 녹음하면 전사, 요약, 위키 발행까지 자동으로 이어집니다. 라벨링 기준 회의가 그대로 팀 문서가 됩니다.',
+        sections: [
+          {
+            title: '녹음에서 요약까지.',
+            body: '브라우저에서 녹음하면 Whisper가 전사하고 LLM이 핵심 결정과 액션 아이템을 요약합니다.',
+          },
+          {
+            title: '위키로 발행.',
+            body: '완성된 회의록은 프로젝트 위키 페이지로 발행됩니다. 라벨링 가이드라인 변경 이력이 회의록과 함께 남습니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['전사', 'Whisper 음성 인식'],
+            ['요약', 'LLM 요약 · 액션 아이템 추출'],
+            ['발행', '프로젝트 위키 자동 발행'],
+          ],
+        },
+      },
     },
   },
 
@@ -248,6 +491,11 @@ export const features = {
       relatedTitle: 'See also',
       ctaTitle: 'The fastest way to judge it is to draw',
       ctaDescription: 'The free plan needs no credit card.',
+      moreKicker: 'More',
+      statusAvailable: 'Available',
+      statusInDevelopment: 'In development',
+      developmentNote:
+        'This feature is under active development and may change before general availability.',
     },
 
     pages: {
@@ -486,6 +734,247 @@ export const features = {
               'Ed25519 signatures · public key PEM · no network required',
             ],
             ['API', 'REST API · per-project authentication'],
+          ],
+        },
+      },
+
+      apps: {
+        title: 'CV utilities for everything between labels.',
+        intro:
+          'From camera FOV math to undistortion, barcode reading, and a JSON formatter — 50+ utility apps live inside your project. Nothing to install, no tab juggling.',
+        sections: [
+          {
+            title: 'From optics calculators to dev tools.',
+            body: 'Optics tools like an FOV calculator, lens picker, and depth-of-field; vision tools like camera calibration, undistortion, and barcode reading; and developer tools like an HTTP client, JSON formatter, JWT viewer, and hex editor — all in one gallery.',
+          },
+          {
+            title: 'They open straight from Files.',
+            body: '“Open with app” on the Files page hands images and data to the right tool instantly. No more download-and-paste round trips.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Optics', 'FOV calculator · lens picker · depth of field'],
+            ['Vision', 'Camera calibration · undistortion · barcode · 3D modeler'],
+            ['Developer', 'HTTP client · JSON formatter · JWT viewer · hex editor'],
+            ['Integration', '“Open with app” from the Files page'],
+          ],
+        },
+      },
+
+      graphs: {
+        title: 'Vision pipelines, wired like Blueprints.',
+        intro:
+          'Unreal-Blueprint-style visual scripting. Chain event, flow-control, math, and computer-vision (CVP) nodes through exec pins into a pipeline, and watch results in the execution log.',
+        sections: [
+          {
+            title: 'Execution starts at an event.',
+            body: 'Flow leaves the start event, passes control nodes like Branch and For Loop, and runs Load Image → Run Model → Save Annotations. Executing nodes glow yellow while output accumulates in the log panel below.',
+          },
+          {
+            title: 'Drag from the palette, refine in the inspector.',
+            body: 'Search the categorized node palette and drag nodes in; adjust labels and input values in the inspector. Graphs auto-save every 30 seconds and can be reused as templates.',
+          },
+        ],
+        specs: {
+          rows: [
+            [
+              'Nodes',
+              'Events · flow control · variables · math · comparison · logic · string · array · cast · debug · CVP (vision)',
+            ],
+            ['Execution', 'Exec-pin flow · execution log · executing-node highlight'],
+            ['Editing', 'Palette search · inspector · auto-save · templates'],
+            ['Deployment', 'Remote execution on edge agents (planned)'],
+          ],
+        },
+      },
+
+      agents: {
+        title: 'CVP’s hands and feet on edge devices.',
+        intro:
+          'Install agents on field devices and edge nodes to run graphs, collect data, and talk to equipment. Monitor status and dispatch work from the platform.',
+        sections: [
+          {
+            title: 'Remote execution and scheduling.',
+            body: 'Agents report health via heartbeats and run jobs on cron schedules. Inference apps (such as RF-DETR detection) run and train on the agent too.',
+          },
+          {
+            title: 'Connected to industrial equipment.',
+            body: 'Talk to PLCs and sensors over industrial protocols like Modbus and push collected data into the project — the bridge between the floor and the cloud.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Execution', 'Graphs · inference/training apps (RF-DETR and more)'],
+            ['Scheduling', 'Local cron scheduler'],
+            ['Protocols', 'Modbus and other equipment integrations'],
+            ['Monitoring', 'Heartbeats · versions · remote jobs'],
+          ],
+        },
+      },
+
+      clusters: {
+        title: 'Kubernetes clusters, inside the project.',
+        intro:
+          'Register the Kubernetes clusters running your training and inference workloads, and control workloads, nodes, and events from the project.',
+        sections: [
+          {
+            title: 'Like Portainer, but attached to your project.',
+            body: 'Browse and control pods, deployments, and services in a tabbed UI — without losing the context of which project the resources serve.',
+          },
+          {
+            title: 'A safe proxied connection.',
+            body: 'Cluster APIs are reached through the platform’s reverse proxy, so the control screen works without putting credentials in the browser.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Resources', 'Pods · deployments · services · nodes · events'],
+            ['Connection', 'Via the platform reverse proxy'],
+            ['UI', 'Cluster detail tabs · status dashboard'],
+          ],
+        },
+      },
+
+      vms: {
+        title: 'Unified monitoring from camera to incident.',
+        intro:
+          'Manage CCTV cameras as a catalog and handle live view, playback, and the event-to-incident workflow on one monitoring screen.',
+        sections: [
+          {
+            title: 'Watch, replay, move.',
+            body: 'Multi-channel live layouts, timeline playback, and PTZ control. Cameras register into a catalog for centralized settings and permissions.',
+          },
+          {
+            title: 'From event to incident.',
+            body: 'Rule-matched events escalate into assignable incidents and notify external systems via webhooks. Audit logs and footage exports support investigations.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Cameras', 'Catalog · PTZ · layouts'],
+            ['Monitoring', 'Multi-channel live · timeline playback'],
+            ['Workflow', 'Rules · events → incidents · webhooks'],
+            ['Records', 'Audit logs · footage exports'],
+          ],
+        },
+      },
+
+      manufacturing: {
+        title: 'The MES that links vision inspection to production.',
+        intro:
+          'A manufacturing execution module for work orders, traceability, and equipment monitoring — built on the MESA-11 model to tie inspection results to production context.',
+        sections: [
+          {
+            title: 'From orders to schedules.',
+            body: 'Manage the product catalog, production orders, and work schedules, with progress on a dashboard.',
+          },
+          {
+            title: 'Your plant as a topology.',
+            body: 'Visualize equipment and work units as a graph topology and attach edge agents to work units to collect floor data. Traceability queries follow what was produced, when, and on which equipment.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Model', 'MESA-11-based feature set'],
+            [
+              'Features',
+              'Production orders · catalog · schedule · traceability · equipment',
+            ],
+            ['Visualization', 'Architecture diagram · graph topology'],
+          ],
+        },
+      },
+
+      mlflow: {
+        title: 'The path from labeled data to models.',
+        intro:
+          'MLflow-compatible experiment tracking, a model registry, and artifact storage built into the project. Your existing MLflow client code works as-is.',
+        sections: [
+          {
+            title: 'Your MLflow client, unchanged.',
+            body: 'Point the tracking URI at your project and pass an access token — existing training scripts just work. Experiments, runs, and metrics accumulate in the project.',
+          },
+          {
+            title: 'From registry to endpoints.',
+            body: 'Register validated models in the registry and manage versions. Artifacts are stored in project storage.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Tracking', 'MLflow-compatible experiments · runs · metrics'],
+            ['Registry', 'Model registration · versioning'],
+            ['Artifacts', 'Stored in project storage'],
+            ['Auth', 'Project access tokens'],
+          ],
+        },
+      },
+
+      grids: {
+        title: 'A spreadsheet-style database for project data.',
+        intro:
+          'Create tables and manage rows and fields, Airtable-style. Experiment matrices, equipment lists, QA checklists — bring spreadsheet work into the project.',
+        sections: [
+          {
+            title: 'Tables with typed fields.',
+            body: 'Structure data with typed fields — text, number, choice, date — and save filters and sorting as views.',
+          },
+          {
+            title: 'Data AI agents can read and write.',
+            body: 'Grids are exposed as tools through the project’s remote MCP server, so AI agents can query and update tables in your automations.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Fields', 'Typed fields: text · number · choice · date'],
+            ['Views', 'Saved filters · sorting'],
+            ['Integration', 'Tools exposed via the remote MCP server'],
+          ],
+        },
+      },
+
+      maps: {
+        title: 'Add location to your vision data.',
+        intro:
+          'Drone surveys, facility inspections, camera placement — draw and manage layers and features on a map for projects where location matters.',
+        sections: [
+          {
+            title: 'Self-served basemaps.',
+            body: 'PMTiles basemaps are served by the platform itself — no external map API keys. Stack layers to organize your project’s spatial data.',
+          },
+          {
+            title: 'Draw it, get GeoJSON.',
+            body: 'Point, line, and polygon drawing tools store features as GeoJSON. Keep camera positions, inspection zones, and flight paths as data.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Basemaps', 'Self-served PMTiles · MapLibre rendering'],
+            ['Features', 'GeoJSON points · lines · polygons'],
+            ['Drawing', 'terra-draw editing tools'],
+          ],
+        },
+      },
+
+      meetings: {
+        title: 'The meeting ends; the minutes are already in the wiki.',
+        intro:
+          'Record a meeting and transcription, summarization, and wiki publishing follow automatically. Labeling-criteria discussions become team documentation.',
+        sections: [
+          {
+            title: 'From recording to summary.',
+            body: 'Record in the browser; Whisper transcribes and an LLM summarizes key decisions and action items.',
+          },
+          {
+            title: 'Published to the wiki.',
+            body: 'Finished minutes publish as project wiki pages, so guideline changes keep their meeting history alongside them.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Transcription', 'Whisper speech recognition'],
+            ['Summary', 'LLM summaries · action item extraction'],
+            ['Publishing', 'Automatic project wiki publishing'],
           ],
         },
       },

@@ -9,6 +9,7 @@ export function Footer() {
 
   const labeling = FEATURE_PAGES.filter(p => p.category === 'labeling');
   const platform = FEATURE_PAGES.filter(p => p.category === 'platform');
+  const more = FEATURE_PAGES.filter(p => p.category === 'more');
 
   return (
     <footer className="border-t border-border">
@@ -42,6 +43,22 @@ export function Footer() {
               <h3 className="text-sm font-semibold">{t.footer.platformTitle}</h3>
               <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
                 {platform.map(page => (
+                  <li key={page.slug}>
+                    <Link
+                      to={page.path}
+                      className="transition-colors hover:text-foreground"
+                    >
+                      {t.pageMeta[page.slug].label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold">{t.footer.moreTitle}</h3>
+              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+                {more.map(page => (
                   <li key={page.slug}>
                     <Link
                       to={page.path}

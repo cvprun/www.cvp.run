@@ -30,7 +30,14 @@ function NavDropdown({category, label}: {category: FeatureCategory; label: strin
         {pages.map(page => (
           <DropdownMenuItem key={page.slug} asChild>
             <Link to={page.path} className="flex flex-col items-start gap-0.5">
-              <span className="text-sm font-medium">{t.pageMeta[page.slug].label}</span>
+              <span className="flex items-center gap-2 text-sm font-medium">
+                {t.pageMeta[page.slug].label}
+                {page.status === 'development' && (
+                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
+                    {t.featurePage.statusInDevelopment}
+                  </span>
+                )}
+              </span>
               <span className="text-xs text-muted-foreground">
                 {t.pageMeta[page.slug].tagline}
               </span>
@@ -79,6 +86,7 @@ export function TopBar() {
         <nav className="hidden items-center gap-1 md:flex">
           <NavDropdown category="labeling" label={t.nav.labeling} />
           <NavDropdown category="platform" label={t.nav.platform} />
+          <NavDropdown category="more" label={t.nav.more} />
           <Link
             to={paths.pricing}
             className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -142,6 +150,23 @@ export function TopBar() {
               className="block rounded-md px-2 py-2 text-sm text-foreground/90"
             >
               {t.pageMeta[page.slug].label}
+            </Link>
+          ))}
+          <p className="px-2 pt-3 pb-1 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+            {t.nav.more}
+          </p>
+          {FEATURE_PAGES.filter(p => p.category === 'more').map(page => (
+            <Link
+              key={page.slug}
+              to={page.path}
+              className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground/90"
+            >
+              {t.pageMeta[page.slug].label}
+              {page.status === 'development' && (
+                <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
+                  {t.featurePage.statusInDevelopment}
+                </span>
+              )}
             </Link>
           ))}
           <Link

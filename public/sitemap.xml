@@ -9,4 +9,14 @@
   <url><loc>https://www.cvp.run/platform/review</loc></url>
   <url><loc>https://www.cvp.run/platform/collaboration</loc></url>
   <url><loc>https://www.cvp.run/platform/developers</loc></url>
+  <url><loc>https://www.cvp.run/more/apps</loc></url>
+  <url><loc>https://www.cvp.run/more/graphs</loc></url>
+  <url><loc>https://www.cvp.run/more/agents</loc></url>
+  <url><loc>https://www.cvp.run/more/clusters</loc></url>
+  <url><loc>https://www.cvp.run/more/vms</loc></url>
+  <url><loc>https://www.cvp.run/more/manufacturing</loc></url>
+  <url><loc>https://www.cvp.run/more/mlflow</loc></url>
+  <url><loc>https://www.cvp.run/more/grids</loc></url>
+  <url><loc>https://www.cvp.run/more/maps</loc></url>
+  <url><loc>https://www.cvp.run/more/meetings</loc></url>
 </urlset>
