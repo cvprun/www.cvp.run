@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.cvp.run/</loc></url>
+  <url><loc>https://www.cvp.run/pricing</loc></url>
+  <url><loc>https://www.cvp.run/labeling/images</loc></url>
+  <url><loc>https://www.cvp.run/labeling/videos</loc></url>
+  <url><loc>https://www.cvp.run/labeling/point-clouds</loc></url>
+  <url><loc>https://www.cvp.run/platform/datasets</loc></url>
+  <url><loc>https://www.cvp.run/platform/review</loc></url>
+  <url><loc>https://www.cvp.run/platform/collaboration</loc></url>
+  <url><loc>https://www.cvp.run/platform/developers</loc></url>
+</urlset>

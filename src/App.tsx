@@ -1,8 +1,11 @@
 import {useEffect} from 'react';
-import {Route, Routes, useLocation} from 'react-router-dom';
+import {Navigate, Route, Routes, useLocation} from 'react-router-dom';
 
-import {DetailPage} from '@/pages/detail';
+import {FeaturePage} from '@/pages/feature';
 import {LandingPage} from '@/pages/landing';
+import {NotFoundPage} from '@/pages/not-found';
+import {PricingPage} from '@/pages/pricing';
+import {LEGACY_REDIRECTS, paths} from '@/lib/site';
 
 function ScrollToTop() {
   const {pathname} = useLocation();
@@ -17,10 +20,19 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/features/:slug" element={<DetailPage kind="feature" />} />
-        <Route path="/modules/:slug" element={<DetailPage kind="module" />} />
-        <Route path="*" element={<DetailPage kind="feature" />} />
+        <Route path={paths.home} element={<LandingPage />} />
+        <Route path={paths.pricing} element={<PricingPage />} />
+        <Route path="/labeling/:slug" element={<FeaturePage category="labeling" />} />
+        <Route path="/platform/:slug" element={<FeaturePage category="platform" />} />
+
+        {/* legacy marketing routes → new IA */}
+        {Object.entries(LEGACY_REDIRECTS).map(([from, to]) => (
+          <Route key={from} path={from} element={<Navigate to={to} replace />} />
+        ))}
+        <Route path="/features/*" element={<Navigate to={paths.home} replace />} />
+        <Route path="/modules/*" element={<Navigate to={paths.home} replace />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );
