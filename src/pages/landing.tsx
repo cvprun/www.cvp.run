@@ -7,10 +7,10 @@ import {FinalCta} from '@/components/final-cta';
 import {Footer} from '@/components/footer';
 import {MockApiSnippet} from '@/components/mocks/api-snippet';
 import {MockAutoSegment} from '@/components/mocks/auto-segment';
-import {MockDatasetGrid} from '@/components/mocks/dataset-grid';
 import {MockImageEditor} from '@/components/mocks/image-editor';
 import {MockIssuePanel} from '@/components/mocks/issue-panel';
 import {MockPointCloudEditor} from '@/components/mocks/point-cloud-editor';
+import {MockSampleGallery} from '@/components/mocks/sample-gallery';
 import {MockVideoTimeline} from '@/components/mocks/video-timeline';
 import {Reveal} from '@/components/reveal';
 import {TopBar} from '@/components/top-bar';
@@ -152,6 +152,9 @@ export function LandingPage() {
               <p className="mt-3 text-center text-xs text-muted-foreground">
                 {t.misc.mockNote}
               </p>
+              <p className="mt-1 text-center text-[11px] text-muted-foreground/70">
+                {t.misc.dataNote}
+              </p>
             </Reveal>
           </div>
         </section>
@@ -214,7 +217,7 @@ export function LandingPage() {
           copy={t.sections.workspace}
           to={paths.platformDatasets}
           layout="stack"
-          mock={MockDatasetGrid}
+          mock={MockSampleGallery}
         />
         <FeatureBand
           copy={t.sections.developers}

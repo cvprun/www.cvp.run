@@ -5,11 +5,8 @@ import {MockPanelFrame} from '@/components/mocks/panel-frame';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
-const THUMBS = [
-  'linear-gradient(135deg, #2b3850 0%, #4c5b7a 55%, #232e40 100%)',
-  'linear-gradient(135deg, #1f2a3d 0%, #3d3554 60%, #171d2c 100%)',
-  'linear-gradient(135deg, #23343a 0%, #3e5c58 55%, #1a2528 100%)',
-];
+/** Real frames from Wikimedia Commons "Dashcam Recording (urban)" (CC0). */
+const THUMBS = ['/mockdata/vt1.webp', '/mockdata/vt2.webp', '/mockdata/vt3.webp'];
 
 export function MockVideoLibrary() {
   const {t} = useLanguage();
@@ -18,21 +15,21 @@ export function MockVideoLibrary() {
   const clips = [
     {
       name: m.clipNames[0],
-      meta: '0:42 · 1920×1080',
+      meta: '0:26 · 1920×1080',
       hls: true,
       encrypted: true,
-      playing: true,
-    },
-    {
-      name: m.clipNames[1],
-      meta: '2:18 · 3840×2160',
-      hls: true,
-      encrypted: false,
       playing: false,
     },
     {
+      name: m.clipNames[1],
+      meta: '2:00 · 1920×1080',
+      hls: true,
+      encrypted: false,
+      playing: true,
+    },
+    {
       name: m.clipNames[2],
-      meta: '0:12 · 1280×720',
+      meta: '0:31 · 1920×1080',
       hls: false,
       encrypted: false,
       playing: false,
@@ -91,10 +88,13 @@ export function MockVideoLibrary() {
                   clip.playing && 'ring-2 ring-primary',
                 )}
               >
-                <div
-                  className="relative aspect-video w-full"
-                  style={{background: THUMBS[i]}}
-                >
+                <div className="relative aspect-video w-full bg-neutral-950">
+                  <img
+                    src={THUMBS[i]}
+                    alt=""
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                   {clip.playing && (
                     <span className="absolute top-1.5 left-1.5 flex items-center gap-1 rounded bg-primary px-1.5 py-0.5 text-[9px] font-medium text-primary-foreground">
                       {m.nowPlaying}

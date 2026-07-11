@@ -20,6 +20,7 @@ import {MockMeetingDetail} from './meeting-detail';
 import {MockMesTopology} from './mes-topology';
 import {MockMlflowRuns} from './mlflow-runs';
 import {MockPointCloudEditor} from './point-cloud-editor';
+import {MockSampleGallery} from './sample-gallery';
 import {MockTokenPanel} from './token-panel';
 import {MockVideoLibrary} from './video-library';
 import {MockVideoTimeline} from './video-timeline';
@@ -34,6 +35,7 @@ export const MOCKS: Record<MockKey, ComponentType> = {
   autoSegment: MockAutoSegment,
   issuePanel: MockIssuePanel,
   datasetGrid: MockDatasetGrid,
+  sampleGallery: MockSampleGallery,
   files: MockFiles,
   wiki: MockWiki,
   videoLibrary: MockVideoLibrary,

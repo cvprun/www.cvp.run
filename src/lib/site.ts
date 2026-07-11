@@ -70,6 +70,7 @@ export type MockKey =
   | 'autoSegment'
   | 'issuePanel'
   | 'datasetGrid'
+  | 'sampleGallery'
   | 'files'
   | 'wiki'
   | 'videoLibrary'
@@ -134,7 +135,7 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     status: 'available',
     path: paths.platformDatasets,
     heroMock: 'datasetGrid',
-    sectionMocks: [null, null, null],
+    sectionMocks: [null, 'sampleGallery', null],
     related: ['images', 'review', 'collaboration'],
   },
   {

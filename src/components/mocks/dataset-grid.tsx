@@ -1,164 +1,213 @@
 import {
-  ArrowUpRight,
   Box,
-  Calendar,
+  Database,
+  File,
+  FileCheck,
+  FileImage,
+  FilePenLine,
   Images,
-  Layers,
+  LayoutGrid,
+  List,
+  PersonStanding,
   Plus,
   Video,
   type LucideIcon,
 } from 'lucide-react';
 
 import {MockAppFrame} from '@/components/mocks/app-frame';
-import {Swatch} from '@/components/mocks/mock-ui';
 import {useLanguage} from '@/lib/i18n';
-import type {Translations} from '@/lib/translations';
+import {cn} from '@/lib/utils';
 
-const CLASS_COUNTS = [
-  {name: 'car', color: '#6496F5', count: '1,204'},
-  {name: 'person', color: '#FF1E1E', count: '861'},
-  {name: 'traffic-sign', color: '#FF0000', count: '316'},
-];
-
-function DatasetCard({
-  icon: Icon,
-  name,
-  description,
-  samples,
-  date,
-  sampleCount,
-}: {
+type Row = {
   icon: LucideIcon;
   name: string;
   description: string;
   samples: string;
-  date: string;
-  sampleCount: (n: string) => string;
-}) {
+  /** unlabeled / in progress / labeled / reviewed */
+  statuses: [number, number, number, number];
+  pct: number;
+  created: string;
+};
+
+const STATUS_ICONS: LucideIcon[] = [File, FilePenLine, FileImage, FileCheck];
+
+function ProgressCell({pct}: {pct: number}) {
   return (
-    <div className="rounded-md border border-border bg-card p-3">
-      <div className="flex items-start gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40">
-          <Icon className="size-4 text-muted-foreground" />
+    <div className="relative mx-auto h-4 w-20 overflow-hidden rounded-full bg-muted">
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium tabular-nums text-foreground">
+        {pct}%
+      </span>
+      <div
+        className="absolute inset-y-0 left-0 overflow-hidden bg-primary"
+        style={{width: `${pct}%`}}
+      >
+        <span className="flex h-full w-20 items-center justify-center text-[10px] font-medium tabular-nums text-primary-foreground">
+          {pct}%
         </span>
-        <span className="min-w-0">
-          <span className="block truncate text-[13px] font-medium">{name}</span>
-          <span className="block text-[9px] tracking-wider text-muted-foreground uppercase">
-            {sampleCount(samples)}
-          </span>
-        </span>
-      </div>
-      <p className="mt-2 line-clamp-2 text-[11px] text-muted-foreground">
-        {description}
-      </p>
-      <div className="mt-2.5 flex items-center gap-3 border-t border-border/60 pt-2.5 text-[10px] text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <Layers className="size-3" />
-          {samples}
-        </span>
-        <span className="flex items-center gap-1">
-          <Calendar className="size-3" />
-          {date}
-        </span>
-        <ArrowUpRight className="ml-auto size-3" />
       </div>
     </div>
   );
 }
 
-function StatsPanel({m}: {m: Translations['mocks']['datasets']}) {
+/** Grid/table view switcher as rendered in the app's list headers. */
+export function ViewModeSwitcher({active}: {active: 'grid' | 'table'}) {
   return (
-    <div className="rounded-lg border border-border bg-card p-3">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold">{m.statsTitle}</span>
-        <span className="text-[10px] text-muted-foreground">{m.annotations}</span>
-      </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-        <span className="block h-full w-[66%] rounded-full bg-primary" />
-      </div>
-      <div className="mt-2 flex flex-wrap gap-1.5 text-[10px]">
-        <span className="rounded-full border border-border px-2 py-0.5 text-muted-foreground">
-          {m.statusUnlabeled} 120
-        </span>
-        <span className="rounded-full border border-border px-2 py-0.5 text-muted-foreground">
-          {m.statusInProgress} 300
-        </span>
-        <span className="rounded-full border border-primary bg-primary/10 px-2 py-0.5">
-          {m.statusLabeled} 620
-        </span>
-        <span className="rounded-full border border-border px-2 py-0.5 text-muted-foreground">
-          {m.statusReviewed} 200
-        </span>
-      </div>
-      <div className="mt-2.5 border-t border-border/60 pt-2">
-        <span className="text-[9px] tracking-wider text-muted-foreground uppercase">
-          {m.byClass}
-        </span>
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {CLASS_COUNTS.map(c => (
-            <span
-              key={c.name}
-              className="flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[10px]"
-            >
-              <Swatch color={c.color} round />
-              {c.name}
-              <span className="font-mono text-[9px] text-muted-foreground">
-                {c.count}
-              </span>
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
+    <span className="flex overflow-hidden rounded-md border border-border">
+      <span
+        className={cn(
+          'flex h-7 w-7 items-center justify-center',
+          active === 'grid'
+            ? 'bg-primary text-primary-foreground'
+            : 'text-muted-foreground',
+        )}
+      >
+        <LayoutGrid className="size-3.5" />
+      </span>
+      <span
+        className={cn(
+          'flex h-7 w-7 items-center justify-center',
+          active === 'table'
+            ? 'bg-primary text-primary-foreground'
+            : 'text-muted-foreground',
+        )}
+      >
+        <List className="size-3.5" />
+      </span>
+    </span>
   );
 }
 
 export function MockDatasetGrid() {
   const {t} = useLanguage();
   const m = t.mocks.datasets;
+  const f = t.mocks.frame;
+
+  const rows: Row[] = [
+    {
+      icon: Images,
+      name: m.names.image,
+      description: m.names.imageDesc,
+      samples: '1,240',
+      statuses: [120, 300, 620, 200],
+      pct: 66,
+      created: '2026-07-01',
+    },
+    {
+      icon: Video,
+      name: m.names.video,
+      description: m.names.videoDesc,
+      samples: '12',
+      statuses: [0, 2, 8, 2],
+      pct: 83,
+      created: '2026-06-24',
+    },
+    {
+      icon: Box,
+      name: m.names.pointCloud,
+      description: m.names.pointCloudDesc,
+      samples: '86',
+      statuses: [6, 12, 52, 16],
+      pct: 79,
+      created: '2026-06-12',
+    },
+  ];
+
+  const statusTitles = [
+    m.statusUnlabeled,
+    m.statusInProgress,
+    m.statusLabeled,
+    m.statusReviewed,
+  ];
 
   return (
     <MockAppFrame activeNav="datasets">
-      <div className="flex items-start justify-between gap-3">
-        <div>
+      {/* project page header */}
+      <p className="text-[10px] text-muted-foreground">
+        {f.breadcrumbHome} / {f.projectName} / {f.nav.datasets}
+      </p>
+      <div className="mt-1.5 flex flex-wrap items-end justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <Database className="size-5 shrink-0 text-muted-foreground" />
           <h3 className="text-xl font-semibold tracking-tight">{m.title}</h3>
-          <p className="mt-1 text-[11px] text-muted-foreground">{m.description}</p>
-        </div>
-        <span className="flex shrink-0 items-center gap-1 rounded-md bg-primary px-2.5 py-1.5 text-[11px] font-medium text-primary-foreground">
-          <Plus className="size-3" />
-          {m.newDataset}
+        </span>
+        <span className="flex shrink-0 items-center gap-1.5">
+          <ViewModeSwitcher active="table" />
+          <span className="hidden items-center gap-1 rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground @2xl:flex">
+            <PersonStanding className="size-3" />
+            {m.keypointPresets}
+          </span>
+          <span className="flex items-center gap-1 rounded-md bg-primary px-2.5 py-1.5 text-[11px] font-medium text-primary-foreground">
+            <Plus className="size-3" />
+            {m.newDataset}
+          </span>
         </span>
       </div>
+      <p className="mt-1 text-[11px] text-muted-foreground">{m.description}</p>
 
-      <div className="mt-4">
-        <StatsPanel m={m} />
-      </div>
-
-      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <DatasetCard
-          icon={Images}
-          name={m.names.image}
-          description={m.names.imageDesc}
-          samples="1,240"
-          date="2026-07-01"
-          sampleCount={m.sampleCount}
-        />
-        <DatasetCard
-          icon={Video}
-          name={m.names.video}
-          description={m.names.videoDesc}
-          samples="12"
-          date="2026-06-24"
-          sampleCount={m.sampleCount}
-        />
-        <DatasetCard
-          icon={Box}
-          name={m.names.pointCloud}
-          description={m.names.pointCloudDesc}
-          samples="86"
-          date="2026-06-12"
-          sampleCount={m.sampleCount}
-        />
+      {/* dataset table */}
+      <div className="mt-4 overflow-hidden rounded-md border border-border bg-card">
+        <table className="w-full text-[11px]">
+          <thead>
+            <tr className="border-b border-border text-muted-foreground">
+              <th className="px-3 py-2 text-left font-medium">{m.columns.name}</th>
+              <th className="hidden px-3 py-2 text-left font-medium @4xl:table-cell">
+                {m.columns.description}
+              </th>
+              <th className="px-2 py-2 text-center font-medium">{m.columns.samples}</th>
+              {STATUS_ICONS.map((Icon, i) => (
+                <th
+                  key={i}
+                  className="hidden px-1.5 py-2 @2xl:table-cell"
+                  title={statusTitles[i]}
+                >
+                  <Icon className="mx-auto size-3.5" />
+                </th>
+              ))}
+              <th className="px-2 py-2 text-center font-medium">
+                {m.columns.progress}
+              </th>
+              <th className="hidden px-3 py-2 text-right font-medium @3xl:table-cell">
+                {m.columns.created}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({icon: Icon, ...row}, ri) => (
+              <tr
+                key={row.name}
+                className={cn(
+                  'hover:bg-accent/40',
+                  ri > 0 && 'border-t border-border/60',
+                )}
+              >
+                <td className="px-3 py-2.5 font-medium text-foreground">
+                  <span className="flex items-center gap-2">
+                    <Icon className="size-3.5 shrink-0 text-muted-foreground" />
+                    <span className="truncate">{row.name}</span>
+                  </span>
+                </td>
+                <td className="hidden max-w-0 truncate px-3 py-2.5 text-muted-foreground @4xl:table-cell">
+                  {row.description}
+                </td>
+                <td className="px-2 py-2.5 text-center tabular-nums">{row.samples}</td>
+                {row.statuses.map((n, i) => (
+                  <td
+                    key={i}
+                    className="hidden px-1.5 py-2.5 text-center tabular-nums text-muted-foreground @2xl:table-cell"
+                  >
+                    {n}
+                  </td>
+                ))}
+                <td className="px-2 py-2.5">
+                  <ProgressCell pct={row.pct} />
+                </td>
+                <td className="hidden px-3 py-2.5 text-right font-mono text-[10px] text-muted-foreground @3xl:table-cell">
+                  {row.created}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </MockAppFrame>
   );

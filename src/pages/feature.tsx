@@ -13,6 +13,9 @@ import {FEATURE_PAGES, getFeaturePage, type FeatureCategory} from '@/lib/site';
 import {usePageMeta} from '@/lib/use-page-meta';
 import {cn} from '@/lib/utils';
 
+/** Pages whose mocks show real open-dataset media (see t.misc.dataNote). */
+const REAL_DATA_SLUGS = new Set(['images', 'videos', 'pointClouds', 'datasets']);
+
 export function FeaturePage({category}: {category: FeatureCategory}) {
   const {t} = useLanguage();
   const {slug} = useParams();
@@ -77,6 +80,11 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
                 <p className="mt-3 text-center text-xs text-muted-foreground">
                   {t.misc.mockNote}
                 </p>
+                {REAL_DATA_SLUGS.has(def.slug) && (
+                  <p className="mt-1 text-center text-[11px] text-muted-foreground/70">
+                    {t.misc.dataNote}
+                  </p>
+                )}
               </Reveal>
             )}
           </div>

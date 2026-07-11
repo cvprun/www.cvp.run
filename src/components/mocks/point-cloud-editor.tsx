@@ -1,179 +1,479 @@
 import {
+  ArrowLeft,
   Bone,
   Box,
   BoxSelect,
+  Boxes as BoxesIcon,
+  Eye,
+  FileUp,
   Hexagon,
   Lasso,
   Locate,
+  MessageSquarePlus,
+  MessagesSquare,
   MousePointer2,
   Move,
   Move3d,
   Palette,
+  Redo2,
   Rotate3d,
   Ruler,
   Save,
   Scale3d,
-  Wand2,
+  Shapes,
+  SlidersHorizontal,
+  Tags,
+  Undo2,
   Waypoints,
 } from 'lucide-react';
-import {useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {
   MockChrome,
   MockIconButton,
   MockWindow,
   Swatch,
-  seededRandom,
-  turbo,
 } from '@/components/mocks/mock-ui';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
-const CAR_COLOR = '#6496F5';
-const BUILDING_COLOR = '#FFC800';
-const GROUND_COLOR = '#475569';
+/**
+ * Real LiDAR frame from PandaSet (CC0) — sequence 001, frame 40, downsampled
+ * to 60k points and quantized. Per-point semantic labels and cuboids are the
+ * dataset's real annotations; colors follow the app's SemanticKITTI-style
+ * class palette.
+ */
+const POINTS_URL = '/mockdata/pandaset-points.bin';
+const META_URL = '/mockdata/pandaset-meta.json';
 
-type Pt = {
-  x: number;
-  y: number;
-  r: number;
-  h: number;
-  i: number;
-  c: 'ground' | 'car' | 'wall';
+/** PandaSet semseg class id → app palette hex. */
+const LABEL_COLORS: Record<number, string> = {
+  4: '#6E6E6E', // Reflection
+  5: '#00AF00', // Vegetation
+  6: '#96F050', // Ground
+  7: '#FF00FF', // Road
+  8: '#FF96FF', // Lane line marking
+  9: '#FF96FF', // Stop line marking
+  10: '#FF96FF', // Other road marking
+  11: '#4B004B', // Sidewalk
+  13: '#6496F5', // Car
+  14: '#501EB4', // Pickup truck
+  18: '#1E3C96', // Motorcycle
+  19: '#FF3CDC', // Construction vehicle
+  20: '#FF3CDC', // Other vehicle
+  24: '#FF8C1E', // Personal mobility device
+  30: '#FF1E1E', // Pedestrian
+  36: '#FF0000', // Signs
+  37: '#FF7828', // Cones
+  38: '#FF7828', // Construction signs
+  41: '#FFC800', // Building
+  42: '#969696', // Other static object
 };
 
-function makePoints(): Pt[] {
-  const rnd = seededRandom(42);
-  const pts: Pt[] = [];
-  // ground plane with fake perspective (further = higher on screen, smaller)
-  for (let n = 0; n < 420; n++) {
-    const depth = rnd();
-    const x = 40 + rnd() * 720;
-    const y = 150 + depth * 250 + (rnd() - 0.5) * 10;
-    pts.push({
-      x,
-      y,
-      r: 0.9 + depth * 1.4,
-      h: 0.05 + rnd() * 0.12,
-      i: rnd() * 0.5,
-      c: 'ground',
-    });
-  }
-  // car cluster
-  for (let n = 0; n < 130; n++) {
-    const x = 430 + rnd() * 130;
-    const y = 268 + rnd() * 58;
-    pts.push({x, y, r: 1.6, h: 0.35 + (326 - y) / 90, i: 0.5 + rnd() * 0.5, c: 'car'});
-  }
-  // wall / building slice on the left
-  for (let n = 0; n < 150; n++) {
-    const x = 80 + rnd() * 110;
-    const y = 120 + rnd() * 180;
-    pts.push({x, y, r: 1.3, h: 0.4 + (300 - y) / 200, i: 0.3 + rnd() * 0.4, c: 'wall'});
-  }
-  return pts;
+const CUBOID_COLORS: Record<string, string> = {
+  Car: '#6496F5',
+  'Pickup Truck': '#501EB4',
+  Pedestrian: '#FF1E1E',
+  Motorcycle: '#1E3C96',
+};
+
+const CUBOID_LABELS = new Set(Object.keys(CUBOID_COLORS));
+const SELECTED_CUBOID = 40;
+
+/** Turbo colormap stops (same ramp as mock-ui's `turbo`, interpolated). */
+const TURBO_STOPS: [number, number, number][] = [
+  [0x30, 0x12, 0x3b],
+  [0x46, 0x69, 0xdb],
+  [0x26, 0xbc, 0xe1],
+  [0x72, 0xfe, 0x5e],
+  [0xd3, 0xe8, 0x35],
+  [0xfb, 0x7e, 0x21],
+  [0xd9, 0x38, 0x07],
+];
+
+function turboSmooth(t: number): string {
+  const x = Math.min(1, Math.max(0, t)) * (TURBO_STOPS.length - 1);
+  const i = Math.min(TURBO_STOPS.length - 2, Math.floor(x));
+  const f = x - i;
+  const a = TURBO_STOPS[i];
+  const b = TURBO_STOPS[i + 1];
+  const r = Math.round(a[0] + (b[0] - a[0]) * f);
+  const g = Math.round(a[1] + (b[1] - a[1]) * f);
+  const bl = Math.round(a[2] + (b[2] - a[2]) * f);
+  return `rgb(${r},${g},${bl})`;
 }
 
-const POINTS = makePoints();
+type CloudMeta = {
+  count: number;
+  scale: number;
+  classes: {id: number; src: number; name: string; count: number}[];
+  cuboids: Cuboid[];
+};
 
-type ColorMode = 'rgb' | 'label' | 'height' | 'intensity';
+type Cuboid = {
+  id: number;
+  label: string;
+  x: number;
+  y: number;
+  z: number;
+  dx: number;
+  dy: number;
+  dz: number;
+  yaw: number;
+  pts: number;
+};
 
-function pointColor(p: Pt, mode: ColorMode): string {
-  switch (mode) {
-    case 'height':
-      return turbo(p.h);
-    case 'intensity':
-      return turbo(p.i);
-    case 'label':
-      return p.c === 'car' ? CAR_COLOR : p.c === 'wall' ? BUILDING_COLOR : GROUND_COLOR;
-    case 'rgb': {
-      const v = Math.round(120 + p.i * 110);
-      return `rgb(${v - 14},${v - 6},${v + 10})`;
+type Cloud = {
+  pos: Float32Array;
+  inten: Uint8Array;
+  cls: Uint8Array;
+  count: number;
+  meta: CloudMeta;
+};
+
+function useCloud(): Cloud | null {
+  const [cloud, setCloud] = useState<Cloud | null>(null);
+  useEffect(() => {
+    let alive = true;
+    Promise.all([
+      fetch(POINTS_URL).then(r => r.arrayBuffer()),
+      fetch(META_URL).then(r => r.json() as Promise<CloudMeta>),
+    ])
+      .then(([buf, meta]) => {
+        if (!alive) {
+          return;
+        }
+        const count = Math.floor(buf.byteLength / 8);
+        const dv = new DataView(buf);
+        const pos = new Float32Array(count * 3);
+        const inten = new Uint8Array(count);
+        const cls = new Uint8Array(count);
+        for (let i = 0; i < count; i++) {
+          const o = i * 8;
+          pos[i * 3] = dv.getInt16(o, true) * meta.scale;
+          pos[i * 3 + 1] = dv.getInt16(o + 2, true) * meta.scale;
+          pos[i * 3 + 2] = dv.getInt16(o + 4, true) * meta.scale;
+          inten[i] = dv.getUint8(o + 6);
+          cls[i] = dv.getUint8(o + 7);
+        }
+        setCloud({pos, inten, cls, count, meta});
+      })
+      .catch(() => {
+        /* mock stays empty when assets are unavailable */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return cloud;
+}
+
+type ColorMode = 'label' | 'height' | 'intensity';
+
+const HEIGHT_BINS = 32;
+
+/** Per-point color bucket index + bucket color table for the given mode. */
+function buildColors(
+  cloud: Cloud,
+  mode: ColorMode,
+): {index: Uint8Array; table: string[]} {
+  const {pos, inten, cls, count, meta} = cloud;
+  if (mode === 'label') {
+    const table = meta.classes.map(c => LABEL_COLORS[c.src] ?? '#808080');
+    return {index: cls, table};
+  }
+  const index = new Uint8Array(count);
+  const table = Array.from({length: HEIGHT_BINS}, (_, i) =>
+    turboSmooth(i / (HEIGHT_BINS - 1)),
+  );
+  for (let i = 0; i < count; i++) {
+    const t = mode === 'height' ? (pos[i * 3 + 2] + 2.5) / 9 : inten[i] / 200;
+    index[i] = Math.max(
+      0,
+      Math.min(HEIGHT_BINS - 1, Math.round(t * (HEIGHT_BINS - 1))),
+    );
+  }
+  return {index, table};
+}
+
+/** Rotated cuboid corners in world space (yaw about +z). */
+function cuboidCorners(c: Cuboid): [number, number, number][] {
+  const cos = Math.cos(c.yaw);
+  const sin = Math.sin(c.yaw);
+  const out: [number, number, number][] = [];
+  for (const sx of [-1, 1]) {
+    for (const sy of [-1, 1]) {
+      for (const sz of [-1, 1]) {
+        const lx = (sx * c.dx) / 2;
+        const ly = (sy * c.dy) / 2;
+        out.push([
+          c.x + lx * cos - ly * sin,
+          c.y + lx * sin + ly * cos,
+          c.z + (sz * c.dz) / 2,
+        ]);
+      }
     }
   }
+  return out;
 }
 
-/** Pseudo-3D cuboid wireframe (front + back rects joined at corners). */
-function Cuboid({selected = true}: {selected?: boolean}) {
-  const stroke = selected ? '#a9c4fa' : CAR_COLOR;
-  const front = {x: 420, y: 262, w: 150, h: 70};
-  const dx = 26;
-  const dy = -16;
-  const b = {x: front.x + dx, y: front.y + dy, w: front.w, h: front.h};
-  const corners: [number, number, number, number][] = [
-    [front.x, front.y, b.x, b.y],
-    [front.x + front.w, front.y, b.x + b.w, b.y],
-    [front.x, front.y + front.h, b.x, b.y + b.h],
-    [front.x + front.w, front.y + front.h, b.x + b.w, b.y + b.h],
-  ];
-  return (
-    <g stroke={stroke} strokeWidth={1.5} fill="none">
-      <rect x={b.x} y={b.y} width={b.w} height={b.h} opacity={0.55} />
-      {corners.map(([x1, y1, x2, y2], i) => (
-        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} opacity={0.55} />
-      ))}
-      <rect
-        x={front.x}
-        y={front.y}
-        width={front.w}
-        height={front.h}
-        fill={CAR_COLOR}
-        fillOpacity={0.15}
-      />
-    </g>
-  );
+/** Edge pairs for the corner ordering produced by `cuboidCorners`. */
+const CUBOID_EDGES: [number, number][] = [
+  [0, 1],
+  [2, 3],
+  [4, 5],
+  [6, 7],
+  [0, 2],
+  [1, 3],
+  [4, 6],
+  [5, 7],
+  [0, 4],
+  [1, 5],
+  [2, 6],
+  [3, 7],
+];
+
+function setupCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D | null {
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  if (w === 0 || h === 0) {
+    return null;
+  }
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    return null;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#0b1220';
+  ctx.fillRect(0, 0, w, h);
+  return ctx;
 }
 
-function OrthoPanel({
-  label,
-  variant,
-}: {
-  label: string;
-  variant: 'top' | 'front' | 'side';
-}) {
-  const rnd = seededRandom(variant === 'top' ? 7 : variant === 'front' ? 11 : 13);
-  const dots = Array.from({length: 90}, () => ({
-    x: 8 + rnd() * 96,
-    y: 10 + rnd() * 52,
-    h: rnd(),
-  }));
-  const box =
-    variant === 'top'
-      ? {x: 48, y: 24, w: 30, h: 16}
-      : variant === 'front'
-        ? {x: 46, y: 34, w: 32, h: 18}
-        : {x: 40, y: 34, w: 44, h: 18};
-  return (
-    <div className="relative min-h-0 flex-1 overflow-hidden bg-[#0b1220]">
-      <span className="absolute top-1 left-1 z-10 rounded bg-black/50 px-1.5 py-0.5 text-[9px] font-medium tracking-wide text-white/80 uppercase">
-        {label}
-      </span>
-      <svg
-        viewBox="0 0 112 72"
-        className="h-full w-full"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        {dots.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r={0.9} fill={turbo(d.h)} opacity={0.85} />
-        ))}
-        <rect
-          x={box.x}
-          y={box.y}
-          width={box.w}
-          height={box.h}
-          fill="none"
-          stroke={CAR_COLOR}
-          strokeWidth={1.2}
-        />
-      </svg>
-    </div>
-  );
+/** Perspective view from behind/above the ego vehicle (forward = +y). */
+function drawMain(
+  canvas: HTMLCanvasElement,
+  cloud: Cloud,
+  colors: {index: Uint8Array; table: string[]},
+) {
+  const ctx = setupCanvas(canvas);
+  if (!ctx) {
+    return;
+  }
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  const fl = h * 0.9;
+  // camera at (0,-26,15) looking at (0,10,0); precomputed orthonormal basis
+  const upY = 0.385;
+  const upZ = 0.923;
+  const fwY = 0.923;
+  const fwZ = -0.385;
+
+  const project = (
+    x: number,
+    y: number,
+    z: number,
+  ): [number, number, number] | null => {
+    const dy = y + 26;
+    const dz = z - 15;
+    const zc = fwY * dy + fwZ * dz;
+    if (zc < 2 || zc > 95) {
+      return null;
+    }
+    const yc = upY * dy + upZ * dz;
+    return [w / 2 + (fl * x) / zc, h / 2 - (fl * yc) / zc, zc];
+  };
+
+  const {pos, count} = cloud;
+  const buckets: number[][] = Array.from({length: colors.table.length}, () => []);
+  for (let i = 0; i < count; i++) {
+    buckets[colors.index[i]].push(i);
+  }
+  for (let b = 0; b < buckets.length; b++) {
+    ctx.fillStyle = colors.table[b];
+    const list = buckets[b];
+    for (const i of list) {
+      const p = project(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
+      if (!p) {
+        continue;
+      }
+      const s = Math.min(3.2, Math.max(1, 150 / p[2]));
+      ctx.fillRect(p[0] - s / 2, p[1] - s / 2, s, s);
+    }
+  }
+
+  for (const c of cloud.meta.cuboids) {
+    if (!CUBOID_LABELS.has(c.label) || c.pts < 40) {
+      continue;
+    }
+    const selected = c.id === SELECTED_CUBOID;
+    const corners = cuboidCorners(c).map(([x, y, z]) => project(x, y, z));
+    if (corners.some(p => p === null)) {
+      continue;
+    }
+    ctx.strokeStyle = selected ? '#a9c4fa' : (CUBOID_COLORS[c.label] ?? '#FFC800');
+    ctx.lineWidth = selected ? 2 : 1.1;
+    ctx.globalAlpha = selected ? 1 : 0.85;
+    ctx.beginPath();
+    for (const [a, b] of CUBOID_EDGES) {
+      const pa = corners[a] as [number, number, number];
+      const pb = corners[b] as [number, number, number];
+      ctx.moveTo(pa[0], pa[1]);
+      ctx.lineTo(pb[0], pb[1]);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
 }
+
+type OrthoAxis = 'top' | 'front' | 'side';
+
+/** Orthographic slice centered on the selected cuboid (like the app's
+ * TOP/FRONT/SIDE panels used to fine-tune a box). */
+function drawOrtho(
+  canvas: HTMLCanvasElement,
+  cloud: Cloud,
+  colors: {index: Uint8Array; table: string[]},
+  axis: OrthoAxis,
+) {
+  const ctx = setupCanvas(canvas);
+  if (!ctx) {
+    return;
+  }
+  const sel = cloud.meta.cuboids.find(c => c.id === SELECTED_CUBOID);
+  if (!sel) {
+    return;
+  }
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+
+  const halfU =
+    axis === 'side'
+      ? sel.dy * 0.9 + 1.2
+      : sel.dx * 0.9 + Math.abs(Math.sin(sel.yaw)) * sel.dy + 1.2;
+  const halfV =
+    axis === 'top'
+      ? sel.dy * 0.9 + Math.abs(Math.sin(sel.yaw)) * sel.dx + 1.2
+      : sel.dz * 0.9 + 0.9;
+  const scale = Math.min(w / (2 * halfU), h / (2 * halfV)) * 0.9;
+
+  const uv = (x: number, y: number, z: number): [number, number] | null => {
+    let u: number;
+    let v: number;
+    let slab: number;
+    let slabHalf: number;
+    if (axis === 'top') {
+      u = x - sel.x;
+      v = y - sel.y;
+      slab = z - sel.z;
+      slabHalf = sel.dz / 2 + 0.7;
+    } else if (axis === 'front') {
+      u = x - sel.x;
+      v = z - sel.z;
+      slab = y - sel.y;
+      slabHalf = sel.dy / 2 + 1;
+    } else {
+      u = y - sel.y;
+      v = z - sel.z;
+      slab = x - sel.x;
+      slabHalf = sel.dx / 2 + 1;
+    }
+    if (Math.abs(slab) > slabHalf) {
+      return null;
+    }
+    return [w / 2 + u * scale, h / 2 - v * scale];
+  };
+
+  const {pos, count} = cloud;
+  for (let i = 0; i < count; i++) {
+    const p = uv(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
+    if (!p) {
+      continue;
+    }
+    ctx.fillStyle = colors.table[colors.index[i]];
+    ctx.fillRect(p[0] - 1, p[1] - 1, 2, 2);
+  }
+
+  // cuboid outline (+ drag handles on the BEV, like the app)
+  ctx.strokeStyle = '#a9c4fa';
+  ctx.lineWidth = 1.5;
+  if (axis === 'top') {
+    const cos = Math.cos(sel.yaw);
+    const sin = Math.sin(sel.yaw);
+    const corners: [number, number][] = [
+      [-sel.dx / 2, -sel.dy / 2],
+      [sel.dx / 2, -sel.dy / 2],
+      [sel.dx / 2, sel.dy / 2],
+      [-sel.dx / 2, sel.dy / 2],
+    ].map(([lx, ly]) => [
+      w / 2 + (lx * cos - ly * sin) * scale,
+      h / 2 - (lx * sin + ly * cos) * scale,
+    ]);
+    ctx.beginPath();
+    corners.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fillStyle = '#a9c4fa';
+    for (const [x, y] of corners) {
+      ctx.fillRect(x - 2, y - 2, 4, 4);
+    }
+  } else {
+    const width =
+      axis === 'front'
+        ? Math.abs(sel.dx * Math.cos(sel.yaw)) + Math.abs(sel.dy * Math.sin(sel.yaw))
+        : Math.abs(sel.dy * Math.cos(sel.yaw)) + Math.abs(sel.dx * Math.sin(sel.yaw));
+    ctx.strokeRect(
+      w / 2 - (width * scale) / 2,
+      h / 2 - (sel.dz * scale) / 2,
+      width * scale,
+      sel.dz * scale,
+    );
+  }
+}
+
+const ORTHO_AXES: OrthoAxis[] = ['top', 'front', 'side'];
 
 export function MockPointCloudEditor() {
   const {t} = useLanguage();
   const m = t.mocks.pointCloud;
-  const [mode, setMode] = useState<ColorMode>('height');
+  const e = t.mocks.editor;
+  const cloud = useCloud();
+  const [mode, setMode] = useState<ColorMode>('label');
+  const mainRef = useRef<HTMLCanvasElement>(null);
+  const orthoRefs = useRef<(HTMLCanvasElement | null)[]>([null, null, null]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [, setResizeTick] = useState(0);
+
+  const colors = useMemo(
+    () => (cloud ? buildColors(cloud, mode) : null),
+    [cloud, mode],
+  );
+
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node) {
+      return;
+    }
+    const observer = new ResizeObserver(() => setResizeTick(n => n + 1));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!cloud || !colors) {
+      return;
+    }
+    if (mainRef.current) {
+      drawMain(mainRef.current, cloud, colors);
+    }
+    orthoRefs.current.forEach((canvas, i) => {
+      if (canvas) {
+        drawOrtho(canvas, cloud, colors, ORTHO_AXES[i]);
+      }
+    });
+  });
 
   const tools = [
     {icon: MousePointer2, active: false},
@@ -185,36 +485,56 @@ export function MockPointCloudEditor() {
     {icon: Bone, active: false},
     {icon: Lasso, active: false},
     {icon: BoxSelect, active: false},
+    {icon: MessageSquarePlus, active: false},
+  ];
+
+  const tabs = [
+    {icon: BoxesIcon, label: e.tabObjects, active: true},
+    {icon: SlidersHorizontal, label: e.tabProperties, active: false},
+    {icon: Shapes, label: e.tabClasses, active: false},
+    {icon: Tags, label: e.tabTags, active: false},
+    {icon: MessagesSquare, label: e.tabIssues, active: false},
   ];
 
   const modes: {key: ColorMode; label: string}[] = [
-    {key: 'rgb', label: m.colorModes.rgb},
     {key: 'label', label: m.colorModes.label},
     {key: 'height', label: m.colorModes.height},
     {key: 'intensity', label: m.colorModes.intensity},
   ];
 
-  const instances = [
-    {id: 1, color: CAR_COLOR, points: '4,182'},
-    {id: 2, color: BUILDING_COLOR, points: '18,406'},
-    {id: 3, color: '#98DF8A', points: '2,047'},
-  ];
+  const cuboids = cloud
+    ? (() => {
+        const byPts = [...cloud.meta.cuboids].sort((a, b) => b.pts - a.pts);
+        const cars = byPts.filter(c => c.label === 'Car').slice(0, 4);
+        const truck = byPts.find(c => c.label === 'Pickup Truck');
+        const ped = byPts.find(c => c.label === 'Pedestrian');
+        return [...cars, truck, ped].filter((c): c is Cuboid => Boolean(c));
+      })()
+    : [];
+
+  const classSummary = cloud
+    ? [...cloud.meta.classes].sort((a, b) => b.count - a.count).slice(0, 5)
+    : [];
 
   return (
     <MockWindow>
       <MockChrome />
       {/* editor header */}
       <div className="flex h-10 items-center gap-2 border-b border-border bg-background px-3 text-xs">
+        <ArrowLeft className="size-3.5 text-muted-foreground" />
         <span className="font-medium">{m.fileName}</span>
         <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
           {m.pointCount}
         </span>
         <span className="ml-auto flex items-center gap-1.5 text-muted-foreground">
-          <Wand2 className="size-3.5" />
+          <FileUp className="size-3.5" />
           <Ruler className="size-3.5" />
           <span className="mx-1 h-4 w-px bg-border" />
+          <Undo2 className="size-3.5" />
+          <Redo2 className="size-3.5 opacity-50" />
           <span className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px]">
             <Save className="size-3" />
+            {e.saved}
           </span>
         </span>
       </div>
@@ -230,17 +550,36 @@ export function MockPointCloudEditor() {
           </span>
         </div>
 
-        {/* ortho views */}
+        {/* ortho views (selected cuboid) */}
         <div className="hidden w-28 shrink-0 flex-col gap-px border-r border-border bg-border sm:flex">
-          <OrthoPanel label={m.ortho.top} variant="top" />
-          <OrthoPanel label={m.ortho.front} variant="front" />
-          <OrthoPanel label={m.ortho.side} variant="side" />
+          {ORTHO_AXES.map((axis, i) => (
+            <div
+              key={axis}
+              className="relative min-h-0 flex-1 overflow-hidden bg-[#0b1220]"
+            >
+              <span className="absolute top-1 left-1 z-10 rounded bg-black/50 px-1.5 py-0.5 text-[9px] font-medium tracking-wide text-white/80 uppercase">
+                {m.ortho[axis]}
+              </span>
+              <canvas
+                ref={el => {
+                  orthoRefs.current[i] = el;
+                }}
+                className="h-full w-full"
+              />
+            </div>
+          ))}
         </div>
 
-        {/* main viewport */}
-        <div className="relative min-w-0 flex-1 overflow-hidden bg-[#0b1220]">
+        {/* main perspective viewport */}
+        <div
+          ref={wrapRef}
+          className="relative min-w-0 flex-1 overflow-hidden bg-[#0b1220]"
+        >
           {/* color mode segment control */}
           <div className="absolute top-2 left-2 z-10 flex overflow-hidden rounded bg-background/90 text-[10px] shadow">
+            <span className="px-2 py-1 text-muted-foreground/50">
+              {m.colorModes.rgb}
+            </span>
             {modes.map(({key, label}) => (
               <button
                 key={key}
@@ -274,73 +613,70 @@ export function MockPointCloudEditor() {
             </span>
           </div>
 
-          <svg
-            viewBox="0 0 800 430"
-            className="h-full w-full"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            {/* ground grid */}
-            <g stroke="#334155" strokeWidth={0.6} opacity={0.6}>
-              {Array.from({length: 9}, (_, i) => (
-                <line
-                  key={`h${i}`}
-                  x1={0}
-                  y1={160 + i * 34}
-                  x2={800}
-                  y2={150 + i * 34}
-                />
-              ))}
-              {Array.from({length: 13}, (_, i) => (
-                <line
-                  key={`v${i}`}
-                  x1={i * 66}
-                  y1={140}
-                  x2={i * 66 - (i - 6) * 30}
-                  y2={430}
-                />
-              ))}
-            </g>
-            {POINTS.map((p, i) => (
-              <circle
-                key={i}
-                cx={p.x}
-                cy={p.y}
-                r={p.r}
-                fill={pointColor(p, mode)}
-                opacity={0.9}
-              />
-            ))}
-            <Cuboid />
-          </svg>
+          <canvas ref={mainRef} className="h-full w-full" />
         </div>
 
-        {/* instances panel */}
-        <aside className="hidden w-44 shrink-0 flex-col border-l border-border bg-muted/30 lg:flex">
-          <div className="flex items-center justify-between border-b border-border px-3 py-2">
-            <span className="text-xs font-semibold">{m.objectsTitle}</span>
-            <span className="text-[10px] text-muted-foreground">
-              {instances.length}
-            </span>
-          </div>
-          <ul className="space-y-0.5 p-2">
-            {instances.map((ins, i) => (
-              <li
-                key={ins.id}
+        {/* objects panel */}
+        <aside className="hidden w-48 shrink-0 flex-col border-l border-border bg-muted/30 lg:flex">
+          <div className="grid grid-cols-5 gap-0.5 p-1.5">
+            {tabs.map(({icon: Icon, label, active}) => (
+              <span
+                key={label}
+                title={label}
                 className={cn(
-                  'flex items-center gap-2 rounded border px-2 py-1.5 text-[11px]',
-                  i === 0 ? 'border-primary bg-accent' : 'border-transparent',
+                  'flex h-8 items-center justify-center rounded',
+                  active ? 'bg-background shadow-sm' : 'text-muted-foreground',
                 )}
               >
-                <Swatch color={ins.color} />
-                <span className="flex-1 truncate">
-                  {m.instancePrefix} #{ins.id}
-                </span>
+                <Icon className="size-3.5" />
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center justify-between px-3 py-1.5">
+            <span className="text-xs font-semibold">{m.objectsTitle}</span>
+            <span className="text-[10px] text-muted-foreground">
+              {cloud?.meta.cuboids.length ?? 0}
+            </span>
+          </div>
+          <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden px-2">
+            {cuboids.map(c => (
+              <li
+                key={c.id}
+                className={cn(
+                  'flex items-center gap-2 rounded border px-2 py-1.5 text-[11px]',
+                  c.id === SELECTED_CUBOID
+                    ? 'border-primary bg-accent'
+                    : 'border-transparent',
+                )}
+              >
+                <Swatch color={CUBOID_COLORS[c.label] ?? '#FFC800'} />
+                <Box className="size-3 shrink-0 text-muted-foreground" />
+                <span className="flex-1 truncate">{c.label}</span>
                 <span className="font-mono text-[9px] text-muted-foreground">
-                  {ins.points}
+                  {m.pointsSuffix(c.pts.toLocaleString())}
                 </span>
+                <Eye className="size-3 shrink-0 text-muted-foreground" />
               </li>
             ))}
           </ul>
+          <div className="border-t border-border px-3 py-2">
+            <span className="text-[9px] tracking-wider text-muted-foreground uppercase">
+              {m.classesTitle}
+            </span>
+            <ul className="mt-1 space-y-0.5">
+              {classSummary.map(c => (
+                <li key={c.id} className="flex items-center gap-1.5 text-[10px]">
+                  <Swatch color={LABEL_COLORS[c.src] ?? '#808080'} />
+                  <span className="flex-1 truncate text-muted-foreground">
+                    {c.name}
+                  </span>
+                  <span className="font-mono text-[9px] text-muted-foreground">
+                    {c.count.toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </aside>
       </div>
     </MockWindow>

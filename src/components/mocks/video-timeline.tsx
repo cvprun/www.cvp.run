@@ -3,23 +3,38 @@ import {ChevronFirst, ChevronLast, Play, SkipBack, SkipForward} from 'lucide-rea
 import {MockChrome, MockWindow, Swatch} from '@/components/mocks/mock-ui';
 import {useLanguage} from '@/lib/i18n';
 
+/**
+ * Real dashcam footage from Wikimedia Commons — "Dashcam Recording (urban)"
+ * by Fernost (CC0), 12.3s excerpt at 30 fps. The frame below is the actual
+ * frame at 73s; tracks/keyframes follow the vehicles visible in the clip
+ * (white hatchback being passed, parked wagons, car ahead, parking sign).
+ */
+const FRAME_URL = '/mockdata/video-frame.webp';
+const FRAME_W = 1440;
+const FRAME_H = 753;
+
 const TRACK_CAR = '#6496F5';
-const TRACK_PERSON = '#FF1E1E';
+const TRACK_SIGN = '#FF0000';
 const TAG_COLOR = '#F5A623';
 
-const PLAYHEAD = 13.3; // 120 / 899
+const TOTAL_FRAMES = 368;
+const PLAYHEAD_FRAME = 90;
+
+const pct = (frame: number) => (frame / TOTAL_FRAMES) * 100;
 
 type Track = {
+  id: number;
   name: string;
   color: string;
   keyframes: number[];
-  from: number;
-  to: number;
+  selected?: boolean;
 };
 
 const TRACKS: Track[] = [
-  {name: 'car', color: TRACK_CAR, keyframes: [3, 22, 40, 58, 76, 94], from: 3, to: 94},
-  {name: 'person', color: TRACK_PERSON, keyframes: [10, 34, 50], from: 10, to: 50},
+  {id: 1, name: 'car', color: TRACK_CAR, keyframes: [0, 30, 60]},
+  {id: 2, name: 'car', color: TRACK_CAR, keyframes: [30, 90, 150], selected: true},
+  {id: 3, name: 'car', color: TRACK_CAR, keyframes: [0, 60, 120, 150]},
+  {id: 4, name: 'traffic-sign', color: TRACK_SIGN, keyframes: [30, 120]},
 ];
 
 function Diamond({
@@ -42,61 +57,96 @@ function Diamond({
   );
 }
 
-/** Interpolated-frame preview above the timeline dock. */
-function FramePreview() {
-  return (
-    <svg
-      viewBox="0 0 800 240"
-      className="h-full w-full"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      <rect width={800} height={240} fill="#1c2431" />
-      <polygon points="0,240 800,240 620,110 180,110" fill="#38445c" />
-      <rect x={0} y={40} width={130} height={70} fill="#2b3850" />
-      <rect x={660} y={30} width={140} height={80} fill="#2b3850" />
-      <rect x={330} y={128} width={150} height={54} rx={9} fill="#4c5b7a" />
-      <rect x={356} y={110} width={92} height={28} rx={7} fill="#55648a" />
-      {/* interpolated box (dashed) trailing the keyframed one */}
+/** Konva-style bounding box over the video frame. Solid boxes sit on a
+ * keyframe; the dashed one is interpolated between keyframes. */
+function Box({
+  x,
+  y,
+  w,
+  h,
+  color,
+  label,
+  variant = 'solid',
+  selected = false,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color: string;
+  label?: string;
+  variant?: 'solid' | 'interpolated';
+  selected?: boolean;
+}) {
+  if (variant === 'interpolated') {
+    return (
       <rect
-        x={252}
-        y={116}
-        width={168}
-        height={72}
+        x={x}
+        y={y}
+        width={w}
+        height={h}
         fill="none"
-        stroke={TRACK_CAR}
-        strokeWidth={1.5}
-        strokeDasharray="6 4"
-        opacity={0.45}
+        stroke={color}
+        strokeWidth={2.5}
+        strokeDasharray="10 7"
+        opacity={0.55}
       />
+    );
+  }
+  const tagH = 24;
+  const tagY = y - tagH - 3;
+  return (
+    <g>
       <rect
-        x={318}
-        y={104}
-        width={176}
-        height={84}
-        fill={TRACK_CAR}
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        fill={color}
         fillOpacity={0.12}
-        stroke={TRACK_CAR}
-        strokeWidth={2}
+        stroke={color}
+        strokeWidth={selected ? 6 : 3}
       />
-      <rect
-        x={318}
-        y={87}
-        width={38}
-        height={16}
-        rx={2}
-        fill={TRACK_CAR}
-        opacity={0.85}
-      />
-      <text
-        x={323}
-        y={99}
-        fontSize={11}
-        fill="#ffffff"
-        fontFamily="ui-sans-serif, system-ui"
-      >
-        car
-      </text>
-    </svg>
+      {label && (
+        <>
+          <rect
+            x={x}
+            y={tagY}
+            width={label.length * 9.5 + 14}
+            height={tagH}
+            rx={3}
+            fill={color}
+            opacity={0.85}
+          />
+          <text
+            x={x + 7}
+            y={tagY + tagH - 7}
+            fontSize={17}
+            fill="#ffffff"
+            fontFamily="ui-sans-serif, system-ui"
+          >
+            {label}
+          </text>
+        </>
+      )}
+      {selected &&
+        [
+          [x, y],
+          [x + w, y],
+          [x, y + h],
+          [x + w, y + h],
+        ].map(([hx, hy], i) => (
+          <circle
+            key={i}
+            cx={hx}
+            cy={hy}
+            r={7}
+            fill="#3b82f6"
+            stroke="#ffffff"
+            strokeWidth={2.5}
+          />
+        ))}
+    </g>
   );
 }
 
@@ -104,13 +154,55 @@ export function MockVideoTimeline() {
   const {t} = useLanguage();
   const m = t.mocks.timeline;
 
-  const ticks = [0, 90, 180, 270, 360, 450, 540, 630, 720, 810];
+  const ticks = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360];
 
   return (
     <MockWindow>
       <MockChrome />
-      <div className="h-36 overflow-hidden bg-neutral-950 sm:h-44">
-        <FramePreview />
+      {/* current frame (real footage) with tracked boxes */}
+      <div className="relative w-full overflow-hidden bg-neutral-950">
+        <div className="relative aspect-[1440/753] w-full">
+          <img
+            src={FRAME_URL}
+            alt=""
+            className="absolute inset-0 h-full w-full"
+            loading="lazy"
+          />
+          <svg
+            viewBox={`0 0 ${FRAME_W} ${FRAME_H}`}
+            className="absolute inset-0 h-full w-full"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            {/* car ahead — between keyframes, interpolated */}
+            <Box
+              x={720}
+              y={446}
+              w={49}
+              h={37}
+              color={TRACK_CAR}
+              variant="interpolated"
+            />
+            <Box x={847} y={440} w={104} h={72} color={TRACK_CAR} label="car" />
+            <Box
+              x={1004}
+              y={340}
+              w={30}
+              h={55}
+              color={TRACK_SIGN}
+              label="traffic-sign"
+            />
+            {/* selected track — keyframe on the playhead frame */}
+            <Box
+              x={906}
+              y={433}
+              w={204}
+              h={115}
+              color={TRACK_CAR}
+              label="car"
+              selected
+            />
+          </svg>
+        </div>
       </div>
 
       {/* timeline dock */}
@@ -140,7 +232,7 @@ export function MockVideoTimeline() {
             </div>
             {TRACKS.map(track => (
               <div
-                key={track.name}
+                key={track.id}
                 className="flex h-7 items-center gap-1.5 px-2 text-[11px]"
               >
                 <Swatch color={track.color} />
@@ -149,7 +241,7 @@ export function MockVideoTimeline() {
             ))}
             <div className="flex h-7 items-center gap-1.5 px-2 text-[11px]">
               <Swatch color={TAG_COLOR} round />
-              <span className="truncate text-muted-foreground">night</span>
+              <span className="truncate text-muted-foreground">daylight</span>
             </div>
           </div>
 
@@ -158,18 +250,18 @@ export function MockVideoTimeline() {
             {/* playhead */}
             <div
               className="absolute top-0 bottom-0 z-20 w-px bg-primary"
-              style={{left: `${PLAYHEAD}%`}}
+              style={{left: `${pct(PLAYHEAD_FRAME)}%`}}
             >
               <span className="absolute -top-0 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-primary" />
             </div>
 
             {/* ruler */}
             <div className="relative h-6 border-b border-border">
-              {ticks.map((f, i) => (
+              {ticks.map(f => (
                 <span
                   key={f}
                   className="absolute top-0 flex h-full flex-col justify-between"
-                  style={{left: `${i * 10}%`}}
+                  style={{left: `${pct(f)}%`}}
                 >
                   <span className="pl-1 font-mono text-[9px] text-muted-foreground">
                     {f}
@@ -180,35 +272,39 @@ export function MockVideoTimeline() {
             </div>
 
             {/* track rows */}
-            {TRACKS.map((track, ti) => (
-              <div key={track.name} className="relative h-7">
-                <span
-                  className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full"
-                  style={{
-                    left: `${track.from}%`,
-                    width: `${track.to - track.from}%`,
-                    backgroundColor: track.color,
-                    opacity: ti === 0 ? 0.9 : 0.45,
-                  }}
-                />
-                {track.keyframes.map(kf => (
-                  <Diamond
-                    key={kf}
-                    at={kf}
-                    color={track.color}
-                    selected={ti === 0 && kf === 22}
+            {TRACKS.map(track => {
+              const from = track.keyframes[0];
+              const to = track.keyframes[track.keyframes.length - 1];
+              return (
+                <div key={track.id} className="relative h-7">
+                  <span
+                    className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full"
+                    style={{
+                      left: `${pct(from)}%`,
+                      width: `${pct(to - from)}%`,
+                      backgroundColor: track.color,
+                      opacity: track.selected ? 0.9 : 0.45,
+                    }}
                   />
-                ))}
-              </div>
-            ))}
+                  {track.keyframes.map(kf => (
+                    <Diamond
+                      key={kf}
+                      at={pct(kf)}
+                      color={track.color}
+                      selected={track.selected && kf === PLAYHEAD_FRAME}
+                    />
+                  ))}
+                </div>
+              );
+            })}
 
             {/* tag span row */}
             <div className="relative h-7">
               <span
                 className="absolute top-1/2 h-2.5 -translate-y-1/2 rounded"
                 style={{
-                  left: '46%',
-                  width: '48%',
+                  left: '0%',
+                  width: '100%',
                   backgroundColor: TAG_COLOR,
                   opacity: 0.7,
                 }}

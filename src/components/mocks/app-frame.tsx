@@ -67,10 +67,10 @@ export function MockAppFrame({
   const f = t.mocks.frame;
 
   return (
-    <MockWindow>
+    <MockWindow className="@container">
       <MockChrome />
       <div className="flex min-h-[26rem] text-sm">
-        <aside className="hidden w-52 shrink-0 flex-col border-r border-border bg-muted/30 md:flex">
+        <aside className="hidden w-52 shrink-0 flex-col border-r border-border bg-muted/30 @3xl:flex">
           <div className="flex flex-col gap-3 px-3 pt-4 pb-3">
             <Logo />
             <span className="flex items-center gap-2 rounded-md border border-border bg-background/60 px-2 py-1.5">
