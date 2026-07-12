@@ -16,6 +16,8 @@ export function appLink(path: string): string | undefined {
 export const paths = {
   home: '/',
   pricing: '/pricing',
+  newsletterConfirm: '/newsletter/confirm',
+  newsletterUnsubscribe: '/newsletter/unsubscribe',
   labelingImages: '/labeling/images',
   labelingVideos: '/labeling/videos',
   labelingPointClouds: '/labeling/point-clouds',

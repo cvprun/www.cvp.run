@@ -1,4 +1,5 @@
 import {CtaButtons} from '@/components/cta-buttons';
+import {NewsletterForm} from '@/components/newsletter-form';
 import {useLanguage} from '@/lib/i18n';
 
 /** Closing call-to-action band shared by every page. */
@@ -18,6 +19,10 @@ export function FinalCta() {
           </p>
           <div className="mt-8">
             <CtaButtons />
+          </div>
+          <div className="mx-auto mt-10 max-w-md border-t border-border pt-8">
+            <p className="text-sm text-muted-foreground">{t.newsletter.ctaLead}</p>
+            <NewsletterForm source="www-cta" className="mt-3" />
           </div>
         </div>
       </div>

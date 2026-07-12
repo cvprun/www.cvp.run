@@ -111,6 +111,35 @@ export const common = {
       comingSoonNote: 'app.cvp.run 정식 오픈을 준비하고 있습니다.',
     },
 
+    newsletter: {
+      title: '뉴스레터',
+      description: '제품 소식과 업데이트를 이메일로 받아보세요.',
+      ctaLead: '뉴스레터로 새 기능 소식을 먼저 받아보세요.',
+      emailLabel: '이메일 주소',
+      emailPlaceholder: 'you@example.com',
+      subscribe: '구독하기',
+      submitting: '전송 중…',
+      success: '확인 메일을 보냈습니다. 받은편지함을 확인해 주세요.',
+      error: '요청에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+      confirmTitle: '뉴스레터 구독 확정',
+      confirmDescription: '아래 버튼을 누르면 뉴스레터 구독이 확정됩니다.',
+      confirmAction: '구독 확정하기',
+      confirmSuccessTitle: '구독이 완료되었습니다',
+      confirmSuccessDescription:
+        '이제 CVP 소식과 업데이트를 이메일로 받아보실 수 있습니다.',
+      unsubscribeTitle: '뉴스레터 수신거부',
+      unsubscribeDescription:
+        '아래 버튼을 누르면 더 이상 뉴스레터를 보내드리지 않습니다.',
+      unsubscribeAction: '수신거부하기',
+      unsubscribeSuccessTitle: '수신거부가 완료되었습니다',
+      unsubscribeSuccessDescription:
+        '더 이상 메일이 발송되지 않습니다. 언제든 다시 구독하실 수 있습니다.',
+      working: '처리 중…',
+      invalidTitle: '링크가 유효하지 않습니다',
+      invalidDescription:
+        '링크가 만료되었거나 이미 처리되었습니다. 필요하면 다시 가입을 시도해 주세요.',
+    },
+
     footer: {
       description:
         'CVP — 이미지, 비디오, 3D 포인트클라우드를 하나의 워크스페이스에서 라벨링하고 관리하는 비전 데이터 플랫폼.',
@@ -245,6 +274,35 @@ export const common = {
       primary: 'Start for free',
       secondary: 'See pricing',
       comingSoonNote: 'app.cvp.run is getting ready for launch.',
+    },
+
+    newsletter: {
+      title: 'Newsletter',
+      description: 'Get product news and updates in your inbox.',
+      ctaLead: 'Be the first to hear about new features via the newsletter.',
+      emailLabel: 'Email address',
+      emailPlaceholder: 'you@example.com',
+      subscribe: 'Subscribe',
+      submitting: 'Sending…',
+      success: 'Confirmation email sent. Please check your inbox.',
+      error: 'Something went wrong. Please try again in a moment.',
+      confirmTitle: 'Confirm your subscription',
+      confirmDescription:
+        'Click the button below to confirm your newsletter subscription.',
+      confirmAction: 'Confirm subscription',
+      confirmSuccessTitle: 'Subscription confirmed',
+      confirmSuccessDescription: 'You will now receive CVP news and updates by email.',
+      unsubscribeTitle: 'Unsubscribe from the newsletter',
+      unsubscribeDescription:
+        'Click the button below to stop receiving the newsletter.',
+      unsubscribeAction: 'Unsubscribe',
+      unsubscribeSuccessTitle: 'You have been unsubscribed',
+      unsubscribeSuccessDescription:
+        'No more emails will be sent. You can subscribe again anytime.',
+      working: 'Working…',
+      invalidTitle: 'This link is not valid',
+      invalidDescription:
+        'The link has expired or was already used. Feel free to sign up again.',
     },
 
     footer: {

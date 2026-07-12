@@ -3,6 +3,7 @@ import {Navigate, Route, Routes, useLocation} from 'react-router-dom';
 
 import {FeaturePage} from '@/pages/feature';
 import {LandingPage} from '@/pages/landing';
+import {NewsletterActionPage} from '@/pages/newsletter';
 import {NotFoundPage} from '@/pages/not-found';
 import {PricingPage} from '@/pages/pricing';
 import {LEGACY_REDIRECTS, paths} from '@/lib/site';
@@ -22,6 +23,14 @@ function App() {
       <Routes>
         <Route path={paths.home} element={<LandingPage />} />
         <Route path={paths.pricing} element={<PricingPage />} />
+        <Route
+          path={paths.newsletterConfirm}
+          element={<NewsletterActionPage mode="confirm" />}
+        />
+        <Route
+          path={paths.newsletterUnsubscribe}
+          element={<NewsletterActionPage mode="unsubscribe" />}
+        />
         <Route path="/labeling/:slug" element={<FeaturePage category="labeling" />} />
         <Route path="/platform/:slug" element={<FeaturePage category="platform" />} />
         <Route path="/more/:slug" element={<FeaturePage category="more" />} />
