@@ -11,9 +11,7 @@ export function Logo({
   return (
     <span className={cn('inline-flex items-center gap-2', className)}>
       <CvpFace className="size-6 text-foreground" aria-hidden />
-      {showWordmark && (
-        <span className="text-base font-bold tracking-tight">CVP</span>
-      )}
+      {showWordmark && <span className="text-base font-bold tracking-tight">CVP</span>}
     </span>
   );
 }
