@@ -14,7 +14,13 @@ import {usePageMeta} from '@/lib/use-page-meta';
 import {cn} from '@/lib/utils';
 
 /** Pages whose mocks show real open-dataset media (see t.misc.dataNote). */
-const REAL_DATA_SLUGS = new Set(['images', 'videos', 'pointClouds', 'datasets']);
+const REAL_DATA_SLUGS = new Set([
+  'images',
+  'videos',
+  'pointClouds',
+  'datasets',
+  'review',
+]);
 
 export function FeaturePage({category}: {category: FeatureCategory}) {
   const {t} = useLanguage();

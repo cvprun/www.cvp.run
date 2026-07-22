@@ -3,63 +3,110 @@ import {Check, ChevronDown, MessageSquare, Send} from 'lucide-react';
 import {MockPanelFrame} from '@/components/mocks/panel-frame';
 import {useLanguage} from '@/lib/i18n';
 
-const CLASS_CAR = '#6496F5';
+/**
+ * COCO 2017 val image 000000148719 — "1970 Dodge Dude" by dave_7 (CC BY 2.0),
+ * annotations CC BY 4.0 by the COCO Consortium. Every box below is the
+ * dataset's own annotation, offset into this 640×400 crop. COCO labels only
+ * one person here (far left), so the man visible through the windshield is
+ * genuinely unlabeled — which is what the open review thread is about.
+ */
+const IMAGE_URL = '/mockdata/coco-pickup.webp';
+const IMG_W = 640;
+const IMG_H = 400;
 
-/** Canvas crop with one open pin and one resolved pin over a labeled box. */
+const CLASS_TRUCK = '#501EB4';
+const CLASS_PERSON = '#FF1E1E';
+
+type Box = {name: string; color: string; x: number; y: number; w: number; h: number};
+
+const BOXES: Box[] = [
+  {name: 'truck', color: CLASS_TRUCK, x: 96, y: 36, w: 486.5, h: 283.7},
+  {name: 'truck', color: CLASS_TRUCK, x: 0, y: 48.2, w: 259, h: 211.5},
+  {name: 'truck', color: CLASS_TRUCK, x: 545, y: 55.7, w: 88.8, h: 68.1},
+  {name: 'truck', color: CLASS_TRUCK, x: 192.6, y: 56.9, w: 29.8, h: 34.5},
+  {name: 'truck', color: CLASS_TRUCK, x: 231.4, y: 58.7, w: 42.1, h: 29.9},
+  {name: 'person', color: CLASS_PERSON, x: 1.7, y: 59.5, w: 41.5, h: 44.1},
+];
+
+/** Pin anchors in image coordinates: the open one sits on the unlabeled man
+ * behind the windshield, the resolved one on the truck cropped by the frame. */
+const PIN_OPEN = {x: 421, y: 101};
+const PIN_RESOLVED = {x: 55, y: 150};
+
+const asPercent = (pin: {x: number; y: number}) => ({
+  left: `${(pin.x / IMG_W) * 100}%`,
+  top: `${(pin.y / IMG_H) * 100}%`,
+});
+
+/** Labeled frame with one open pin and one resolved pin. */
 function PinnedCanvas() {
   return (
     <div className="relative h-full min-h-56 overflow-hidden bg-neutral-950">
-      <svg
-        viewBox="0 0 520 320"
-        className="h-full w-full"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <rect width={520} height={320} fill="#1c2431" />
-        <polygon points="0,320 520,320 430,160 90,160" fill="#38445c" />
-        <rect x={0} y={60} width={110} height={100} fill="#2b3850" />
-        <rect x={420} y={50} width={100} height={110} fill="#2b3850" />
-        {/* truck body: cabin + bed */}
-        <rect x={150} y={182} width={92} height={64} rx={7} fill="#4c5b7a" />
-        <rect x={238} y={168} width={150} height={78} rx={7} fill="#42506e" />
-        {/* box currently spanning cabin AND bed (the issue) */}
-        <rect
-          x={142}
-          y={158}
-          width={254}
-          height={96}
-          fill={CLASS_CAR}
-          fillOpacity={0.12}
-          stroke={CLASS_CAR}
-          strokeWidth={2}
+      <div className="relative aspect-[640/400] w-full">
+        <img
+          src={IMAGE_URL}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 h-full w-full"
         />
-        <rect
-          x={142}
-          y={141}
-          width={34}
-          height={16}
-          rx={2}
-          fill={CLASS_CAR}
-          opacity={0.85}
-        />
-        <text
-          x={147}
-          y={153}
-          fontSize={11}
-          fill="#ffffff"
-          fontFamily="ui-sans-serif, system-ui"
+        <svg
+          viewBox={`0 0 ${IMG_W} ${IMG_H}`}
+          className="absolute inset-0 h-full w-full"
+          preserveAspectRatio="xMidYMid meet"
         >
-          car
-        </text>
-      </svg>
+          {BOXES.map((box, i) => {
+            const tagH = 15;
+            const tagY = box.y - tagH - 2;
+            return (
+              <g key={i}>
+                <rect
+                  x={box.x}
+                  y={box.y}
+                  width={box.w}
+                  height={box.h}
+                  fill={box.color}
+                  fillOpacity={0.12}
+                  stroke={box.color}
+                  strokeWidth={2}
+                />
+                <rect
+                  x={box.x}
+                  y={tagY}
+                  width={box.name.length * 5.6 + 8}
+                  height={tagH}
+                  rx={2}
+                  fill={box.color}
+                  opacity={0.85}
+                />
+                <text
+                  x={box.x + 4}
+                  y={tagY + tagH - 4}
+                  fontSize={11}
+                  fill="#ffffff"
+                  fontFamily="ui-sans-serif, system-ui"
+                >
+                  {box.name}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
 
-      {/* open pin (#1, amber) */}
-      <span className="absolute top-[38%] left-[62%] flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-0.5 rounded-full border-2 border-white bg-amber-500 px-1 text-[11px] font-semibold text-white shadow-md ring-2 ring-primary">
-        <MessageSquare className="size-3" />1
-      </span>
-      {/* resolved pin (green check) */}
-      <span className="absolute top-[70%] left-[28%] flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-emerald-500 px-1 text-white shadow-md">
-        <Check className="size-3" />
-      </span>
+        {/* open pin (#1, amber) — on the unlabeled person */}
+        <span
+          className="absolute flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-0.5 rounded-full border-2 border-white bg-amber-500 px-1 text-[11px] font-semibold text-white shadow-md ring-2 ring-primary"
+          style={asPercent(PIN_OPEN)}
+        >
+          <MessageSquare className="size-3" />1
+        </span>
+        {/* resolved pin (green check) */}
+        <span
+          className="absolute flex h-6 min-w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-emerald-500 px-1 text-white shadow-md"
+          style={asPercent(PIN_RESOLVED)}
+        >
+          <Check className="size-3" />
+        </span>
+      </div>
     </div>
   );
 }
@@ -69,14 +116,14 @@ export function MockIssuePanel() {
   const m = t.mocks.issues;
 
   return (
-    <MockPanelFrame>
-      <div className="flex flex-col sm:flex-row">
+    <MockPanelFrame className="@container">
+      <div className="flex flex-col @2xl:flex-row">
         <div className="min-w-0 flex-1">
           <PinnedCanvas />
         </div>
 
         {/* issues tab */}
-        <aside className="flex w-full shrink-0 flex-col border-t border-border bg-card sm:w-72 sm:border-t-0 sm:border-l">
+        <aside className="flex w-full shrink-0 flex-col border-t border-border bg-card @2xl:w-72 @2xl:border-t-0 @2xl:border-l">
           <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
             <span className="text-[11px] text-muted-foreground">{m.headerOpen}</span>
             <span className="flex gap-0.5 text-[10px]">

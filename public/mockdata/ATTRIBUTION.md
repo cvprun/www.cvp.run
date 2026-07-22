@@ -26,6 +26,18 @@ image-editor mockup are the dataset's actual annotations for
 | gallery/g11                   | ed3c4d467ffab88f | Chris                           |
 | gallery/g12                   | 063e2d10b024ca26 | mancbranch                      |
 
+## Review & QA frame (`coco-pickup.webp`)
+
+Image `000000148719` from the [COCO](https://cocodataset.org) 2017 validation
+split — ["1970 Dodge Dude"](https://www.flickr.com/photos/daveseven/4781344883/)
+by dave_7, **CC BY 2.0** (COCO license id 4). COCO's own annotations are
+**CC BY 4.0** by the COCO Consortium.
+
+The boxes in the review mockup are that image's real annotations (five trucks
+and one person), offset into a 640×400 crop. COCO labels only the person at
+the far left, so the man visible through the windshield really is unlabeled —
+that is what the open review thread points at.
+
 ## Video labeling frame (`davis-crossing.webp`)
 
 Frame 30 of the `crossing` sequence from the

@@ -128,8 +128,9 @@ export const mocks = {
         me: '나',
         reviewer: 'reviewer',
         labeler: 'haneul',
-        comment1: '이 박스가 트럭 짐칸까지 포함하고 있어요. 캐빈만 잡아주세요.',
-        comment2: '수정했습니다. 확인 부탁드려요!',
+        comment1:
+          '앞유리 너머에 서 있는 사람이 라벨링에서 빠졌어요. person 박스를 추가해 주세요.',
+        comment2: '가림이 60% 미만이라 라벨링 대상이 맞네요. 바로 추가하겠습니다.',
         replyPlaceholder: '답글 입력…',
         resolve: '해결',
         resolvedAgo: '2h',
@@ -630,8 +631,9 @@ export const mocks = {
         me: 'me',
         reviewer: 'reviewer',
         labeler: 'haneul',
-        comment1: 'This box includes the truck bed. Please keep it to the cabin only.',
-        comment2: 'Fixed — please take another look!',
+        comment1:
+          'The man standing behind the windshield has no box. Please add a person box.',
+        comment2: 'Occlusion is under 60%, so it qualifies — adding it now.',
         replyPlaceholder: 'Reply…',
         resolve: 'Resolve',
         resolvedAgo: '2h',
