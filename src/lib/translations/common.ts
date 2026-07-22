@@ -161,7 +161,7 @@ export const common = {
     misc: {
       mockNote: '* 실제 컴포넌트로 재현한 화면입니다.',
       dataNote:
-        '사진·영상·포인트 클라우드는 공개 데이터셋의 실제 데이터입니다 — Open Images(CC BY 2.0) · Wikimedia Commons(CC0) · PandaSet(CC0)',
+        '사진·영상·포인트 클라우드는 공개 데이터셋의 실제 데이터입니다 — Open Images(CC BY 2.0) · DAVIS 2017(CC BY 4.0) · Wikimedia Commons(CC0) · PandaSet(CC0)',
       betaBadge: '베타',
     },
   },
@@ -326,7 +326,7 @@ export const common = {
     misc: {
       mockNote: '* Recreated with real product components.',
       dataNote:
-        'Photos, footage, and point clouds are real data from open datasets — Open Images (CC BY 2.0) · Wikimedia Commons (CC0) · PandaSet (CC0)',
+        'Photos, footage, and point clouds are real data from open datasets — Open Images (CC BY 2.0) · DAVIS 2017 (CC BY 4.0) · Wikimedia Commons (CC0) · PandaSet (CC0)',
       betaBadge: 'Beta',
     },
   },

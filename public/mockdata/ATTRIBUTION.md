@@ -26,13 +26,24 @@ image-editor mockup are the dataset's actual annotations for
 | gallery/g11                   | ed3c4d467ffab88f | Chris                           |
 | gallery/g12                   | 063e2d10b024ca26 | mancbranch                      |
 
-## Video frames (`video-frame.webp`, `vt1–vt3.webp`)
+## Video labeling frame (`davis-crossing.webp`)
+
+Frame 30 of the `crossing` sequence from the
+[DAVIS 2017](https://davischallenge.org/davis2017/code.html) challenge
+(semi-supervised, 480p TrainVal). The annotations belong to the challenge
+organizers and are licensed **CC BY 4.0**; cite Pont-Tuset et al., _The 2017
+DAVIS Challenge on Video Object Segmentation_, arXiv:1704.00675.
+
+The polygons in the video-timeline mockup are the dataset's own pixel-accurate
+instance masks (two pedestrians and a truck), contour-traced and simplified.
+The clip is 52 frames at 24 fps, 854×480 — the frame counter, timecode, and
+track ranges in the mockup are the clip's real numbers.
+
+## Video library thumbnails (`vt1–vt3.webp`)
 
 Frames extracted from
 ["Dashcam Recording (urban)"](<https://commons.wikimedia.org/wiki/File:Dashcam_Recording_(urban).ogv>)
 by Fernost, Wikimedia Commons, **CC0 1.0** (public domain dedication).
-`video-frame.webp` is the frame at 73s (OSD strips cropped); the tracking
-boxes in the video mockup follow the vehicles actually visible in the clip.
 
 ## Point cloud (`pandaset-points.bin`, `pandaset-meta.json`)
 

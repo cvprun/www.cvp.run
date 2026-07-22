@@ -62,15 +62,18 @@ export const mocks = {
 
       timeline: {
         frameColumn: '프레임',
-        fps: '30 fps',
-        counter: '90 / 368',
-        time: '3.00s / 12.27s',
+        fps: '24 fps',
+        counter: '30 / 51',
+        time: '1.25s / 2.13s',
         first: '첫 프레임',
         prev: '이전 프레임',
         play: '재생',
         next: '다음 프레임',
         last: '마지막 프레임',
         addKeyframe: '현재 프레임에 키프레임',
+        keyframeCount: (n: string) => `키프레임 ${n}개`,
+        objectCount: '오브젝트 3개',
+        sequenceNote: 'crossing · 52프레임 · 854×480',
       },
 
       pointCloud: {
@@ -153,8 +156,8 @@ export const mocks = {
         names: {
           image: '차량 감지 v3',
           imageDesc: '도심 주행 이미지 · 차량/보행자/신호등/표지판',
-          video: '주행 클립 2026-06',
-          videoDesc: '대시캠 주행 클립 · 프레임 단위 트래킹',
+          video: '도심 교통 클립 2026-06',
+          videoDesc: '건널목·교차로 클립 · 인스턴스 트래킹',
           pointCloud: '교차로 LiDAR 시퀀스',
           pointCloudDesc: '도심 교차로 스캔 · 64ch 기계식 LiDAR',
         },
@@ -561,15 +564,18 @@ export const mocks = {
 
       timeline: {
         frameColumn: 'Frames',
-        fps: '30 fps',
-        counter: '90 / 368',
-        time: '3.00s / 12.27s',
+        fps: '24 fps',
+        counter: '30 / 51',
+        time: '1.25s / 2.13s',
         first: 'First frame',
         prev: 'Previous frame',
         play: 'Play',
         next: 'Next frame',
         last: 'Last frame',
         addKeyframe: 'Keyframe at current frame',
+        keyframeCount: (n: string) => `${n} keyframes`,
+        objectCount: '3 objects',
+        sequenceNote: 'crossing · 52 frames · 854×480',
       },
 
       pointCloud: {
@@ -652,8 +658,8 @@ export const mocks = {
         names: {
           image: 'Vehicle detection v3',
           imageDesc: 'Urban driving images · cars/pedestrians/lights/signs',
-          video: 'Driving clips 2026-06',
-          videoDesc: 'Dashcam driving clips · per-frame tracking',
+          video: 'Urban traffic clips 2026-06',
+          videoDesc: 'Crossing and intersection clips · instance tracking',
           pointCloud: 'Intersection LiDAR sequence',
           pointCloudDesc: 'Urban intersection scans · 64ch mechanical LiDAR',
         },
