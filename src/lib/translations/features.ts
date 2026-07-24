@@ -18,6 +18,61 @@ export const features = {
         '이 기능은 현재 개발 중이며, 정식 출시 전까지 내용이 바뀔 수 있습니다.',
     },
 
+    labelingTools: {
+      kicker: '모든 어노테이션 타입',
+      title: '정교한 라벨링 도구가 가득.',
+      aiBadge: 'AI',
+      footnote: '모든 도구에 단축키가 붙어 있어 마우스가 캔버스를 떠나지 않습니다.',
+      subtitles: {
+        images:
+          '객체 검출부터 인스턴스 세그멘테이션까지 — 픽셀 단위로 정확한 도구를 단축키 하나로 오갑니다.',
+        videos:
+          '이미지와 똑같은 도형 도구를 타임라인 위에서. 키프레임만 찍으면 사이는 보간됩니다.',
+        pointClouds: '수백만 점의 3D 장면을 위한 큐보이드 · 세그먼트 · 측정 도구.',
+      },
+      tools: {
+        rectangle: {
+          name: '사각형',
+          desc: '드래그 한 번으로 그리는 객체 검출용 바운딩 박스.',
+        },
+        rotatedRectangle: {
+          name: '회전 사각형',
+          desc: '기울어진 객체에 딱 맞는 방향성 박스.',
+        },
+        ellipse: {name: '타원', desc: '원형·타원형 객체를 감싸는 타원.'},
+        polygon: {
+          name: '다각형',
+          desc: '정점을 찍어 만드는 인스턴스 세그멘테이션 마스크.',
+        },
+        polyline: {name: '폴리라인', desc: '차선·경로 같은 열린 선을 잇습니다.'},
+        point: {name: '점', desc: '단일 좌표를 콕 찍는 포인트.'},
+        keypoint: {
+          name: '키포인트',
+          desc: '스켈레톤 프리셋으로 관절·랜드마크를 찍습니다.',
+        },
+        brush: {name: '브러시', desc: '픽셀 단위로 칠하는 마스크.'},
+        eraser: {name: '지우개', desc: '칠한 마스크를 다시 다듬습니다.'},
+        magicWand: {
+          name: '매직 완드',
+          desc: '클릭 한 번, AI(SAM)가 객체를 분할합니다.',
+        },
+        cuboid: {name: '큐보이드', desc: '이동·회전·크기 기즈모로 다루는 3D 박스.'},
+        point3d: {name: '3D 포인트', desc: '포인트클라우드 위의 단일 3D 점.'},
+        polyline3d: {name: '3D 폴리라인', desc: '3D 공간을 가로지르는 폴리라인.'},
+        polygon3d: {name: '3D 폴리곤', desc: '평면 위 영역을 그리는 3D 다각형.'},
+        keypoint3d: {name: '3D 키포인트', desc: '3D 스켈레톤 키포인트.'},
+        segmentLasso: {
+          name: '올가미 세그먼트',
+          desc: '올가미로 점을 칠해 인스턴스로 묶습니다.',
+        },
+        segmentRect: {
+          name: '사각형 세그먼트',
+          desc: '사각형으로 점을 선택해 세그먼트.',
+        },
+        dimension: {name: '치수', desc: '두 점 사이 거리를 재는 치수선.'},
+      },
+    },
+
     pages: {
       images: {
         title: '박스에서 키포인트까지, 손에 붙는 이미지 라벨링.',
@@ -496,6 +551,71 @@ export const features = {
       statusInDevelopment: 'In development',
       developmentNote:
         'This feature is under active development and may change before general availability.',
+    },
+
+    labelingTools: {
+      kicker: 'For any type of annotation',
+      title: 'Packed with advanced labeling tools.',
+      aiBadge: 'AI',
+      footnote: 'Every tool has a shortcut, so your mouse never leaves the canvas.',
+      subtitles: {
+        images:
+          'From object detection to instance segmentation — pixel-accurate tools, each one a shortcut away.',
+        videos:
+          'The same shape tools as images, on a timeline. Set keyframes and the frames between interpolate.',
+        pointClouds:
+          'Cuboids, segments, and measurement for scenes of millions of points.',
+      },
+      tools: {
+        rectangle: {
+          name: 'Rectangle',
+          desc: 'Bounding boxes for object detection in a single drag.',
+        },
+        rotatedRectangle: {
+          name: 'Rotated box',
+          desc: 'Oriented boxes that hug tilted objects.',
+        },
+        ellipse: {name: 'Ellipse', desc: 'Ellipses that wrap round and oval objects.'},
+        polygon: {
+          name: 'Polygon',
+          desc: 'Vertex polygons for instance-segmentation masks.',
+        },
+        polyline: {
+          name: 'Polyline',
+          desc: 'Open lines for lanes, paths, and boundaries.',
+        },
+        point: {name: 'Point', desc: 'Single-coordinate point annotations.'},
+        keypoint: {
+          name: 'Keypoints',
+          desc: 'Skeleton keypoints for joints and landmarks.',
+        },
+        brush: {name: 'Brush', desc: 'Pixel-level masks, painted freehand.'},
+        eraser: {name: 'Eraser', desc: 'Erase to refine painted masks.'},
+        magicWand: {
+          name: 'Magic wand',
+          desc: 'Click once — AI (SAM) segments the object.',
+        },
+        cuboid: {
+          name: 'Cuboid',
+          desc: '3D boxes with move, rotate, and scale gizmos.',
+        },
+        point3d: {name: '3D Point', desc: 'Single 3D points in the cloud.'},
+        polyline3d: {name: '3D Polyline', desc: 'Polylines that cross 3D space.'},
+        polygon3d: {name: '3D Polygon', desc: '3D polygons for planar regions.'},
+        keypoint3d: {name: '3D Keypoints', desc: '3D skeleton keypoints.'},
+        segmentLasso: {
+          name: 'Lasso segment',
+          desc: 'Lasso-paint points into instances.',
+        },
+        segmentRect: {
+          name: 'Rectangle segment',
+          desc: 'Rectangle-select points into segments.',
+        },
+        dimension: {
+          name: 'Dimension',
+          desc: 'Measure distances with dimension lines.',
+        },
+      },
     },
 
     pages: {

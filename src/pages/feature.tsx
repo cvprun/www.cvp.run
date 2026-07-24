@@ -4,6 +4,7 @@ import {Link, useParams} from 'react-router-dom';
 import {CtaButtons} from '@/components/cta-buttons';
 import {FinalCta} from '@/components/final-cta';
 import {Footer} from '@/components/footer';
+import {LabelingToolsSection} from '@/components/labeling-tools';
 import {MOCKS} from '@/components/mocks';
 import {NotFoundPage} from '@/pages/not-found';
 import {Reveal} from '@/components/reveal';
@@ -95,6 +96,9 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
             )}
           </div>
         </section>
+
+        {/* labeling-tool grid — renders only on the labeling editor pages */}
+        <LabelingToolsSection slug={def.slug} tinted />
 
         {/* detail sections — copy matched 1:1 with a mock when available */}
         {page.sections.map((section, i) => {
