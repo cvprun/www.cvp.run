@@ -5,18 +5,23 @@
   <url><loc>https://www.cvp.run/labeling/images</loc></url>
   <url><loc>https://www.cvp.run/labeling/videos</loc></url>
   <url><loc>https://www.cvp.run/labeling/point-clouds</loc></url>
+  <url><loc>https://www.cvp.run/labeling/time-series</loc></url>
   <url><loc>https://www.cvp.run/platform/datasets</loc></url>
+  <url><loc>https://www.cvp.run/platform/training</loc></url>
   <url><loc>https://www.cvp.run/platform/review</loc></url>
   <url><loc>https://www.cvp.run/platform/collaboration</loc></url>
   <url><loc>https://www.cvp.run/platform/developers</loc></url>
-  <url><loc>https://www.cvp.run/more/apps</loc></url>
-  <url><loc>https://www.cvp.run/more/graphs</loc></url>
   <url><loc>https://www.cvp.run/more/agents</loc></url>
-  <url><loc>https://www.cvp.run/more/clusters</loc></url>
-  <url><loc>https://www.cvp.run/more/vms</loc></url>
-  <url><loc>https://www.cvp.run/more/manufacturing</loc></url>
+  <url><loc>https://www.cvp.run/more/collectors</loc></url>
+  <url><loc>https://www.cvp.run/more/digital-twin</loc></url>
   <url><loc>https://www.cvp.run/more/mlflow</loc></url>
+  <url><loc>https://www.cvp.run/more/graphs</loc></url>
   <url><loc>https://www.cvp.run/more/grids</loc></url>
   <url><loc>https://www.cvp.run/more/maps</loc></url>
   <url><loc>https://www.cvp.run/more/meetings</loc></url>
+  <url><loc>https://www.cvp.run/more/signatures</loc></url>
+  <url><loc>https://www.cvp.run/more/memory-maps</loc></url>
+  <url><loc>https://www.cvp.run/more/registry</loc></url>
+  <url><loc>https://www.cvp.run/more/apps</loc></url>
+  <url><loc>https://www.cvp.run/more/store</loc></url>
 </urlset>

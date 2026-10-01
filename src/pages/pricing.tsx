@@ -2,11 +2,18 @@ import {Check, Minus} from 'lucide-react';
 
 import {FinalCta} from '@/components/final-cta';
 import {Footer} from '@/components/footer';
+import {MockUsage} from '@/components/mocks/usage-panel';
 import {Reveal} from '@/components/reveal';
 import {TopBar} from '@/components/top-bar';
 import {Button} from '@/components/ui/button';
 import {useLanguage} from '@/lib/i18n';
-import {formatLimit, formatStorage, PLANS, type PlanDef} from '@/lib/pricing';
+import {
+  formatLimit,
+  formatStorage,
+  PLANS,
+  TOKEN_PACKAGES,
+  type PlanDef,
+} from '@/lib/pricing';
 import {appLink} from '@/lib/site';
 import type {Translations} from '@/lib/translations';
 import {usePageMeta} from '@/lib/use-page-meta';
@@ -30,10 +37,10 @@ function PlanCard({plan}: {plan: PlanDef}) {
   const signup = appLink('/signup');
 
   const highlights = [
-    `${p.rows.projects}: ${formatLimit(plan.limits.projects, p.unlimited)}`,
     `${p.rows.members}: ${formatLimit(plan.limits.members, p.unlimited)}`,
     `${p.rows.storage}: ${formatStorage(plan.limits.storageGb, p.unlimited)}`,
     `${p.rows.apiCalls}: ${formatLimit(plan.limits.apiCallsPerMonth, p.unlimited)}`,
+    `${p.rows.agentTraffic}: ${formatStorage(plan.limits.agentTrafficGb, p.unlimited)}`,
   ];
 
   const cta =
@@ -106,38 +113,50 @@ function ComparisonTable() {
   };
 
   const always: RowDef['render'] = () => <BoolCell value />;
+  const count =
+    (key: keyof PlanDef['limits']): RowDef['render'] =>
+    plan =>
+      formatLimit(plan.limits[key] as number, p.unlimited);
+  const flag =
+    (key: keyof PlanDef['limits']): RowDef['render'] =>
+    plan => <BoolCell value={plan.limits[key] as boolean} />;
+
   const rows: RowDef[] = [
-    {
-      label: p.rows.projects,
-      render: plan => formatLimit(plan.limits.projects, p.unlimited),
-    },
-    {
-      label: p.rows.members,
-      render: plan => formatLimit(plan.limits.members, p.unlimited),
-    },
+    {label: p.rows.members, render: count('members')},
     {
       label: p.rows.storage,
       render: plan => formatStorage(plan.limits.storageGb, p.unlimited),
     },
+    {label: p.rows.apiCalls, render: count('apiCallsPerMonth')},
     {
-      label: p.rows.apiCalls,
-      render: plan => formatLimit(plan.limits.apiCallsPerMonth, p.unlimited),
+      label: p.rows.agentTraffic,
+      render: plan => formatStorage(plan.limits.agentTrafficGb, p.unlimited),
     },
+    {
+      label: p.rows.graphNodeRuns,
+      render: plan =>
+        plan.limits.graphNodeRunsPerMonth === 0
+          ? p.browserOnly
+          : formatLimit(plan.limits.graphNodeRunsPerMonth, p.unlimited),
+    },
+    {label: p.rows.mlflowExperiments, render: count('mlflowExperiments')},
+    {label: p.rows.twinScenes, render: count('twinScenes')},
+    {label: p.rows.wikiPages, render: count('wikiPages')},
+    {label: p.rows.gridRows, render: count('gridRows')},
+    {label: p.rows.memoryMaps, render: count('memoryMaps')},
+    {label: p.rows.mapFeatures, render: count('mapFeatures')},
+    {label: p.rows.licenseKeys, render: count('licenseKeys')},
     {label: p.rows.labeling, render: always},
+    {label: p.rows.aiLabeling, render: always},
+    {label: p.rows.agents, render: always},
     {label: p.rows.review, render: always},
     {label: p.rows.wiki, render: always},
     {label: p.rows.tokens, render: always},
-    {label: p.rows.license, render: always},
-    {
-      label: p.rows.prioritySupport,
-      render: plan => <BoolCell value={plan.limits.prioritySupport} />,
-    },
-    {
-      label: p.rows.auditLogs,
-      render: plan => <BoolCell value={plan.limits.auditLogs} />,
-    },
-    {label: p.rows.customS3, render: plan => <BoolCell value={plan.limits.customS3} />},
-    {label: p.rows.sso, render: plan => <BoolCell value={plan.limits.sso} />},
+    {label: p.rows.videoEncryption, render: flag('videoEncryption')},
+    {label: p.rows.prioritySupport, render: flag('prioritySupport')},
+    {label: p.rows.auditLogs, render: flag('auditLogs')},
+    {label: p.rows.customS3, render: flag('customS3')},
+    {label: p.rows.sso, render: flag('sso')},
   ];
 
   return (
@@ -214,8 +233,73 @@ export function PricingPage() {
           </div>
         </section>
 
-        {/* FAQ */}
+        {/* usage tokens */}
+        <section className="border-t border-border">
+          <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
+            <Reveal>
+              <h2 className="text-2xl font-bold tracking-tight text-balance sm:text-3xl">
+                {p.tokensTitle}
+              </h2>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                {p.tokensDescription}
+              </p>
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+                {TOKEN_PACKAGES.map(pkg => (
+                  <div
+                    key={pkg.usd}
+                    className="rounded-xl border border-border bg-card px-4 py-3"
+                  >
+                    <span className="block text-lg font-bold tabular-nums">
+                      ${pkg.usd}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {p.tokensUnit(pkg.tokens.toLocaleString('en-US'))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+            <Reveal delay={100}>
+              <dl className="overflow-hidden rounded-xl border border-border">
+                {p.tokenUses.map(([label, value], i) => (
+                  <div
+                    key={label}
+                    className={cn(
+                      'grid gap-1 px-5 py-3.5 sm:grid-cols-[13rem_1fr] sm:gap-4',
+                      i % 2 === 1 && 'bg-muted/20',
+                    )}
+                  >
+                    <dt className="text-sm font-medium">{label}</dt>
+                    <dd className="text-sm text-muted-foreground">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* usage screen */}
         <section className="border-t border-border bg-muted/20">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <Reveal>
+              <div className="mx-auto max-w-2xl text-center">
+                <h2 className="text-2xl font-bold tracking-tight text-balance sm:text-3xl">
+                  {p.usageTitle}
+                </h2>
+                <p className="mt-4 text-muted-foreground">{p.usageDescription}</p>
+              </div>
+            </Reveal>
+            <Reveal className="mx-auto mt-10 max-w-5xl" delay={100}>
+              <MockUsage />
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                {t.misc.mockNote}
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="border-t border-border">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
               {p.faqTitle}

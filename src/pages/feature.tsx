@@ -21,6 +21,8 @@ const REAL_DATA_SLUGS = new Set([
   'pointClouds',
   'datasets',
   'review',
+  'training',
+  'collectors',
 ]);
 
 export function FeaturePage({category}: {category: FeatureCategory}) {
@@ -111,7 +113,7 @@ export function FeaturePage({category}: {category: FeatureCategory}) {
             >
               <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
                 {Mock ? (
-                  <div className="grid items-center gap-10 lg:grid-cols-2">
+                  <div className="grid items-center gap-10 lg:grid-cols-2 [&>*]:min-w-0">
                     <Reveal className={i % 2 === 1 ? 'lg:order-2' : undefined}>
                       <div className="max-w-xl">
                         <h2 className="text-2xl font-bold tracking-tight text-balance sm:text-3xl">

@@ -21,74 +21,103 @@ export const paths = {
   labelingImages: '/labeling/images',
   labelingVideos: '/labeling/videos',
   labelingPointClouds: '/labeling/point-clouds',
+  labelingTimeSeries: '/labeling/time-series',
   platformDatasets: '/platform/datasets',
+  platformTraining: '/platform/training',
   platformReview: '/platform/review',
   platformCollaboration: '/platform/collaboration',
   platformDevelopers: '/platform/developers',
-  moreApps: '/more/apps',
-  moreGraphs: '/more/graphs',
   moreAgents: '/more/agents',
-  moreClusters: '/more/clusters',
-  moreVms: '/more/vms',
-  moreManufacturing: '/more/manufacturing',
+  moreCollectors: '/more/collectors',
+  moreTwin: '/more/digital-twin',
   moreMlflow: '/more/mlflow',
+  moreGraphs: '/more/graphs',
   moreGrids: '/more/grids',
   moreMaps: '/more/maps',
   moreMeetings: '/more/meetings',
+  moreSignatures: '/more/signatures',
+  moreMemory: '/more/memory-maps',
+  moreRegistry: '/more/registry',
+  moreApps: '/more/apps',
+  moreStore: '/more/store',
 } as const;
 
 export type FeatureSlug =
   | 'images'
   | 'videos'
   | 'pointClouds'
+  | 'timeSeries'
   | 'datasets'
+  | 'training'
   | 'review'
   | 'collaboration'
   | 'developers'
-  | 'apps'
-  | 'graphs'
   | 'agents'
-  | 'clusters'
-  | 'vms'
-  | 'manufacturing'
+  | 'collectors'
+  | 'twin'
   | 'mlflow'
+  | 'graphs'
   | 'grids'
   | 'maps'
-  | 'meetings';
+  | 'meetings'
+  | 'signatures'
+  | 'memory'
+  | 'registry'
+  | 'apps'
+  | 'store';
 
 export type FeatureCategory = 'labeling' | 'platform' | 'more';
 
-/** `development` pages describe upcoming features and carry an
- * "in development" badge instead of launch messaging. */
+/** `development` pages describe features that are built but still in field
+ * validation; they carry an "in development" badge instead of launch CTAs. */
 export type FeatureStatus = 'available' | 'development';
 
 /** Mockup screens the marketing site can embed. Keys are resolved through the
  * MOCKS registry in `components/mocks`. */
 export type MockKey =
   | 'imageEditor'
+  | 'autoLabelReview'
   | 'keypointPreset'
   | 'videoTimeline'
   | 'pointCloudEditor'
+  | 'pointceptAutoLabel'
   | 'autoSegment'
+  | 'timeseriesEditor'
+  | 'tsColumnMapping'
   | 'issuePanel'
   | 'datasetGrid'
   | 'sampleGallery'
+  | 'uploadWizard'
+  | 'datasetQa'
+  | 'trainingWizard'
+  | 'experimentRun'
+  | 'rfdetrInference'
+  | 'mlopsOverview'
+  | 'mlflowRuns'
+  | 'usage'
   | 'files'
   | 'wiki'
   | 'videoLibrary'
   | 'tokenPanel'
   | 'licensePanel'
   | 'apiSnippet'
+  | 'agentList'
+  | 'agentApps'
+  | 'agentInstall'
+  | 'modbusOverview'
+  | 'collectorsOverview'
+  | 'collectorsTimeline'
+  | 'twinEditor'
   | 'appsGallery'
   | 'graphEditor'
-  | 'agentList'
-  | 'clusterControl'
-  | 'vmsLive'
-  | 'mesTopology'
-  | 'mlflowRuns'
   | 'gridTable'
   | 'mapView'
-  | 'meetingDetail';
+  | 'meetingDetail'
+  | 'meetingRoom'
+  | 'signatureDetail'
+  | 'memoryHex'
+  | 'registry'
+  | 'store';
 
 export type FeaturePageDef = {
   slug: FeatureSlug;
@@ -110,8 +139,8 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     status: 'available',
     path: paths.labelingImages,
     heroMock: 'imageEditor',
-    sectionMocks: [null, 'keypointPreset', 'issuePanel'],
-    related: ['videos', 'pointClouds', 'review'],
+    sectionMocks: [null, 'autoLabelReview', 'keypointPreset', 'issuePanel'],
+    related: ['videos', 'training', 'review'],
   },
   {
     slug: 'videos',
@@ -128,8 +157,17 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     status: 'available',
     path: paths.labelingPointClouds,
     heroMock: 'pointCloudEditor',
-    sectionMocks: [null, 'autoSegment', null],
-    related: ['images', 'videos', 'datasets'],
+    sectionMocks: [null, 'pointceptAutoLabel', 'autoSegment', null],
+    related: ['images', 'training', 'twin'],
+  },
+  {
+    slug: 'timeSeries',
+    category: 'labeling',
+    status: 'available',
+    path: paths.labelingTimeSeries,
+    heroMock: 'timeseriesEditor',
+    sectionMocks: ['tsColumnMapping', null, null],
+    related: ['training', 'collectors', 'datasets'],
   },
   {
     slug: 'datasets',
@@ -137,8 +175,17 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     status: 'available',
     path: paths.platformDatasets,
     heroMock: 'datasetGrid',
-    sectionMocks: [null, 'sampleGallery', null],
-    related: ['images', 'review', 'collaboration'],
+    sectionMocks: ['uploadWizard', 'sampleGallery', 'datasetQa'],
+    related: ['images', 'timeSeries', 'review'],
+  },
+  {
+    slug: 'training',
+    category: 'platform',
+    status: 'available',
+    path: paths.platformTraining,
+    heroMock: 'trainingWizard',
+    sectionMocks: ['rfdetrInference', 'experimentRun', null],
+    related: ['agents', 'mlflow', 'images'],
   },
   {
     slug: 'review',
@@ -156,7 +203,7 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     path: paths.platformCollaboration,
     heroMock: 'wiki',
     sectionMocks: [null, 'files', 'videoLibrary'],
-    related: ['datasets', 'review', 'developers'],
+    related: ['meetings', 'grids', 'review'],
   },
   {
     slug: 'developers',
@@ -164,20 +211,47 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     status: 'available',
     path: paths.platformDevelopers,
     heroMock: 'tokenPanel',
-    sectionMocks: ['apiSnippet', 'licensePanel', null],
-    related: ['datasets', 'collaboration', 'images'],
+    sectionMocks: ['apiSnippet', 'agentInstall', 'licensePanel'],
+    related: ['agents', 'registry', 'mlflow'],
   },
 
-  // "More" section — features not covered by the launch pages. Pages with
-  // status 'development' are roadmap previews and carry an in-dev badge.
+  // "More" — the rest of the project workspace. Everything here ships in the
+  // app today; `development` marks features still in field validation.
   {
-    slug: 'apps',
+    slug: 'agents',
     category: 'more',
     status: 'available',
-    path: paths.moreApps,
-    heroMock: 'appsGallery',
-    sectionMocks: [null, null],
-    related: ['collaboration', 'developers', 'graphs'],
+    path: paths.moreAgents,
+    heroMock: 'agentApps',
+    sectionMocks: ['agentList', 'modbusOverview', null],
+    related: ['training', 'collectors', 'memory'],
+  },
+  {
+    slug: 'collectors',
+    category: 'more',
+    status: 'development',
+    path: paths.moreCollectors,
+    heroMock: 'collectorsOverview',
+    sectionMocks: ['collectorsTimeline', null, null],
+    related: ['agents', 'timeSeries', 'twin'],
+  },
+  {
+    slug: 'twin',
+    category: 'more',
+    status: 'available',
+    path: paths.moreTwin,
+    heroMock: 'twinEditor',
+    sectionMocks: [null, null, null],
+    related: ['memory', 'agents', 'maps'],
+  },
+  {
+    slug: 'mlflow',
+    category: 'more',
+    status: 'available',
+    path: paths.moreMlflow,
+    heroMock: 'mlopsOverview',
+    sectionMocks: ['mlflowRuns', null],
+    related: ['training', 'developers', 'registry'],
   },
   {
     slug: 'graphs',
@@ -186,79 +260,79 @@ export const FEATURE_PAGES: readonly FeaturePageDef[] = [
     path: paths.moreGraphs,
     heroMock: 'graphEditor',
     sectionMocks: [null, null],
-    related: ['apps', 'agents', 'datasets'],
-  },
-  {
-    slug: 'agents',
-    category: 'more',
-    status: 'development',
-    path: paths.moreAgents,
-    heroMock: 'agentList',
-    sectionMocks: [null, null],
-    related: ['graphs', 'clusters', 'developers'],
-  },
-  {
-    slug: 'clusters',
-    category: 'more',
-    status: 'development',
-    path: paths.moreClusters,
-    heroMock: 'clusterControl',
-    sectionMocks: [null, null],
-    related: ['agents', 'mlflow', 'developers'],
-  },
-  {
-    slug: 'vms',
-    category: 'more',
-    status: 'development',
-    path: paths.moreVms,
-    heroMock: 'vmsLive',
-    sectionMocks: [null, null],
-    related: ['videos', 'agents', 'maps'],
-  },
-  {
-    slug: 'manufacturing',
-    category: 'more',
-    status: 'development',
-    path: paths.moreManufacturing,
-    heroMock: 'mesTopology',
-    sectionMocks: [null, null],
-    related: ['vms', 'agents', 'grids'],
-  },
-  {
-    slug: 'mlflow',
-    category: 'more',
-    status: 'development',
-    path: paths.moreMlflow,
-    heroMock: 'mlflowRuns',
-    sectionMocks: [null, null],
-    related: ['datasets', 'developers', 'clusters'],
+    related: ['agents', 'apps', 'datasets'],
   },
   {
     slug: 'grids',
     category: 'more',
-    status: 'development',
+    status: 'available',
     path: paths.moreGrids,
     heroMock: 'gridTable',
-    sectionMocks: [null, null],
-    related: ['datasets', 'collaboration', 'manufacturing'],
+    sectionMocks: [null, null, null],
+    related: ['collaboration', 'store', 'twin'],
   },
   {
     slug: 'maps',
     category: 'more',
-    status: 'development',
+    status: 'available',
     path: paths.moreMaps,
     heroMock: 'mapView',
     sectionMocks: [null, null],
-    related: ['vms', 'datasets', 'grids'],
+    related: ['twin', 'datasets', 'grids'],
   },
   {
     slug: 'meetings',
     category: 'more',
-    status: 'development',
+    status: 'available',
     path: paths.moreMeetings,
     heroMock: 'meetingDetail',
+    sectionMocks: ['meetingRoom', null],
+    related: ['collaboration', 'signatures', 'grids'],
+  },
+  {
+    slug: 'signatures',
+    category: 'more',
+    status: 'available',
+    path: paths.moreSignatures,
+    heroMock: 'signatureDetail',
     sectionMocks: [null, null],
-    related: ['collaboration', 'grids', 'apps'],
+    related: ['collaboration', 'meetings', 'grids'],
+  },
+  {
+    slug: 'memory',
+    category: 'more',
+    status: 'available',
+    path: paths.moreMemory,
+    heroMock: 'memoryHex',
+    sectionMocks: [null, 'modbusOverview'],
+    related: ['agents', 'twin', 'grids'],
+  },
+  {
+    slug: 'registry',
+    category: 'more',
+    status: 'available',
+    path: paths.moreRegistry,
+    heroMock: 'registry',
+    sectionMocks: [null, null],
+    related: ['developers', 'agents', 'mlflow'],
+  },
+  {
+    slug: 'apps',
+    category: 'more',
+    status: 'available',
+    path: paths.moreApps,
+    heroMock: 'appsGallery',
+    sectionMocks: [null, null],
+    related: ['collaboration', 'graphs', 'developers'],
+  },
+  {
+    slug: 'store',
+    category: 'more',
+    status: 'available',
+    path: paths.moreStore,
+    heroMock: 'store',
+    sectionMocks: [null, null],
+    related: ['grids', 'collaboration', 'datasets'],
   },
 ] as const;
 
@@ -276,20 +350,25 @@ export function getFeaturePage(
   );
 }
 
-/** Old marketing routes → new IA. Everything else falls through to `/`. */
+/** Old marketing routes → new IA. Everything else falls through to `/`.
+ * The cluster, VMS, and manufacturing pages were removed from the product
+ * (2026-09); their URLs land on the closest living feature. */
 export const LEGACY_REDIRECTS: Record<string, string> = {
   '/features/visual-programming': paths.moreGraphs,
-  '/features/realtime-streaming': paths.moreVms,
+  '/features/realtime-streaming': paths.moreCollectors,
   '/features/vision-toolkit': paths.moreApps,
-  '/features/vms-cctv': paths.moreVms,
+  '/features/vms-cctv': paths.moreCollectors,
   '/features/datasets-mlops': paths.platformDatasets,
   '/features/extensible': paths.platformDevelopers,
   '/modules/vision': paths.moreApps,
-  '/modules/vms': paths.moreVms,
-  '/modules/manufacturing': paths.moreManufacturing,
+  '/modules/vms': paths.moreCollectors,
+  '/modules/manufacturing': paths.moreTwin,
   '/modules/datasets': paths.platformDatasets,
   '/modules/graphs': paths.moreGraphs,
   '/modules/mlflow': paths.moreMlflow,
   '/modules/agents': paths.moreAgents,
   '/modules/apps': paths.moreApps,
+  '/more/clusters': paths.moreAgents,
+  '/more/vms': paths.moreCollectors,
+  '/more/manufacturing': paths.moreTwin,
 };

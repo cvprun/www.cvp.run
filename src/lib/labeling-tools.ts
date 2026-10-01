@@ -10,6 +10,7 @@
  * drawing and AI tools, not scene navigation.
  */
 import {
+  BetweenHorizontalStart,
   Bone,
   Box,
   BoxSelect,
@@ -18,16 +19,21 @@ import {
   CircleDot,
   Diamond,
   Eraser,
+  Flag,
+  LayoutPanelTop,
   Hexagon,
   Lasso,
   Locate,
   Pentagon,
+  PenLine,
   PersonStanding,
   Ruler,
+  Sparkles,
   Spline,
   Square,
   Wand2,
   Waypoints,
+  ZoomIn,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -41,7 +47,7 @@ export type LabelingTool = {
 };
 
 /** Slugs that carry a tool grid (the three labeling editors). */
-export type ToolSlug = 'images' | 'videos' | 'pointClouds';
+export type ToolSlug = 'images' | 'videos' | 'pointClouds' | 'timeSeries';
 
 const IMAGE_TOOLS: readonly LabelingTool[] = [
   {id: 'rectangle', icon: Square, shortcut: 'R'},
@@ -54,13 +60,12 @@ const IMAGE_TOOLS: readonly LabelingTool[] = [
   {id: 'brush', icon: Brush, shortcut: 'B'},
   {id: 'eraser', icon: Eraser, shortcut: 'X'},
   {id: 'magicWand', icon: Wand2, shortcut: 'W', ai: true},
+  {id: 'autoLabel', icon: Sparkles, shortcut: 'A', ai: true},
 ];
 
-// Video shares every 2D drawing tool with images except the magic wand, which
-// is image-only in the product.
-const VIDEO_TOOLS: readonly LabelingTool[] = IMAGE_TOOLS.filter(
-  t => t.id !== 'magicWand',
-);
+// Video shares every 2D drawing tool with images — the magic wand and auto-label
+// run on the frame currently on screen.
+const VIDEO_TOOLS: readonly LabelingTool[] = IMAGE_TOOLS;
 
 const POINT_CLOUD_TOOLS: readonly LabelingTool[] = [
   {id: 'cuboid', icon: Box, shortcut: 'B'},
@@ -71,12 +76,23 @@ const POINT_CLOUD_TOOLS: readonly LabelingTool[] = [
   {id: 'segmentLasso', icon: Lasso, shortcut: 'G'},
   {id: 'segmentRect', icon: BoxSelect, shortcut: 'X'},
   {id: 'dimension', icon: Ruler, shortcut: 'D'},
+  {id: 'guide', icon: PenLine, shortcut: 'U'},
+  {id: 'autoLabel3d', icon: Sparkles, shortcut: 'A', ai: true},
+];
+
+const TIME_SERIES_TOOLS: readonly LabelingTool[] = [
+  {id: 'range', icon: BetweenHorizontalStart, shortcut: 'R'},
+  {id: 'event', icon: Flag, shortcut: 'E'},
+  {id: 'timeZoom', icon: ZoomIn, shortcut: 'Z'},
+  {id: 'windowClassify', icon: LayoutPanelTop, shortcut: '1–9'},
+  {id: 'aiSuggest', icon: Sparkles, shortcut: '—', ai: true},
 ];
 
 export const LABELING_TOOLS: Record<ToolSlug, readonly LabelingTool[]> = {
   images: IMAGE_TOOLS,
   videos: VIDEO_TOOLS,
   pointClouds: POINT_CLOUD_TOOLS,
+  timeSeries: TIME_SERIES_TOOLS,
 };
 
 /** The tool grid for a feature slug, or null for non-labeling pages. */

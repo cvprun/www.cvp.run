@@ -13,7 +13,7 @@ export function MockPanelFrame({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-xl border border-border bg-card text-left',
+        'overflow-hidden [--radius:0.375rem] rounded-xl border border-border bg-card text-left',
         'shadow-xl shadow-black/10 select-none',
         className,
       )}

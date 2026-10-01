@@ -1,6 +1,6 @@
 # www.cvp.run 전면 개편 플랜 — MVP SaaS 홍보 사이트
 
-> 작성일: 2026-07-06
+> 작성일: 2026-07-06 · **갱신: 2026-10-01** (아래 §0-1 참조)
 > 상태: **구현 완료** (2026-07-06 — Phase 1~6 코드 반영, 빌드/린트 통과. 잔여: 수동 브라우저 검수, OG 이미지, 배포)
 >
 > 목표: MVP SaaS 출시(참조: `~/Downloads/result.md` 전략 보고서)에 맞춰 www.cvp.run을
@@ -11,6 +11,22 @@
 > - **경쟁사**: 1차 [cvat.ai](https://www.cvat.ai/), 2차 supervisely.com
 
 ---
+
+## 0-1. 2026-10-01 갱신 — 앱 현재 상태 반영
+
+앱(app.cvp.run)의 2026-07 이후 변화를 사이트 전체에 반영했다.
+
+- **삭제**: 앱에서 제거된 클러스터·VMS(관제)·제조(MES) 페이지와 목업(`cluster-control`·`vms-live`·`mes-topology`)을 지웠다.
+  `/more/clusters`→에이전트, `/more/vms`→수집기, `/more/manufacturing`→디지털 트윈으로 리다이렉트(`LEGACY_REDIRECTS`).
+  가격표의 `projects` 한도(앱에서 폐기)도 뺐다.
+- **추가 페이지**: `/labeling/time-series`, `/platform/training`(학습 & AI 라벨링), `/more/{collectors,digital-twin,signatures,memory-maps,registry,store}`.
+  에이전트·MLOps·그리드·지도·회의는 '개발 중' → '사용 가능'. 수집기만 현장 검증 중이라 '개발 중'.
+- **목업**: 공통 셸 `MockAppFrame` 을 앱의 현재 틀(기본 사이드바 청사진 + '에이전트 앱' 그룹, 브레드크럼 크롬 바, 제목 줄, 밑줄 탭, Geist 토큰, `--radius:0.375rem`)로 다시 만들고,
+  기존 목업을 전부 그 위로 옮겼다. 새 목업 22종: 시계열 에디터·열 역할, 자동 라벨링 검토·Pointcept 대화상자, QA 통계·업로드 위저드, 훈련 위저드·실험 실행·RF-DETR 추론·MLOps 개요·사용량,
+  에이전트 앱·설치·Modbus, 수집기 개요·타임라인, 디지털 트윈 에디터, 전자서명, 메모리 맵 헥스, 레지스트리, 스토어, 화상 회의실.
+  각 목업은 앱 소스(컴포넌트·ko/en 로케일)를 읽고 만들었다.
+- **랜딩**: 4 모달리티, 시계열·AI 라벨링·학습·에이전트/수집기 밴드, '한 프로젝트 안에' 기능 그리드.
+- **가격**: `plan_limits` 전체(에이전트 통신량·그래프 노드 실행·MLOps 실험·트윈 씬 등) + 토큰(1 토큰 = 1센트, 패키지, 소비처) + 사용량 화면.
 
 ## 0. 레퍼런스 분석 요약
 

@@ -22,6 +22,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
 
   /* Brand accents (from app.cvp.run design language) */
   --color-brand-cyan: #50e3c2;
@@ -58,27 +65,49 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  /* 목업 사이드바 — app.cvp.run 의 :root sidebar-* 와 같은 값 */
+  --sidebar: #f5f5f5;
+  --sidebar-foreground: #171717;
+  --sidebar-primary: #171717;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ebebeb;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #e5e5e5;
 }
 
+/* app.cvp.run 과 같은 Geist(Vercel) 다크 팔레트. 여기가 defaultTheme="dark" 라
+   방문자가 처음 보는 화면이고, 이전 값(채도 0 / 배경 0.145 / 전경 0.985)은
+   Geist 가 아니라 stock shadcn 이라 제품 화면과 어긋났다. 세 가지 규칙(완전
+   중립 / 면이 아니라 선으로 분리 / 글자 등급화)과 바닥을 gray-100 에 두는
+   이유는 app.cvp.run/src/react-app/index.css 의 .dark 주석 참조. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.185 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.185 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.245 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.245 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.245 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: #1a1a1a; /* gray-100 */
+  --foreground: #ededed; /* gray-1000 */
+  --card: #1f1f1f; /* gray-200 */
+  --card-foreground: #ededed;
+  --popover: #242424;
+  --popover-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #1a1a1a;
+  --secondary: #292929; /* gray-300 */
+  --secondary-foreground: #ededed;
+  --muted: #262626;
+  --muted-foreground: #a1a1a1; /* gray-900 */
+  --accent: #2e2e2e; /* gray-400 */
+  --accent-foreground: #ededed;
+  --destructive: #db373a;
+  /* 앱과 달리 테두리는 불투명 색이 아니라 흰색 알파로 남긴다 — 히어로 메시
+     그라디언트 위에 얹히는 카드가 많아, 뒤 색을 따라가는 편이 낫다. */
+  --border: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 20%);
+  --ring: #52a8ff; /* Geist blue-900 */
+  --sidebar: #141414;
+  --sidebar-foreground: #ededed;
+  --sidebar-primary: #ededed;
+  --sidebar-primary-foreground: #1a1a1a;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #ededed;
+  --sidebar-border: #2e2e2e;
 }
 
 @layer base {

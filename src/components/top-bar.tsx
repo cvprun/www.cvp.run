@@ -26,7 +26,10 @@ function NavDropdown({category, label}: {category: FeatureCategory; label: strin
         {label}
         <ChevronDown className="size-3.5" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64">
+      <DropdownMenuContent
+        align="start"
+        className={cn(pages.length > 6 ? 'grid w-[34rem] grid-cols-2 gap-x-1' : 'w-64')}
+      >
         {pages.map(page => (
           <DropdownMenuItem key={page.slug} asChild>
             <Link to={page.path} className="flex flex-col items-start gap-0.5">

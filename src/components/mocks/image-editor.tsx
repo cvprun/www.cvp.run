@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  Boxes as BoxesIcon,
   Brush,
   ChevronDown,
   ChevronLeft,
@@ -9,7 +10,9 @@ import {
   Diamond,
   Eraser,
   Eye,
-  Maximize,
+  FileJson,
+  Grid3x3,
+  Keyboard,
   MessageSquarePlus,
   MessagesSquare,
   MousePointer2,
@@ -18,15 +21,17 @@ import {
   PersonStanding,
   Redo2,
   Save,
+  Settings2,
   Shapes,
-  SlidersHorizontal,
+  Sparkles,
   Spline,
   Square,
   Tags,
   Undo2,
+  Wand2,
   ZoomIn,
   ZoomOut,
-  Boxes as BoxesIcon,
+  type LucideIcon,
 } from 'lucide-react';
 
 import {
@@ -180,10 +185,63 @@ function Box({
   );
 }
 
-export function MockImageEditor() {
-  const {t} = useLanguage();
-  const m = t.mocks.editor;
+/** Strings the current editor chrome adds on top of `t.mocks.editor`
+ * (app `annotate.*` keys). */
+const COPY = {
+  ko: {
+    fitToScreen: '화면에 맞추기',
+    autoLabel: '자동 라벨링',
+    tabs: {
+      objects: '오브젝트',
+      classes: '클래스',
+      tags: '태그',
+      issues: '이슈',
+      settings: '설정',
+    },
+  },
+  en: {
+    fitToScreen: 'Fit to screen',
+    autoLabel: 'Auto-label',
+    tabs: {
+      objects: 'Objects',
+      classes: 'Classes',
+      tags: 'Tags',
+      issues: 'Issues',
+      settings: 'Settings',
+    },
+  },
+} as const;
 
+/** Header icon button (`Button variant="ghost" size="icon"`, h-8 → h-6). */
+function HeaderIcon({
+  icon: Icon,
+  dim = false,
+  className,
+}: {
+  icon: LucideIcon;
+  dim?: boolean;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        'flex size-6 shrink-0 items-center justify-center rounded-md',
+        dim ? 'text-muted-foreground/40' : 'text-muted-foreground',
+        className,
+      )}
+    >
+      <Icon className="size-3.5" />
+    </span>
+  );
+}
+
+export function MockImageEditor() {
+  const {t, lang} = useLanguage();
+  const m = t.mocks.editor;
+  const c = COPY[lang];
+
+  // `EDITOR_KIND_TOOLS.image`, rendered in TOOL_DEFS order:
+  // V M P R O E L G B X K W C.
   const tools = [
     {icon: MousePointer2, active: false},
     {icon: Move, active: false},
@@ -196,51 +254,69 @@ export function MockImageEditor() {
     {icon: Brush, active: false},
     {icon: Eraser, active: false},
     {icon: PersonStanding, active: false},
+    {icon: Wand2, active: false},
     {icon: MessageSquarePlus, active: false},
   ];
 
   const tabs = [
-    {icon: BoxesIcon, label: m.tabObjects, active: true},
-    {icon: SlidersHorizontal, label: m.tabProperties, active: false},
-    {icon: Shapes, label: m.tabClasses, active: false},
-    {icon: Tags, label: m.tabTags, active: false},
-    {icon: MessagesSquare, label: m.tabIssues, active: false},
+    {icon: BoxesIcon, label: c.tabs.objects, active: true},
+    {icon: Shapes, label: c.tabs.classes, active: false},
+    {icon: Tags, label: c.tabs.tags, active: false},
+    {icon: MessagesSquare, label: c.tabs.issues, active: false},
+    {icon: Settings2, label: c.tabs.settings, active: false},
   ];
 
   return (
-    <MockWindow>
+    <MockWindow className="@container">
       <MockChrome />
-      <div className="flex h-10 items-center gap-2 border-b border-border bg-background px-3 text-xs">
-        <ArrowLeft className="size-3.5 text-muted-foreground" />
-        <span className="font-medium">{m.fileName}</span>
-        <span className="flex items-center gap-1 rounded border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground">
-          {m.statusLabeled}
-          <ChevronDown className="size-2.5" />
+      {/* EditorHeader */}
+      <div className="relative z-20 flex h-10 items-center gap-1.5 border-b border-border bg-background px-2.5 text-xs">
+        <HeaderIcon icon={ArrowLeft} />
+        <span className="mr-1 truncate text-[11px] font-medium">{m.fileName}</span>
+        <span className="hidden h-6 w-24 shrink-0 items-center gap-1.5 rounded-md border border-input px-2 text-[10px] @xl:flex">
+          <Tags className="size-3 text-green-600 dark:text-green-400" />
+          <span className="flex-1 truncate">{m.statusLabeled}</span>
+          <ChevronDown className="size-3 text-muted-foreground/60" />
         </span>
-        <span className="ml-auto flex items-center gap-1 text-muted-foreground">
-          <ChevronLeft className="size-3.5" />
-          <span className="font-mono text-[11px]">{m.position}</span>
-          <ChevronRight className="size-3.5" />
+        <span className="flex items-center">
+          <HeaderIcon icon={ChevronLeft} />
+          <span className="min-w-10 text-center text-[10px] text-muted-foreground tabular-nums">
+            {m.position}
+          </span>
+          <HeaderIcon icon={ChevronRight} />
         </span>
-        <span className="mx-1 h-4 w-px bg-border" />
-        <span className="hidden items-center gap-1 text-muted-foreground sm:flex">
-          <ZoomOut className="size-3.5" />
-          <Maximize className="size-3.5" />
-          <ZoomIn className="size-3.5" />
-          <span className="mx-1 h-4 w-px bg-border" />
+        <span className="flex-1" />
+        <span className="hidden items-center @3xl:flex">
+          <HeaderIcon icon={ZoomOut} />
+          <span className="px-1.5 text-[10px] font-medium text-muted-foreground">
+            {c.fitToScreen}
+          </span>
+          <HeaderIcon icon={ZoomIn} />
         </span>
-        <Undo2 className="size-3.5 text-muted-foreground" />
-        <Redo2 className="size-3.5 text-muted-foreground/50" />
-        <span className="ml-1 flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[11px] text-muted-foreground">
+        <HeaderIcon icon={Grid3x3} className="hidden @2xl:flex" />
+        <HeaderIcon icon={Keyboard} className="hidden @2xl:flex" />
+        {/* RF-DETR auto-label, shown with its hover tooltip */}
+        <span className="relative flex size-6 shrink-0 items-center justify-center rounded-md bg-accent text-foreground">
+          <Sparkles className="size-3.5" />
+          <span className="absolute top-full right-0 mt-1.5 rounded-md bg-primary px-2 py-1 text-[10px] whitespace-nowrap text-primary-foreground shadow">
+            {c.autoLabel} (A)
+          </span>
+        </span>
+        <HeaderIcon icon={FileJson} className="hidden @xl:flex" />
+        <span className="mx-1 h-5 w-px shrink-0 bg-border" />
+        <HeaderIcon icon={Undo2} />
+        <HeaderIcon icon={Redo2} dim />
+        <span className="ml-1 flex h-6 shrink-0 items-center gap-1 rounded-md border border-input px-2 text-[10px] font-medium text-muted-foreground shadow-sm">
           <Save className="size-3" />
           {m.saved}
         </span>
       </div>
 
-      <div className="flex h-[22rem] sm:h-[26rem]">
-        <div className="flex w-11 shrink-0 flex-col items-center gap-0.5 border-r border-border bg-background py-2">
+      <div className="flex h-[25rem] sm:h-[27rem]">
+        {/* ToolSidebar */}
+        <div className="flex w-10 shrink-0 flex-col items-center gap-px border-r border-border bg-background py-2">
           {tools.map(({icon, active}, i) => (
-            <MockIconButton key={i} icon={icon} active={active} />
+            <MockIconButton key={i} icon={icon} active={active} size="sm" />
           ))}
         </div>
 
@@ -277,14 +353,14 @@ export function MockImageEditor() {
           </svg>
         </div>
 
-        <aside className="hidden w-52 shrink-0 flex-col border-l border-border bg-muted/30 md:flex">
-          <div className="grid grid-cols-5 gap-0.5 p-1.5">
+        <aside className="hidden w-52 shrink-0 flex-col border-l border-border bg-sidebar @2xl:flex">
+          <div className="m-1.5 grid h-7 grid-cols-5 gap-0.5 rounded-md bg-muted p-0.5">
             {tabs.map(({icon: Icon, label, active}) => (
               <span
                 key={label}
                 title={label}
                 className={cn(
-                  'flex h-8 items-center justify-center rounded',
+                  'flex items-center justify-center rounded',
                   active ? 'bg-background shadow-sm' : 'text-muted-foreground',
                 )}
               >

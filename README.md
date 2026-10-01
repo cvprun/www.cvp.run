@@ -1,9 +1,18 @@
 # www.cvp.run
 
-CVP(Computer Vision Player) 프로젝트 소개 랜딩 페이지입니다.
+CVP(Computer Vision Player) 제품 소개 사이트입니다.
 
-그래프 기반 비주얼 프로그래밍, 실시간 영상 분석, 영상 관제(VMS), MLOps를 통합한
-웹 기반 컴퓨터 비전 플랫폼 **CVP**를 소개합니다. (현재 개발 중)
+이미지·비디오·3D 포인트클라우드·시계열 라벨링을 중심으로, AI 라벨링과 학습,
+에이전트·수집기, 디지털 트윈, MLOps 등 프로젝트 워크스페이스 전체를 소개하는
+비전 데이터 플랫폼 **CVP**(app.cvp.run, 베타)의 마케팅 사이트입니다.
+
+## 구조
+
+- 페이지 레지스트리: [`src/lib/site.ts`](./src/lib/site.ts) — 경로, 기능 페이지(라벨링 4 · 플랫폼 5 · 더 보기 13), 목업 배치, 구 경로 리다이렉트
+- 문구: [`src/lib/translations/`](./src/lib/translations/) (ko/en)
+- 가격·한도: [`src/lib/pricing.ts`](./src/lib/pricing.ts) — app 의 `plan_limits` 와 같은 값
+- 목업: [`src/components/mocks/`](./src/components/mocks/) — app.cvp.run 실제 화면을 정적으로 재현.
+  공통 셸은 `app-frame.tsx`(사이드바 기본 청사진 · 브레드크럼 · 제목 줄 · 밑줄 탭)
 
 ## 기술 스택
 

@@ -1,4 +1,24 @@
-import {ArrowRight, Box, Images, Video} from 'lucide-react';
+import {
+  Activity,
+  ArrowRight,
+  Box,
+  BrainCircuit,
+  Cpu,
+  Cuboid,
+  Images,
+  LayoutGrid,
+  Map,
+  MemoryStick,
+  Mic,
+  Package,
+  Radar,
+  Signature,
+  Store,
+  Table2,
+  Video,
+  Workflow,
+  type LucideIcon,
+} from 'lucide-react';
 import type {ComponentType} from 'react';
 import {Link} from 'react-router-dom';
 
@@ -6,17 +26,21 @@ import {CtaButtons} from '@/components/cta-buttons';
 import {FinalCta} from '@/components/final-cta';
 import {Footer} from '@/components/footer';
 import {MockApiSnippet} from '@/components/mocks/api-snippet';
-import {MockAutoSegment} from '@/components/mocks/auto-segment';
+import {MockAutoLabelReview} from '@/components/mocks/auto-label-review';
+import {MockCollectorsTimeline} from '@/components/mocks/collectors-timeline';
 import {MockImageEditor} from '@/components/mocks/image-editor';
 import {MockIssuePanel} from '@/components/mocks/issue-panel';
 import {MockPointCloudEditor} from '@/components/mocks/point-cloud-editor';
+import {MockPointceptAutoLabel} from '@/components/mocks/pointcept-autolabel';
 import {MockSampleGallery} from '@/components/mocks/sample-gallery';
+import {MockTimeseriesEditor} from '@/components/mocks/timeseries-editor';
+import {MockTrainingWizard} from '@/components/mocks/training-wizard';
 import {MockVideoTimeline} from '@/components/mocks/video-timeline';
 import {Reveal} from '@/components/reveal';
 import {TopBar} from '@/components/top-bar';
 import {useLanguage} from '@/lib/i18n';
 import {PLANS, type PlanDef} from '@/lib/pricing';
-import {paths} from '@/lib/site';
+import {FEATURE_PAGES, paths, type FeatureSlug} from '@/lib/site';
 import type {Translations} from '@/lib/translations';
 import {usePageMeta} from '@/lib/use-page-meta';
 import {cn} from '@/lib/utils';
@@ -69,7 +93,7 @@ function FeatureBand({
             </Reveal>
           </>
         ) : (
-          <div className="grid items-center gap-10 lg:grid-cols-2">
+          <div className="grid items-center gap-10 lg:grid-cols-2 [&>*]:min-w-0">
             <Reveal>{text}</Reveal>
             <Reveal delay={100}>
               <Mock />
@@ -108,6 +132,76 @@ function PlanTeaserCard({plan, t}: {plan: PlanDef; t: Translations}) {
   );
 }
 
+/** Icons for the "inside one project" grid — same icons as the app sidebar. */
+const SCOPE_ICONS: Partial<Record<FeatureSlug, LucideIcon>> = {
+  agents: Cpu,
+  collectors: Radar,
+  twin: Cuboid,
+  mlflow: BrainCircuit,
+  graphs: Workflow,
+  grids: Table2,
+  maps: Map,
+  meetings: Mic,
+  signatures: Signature,
+  memory: MemoryStick,
+  registry: Package,
+  apps: LayoutGrid,
+  store: Store,
+};
+
+function ScopeGrid() {
+  const {t} = useLanguage();
+  const pages = FEATURE_PAGES.filter(p => p.category === 'more');
+  return (
+    <section className="border-t border-border bg-muted/20">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
+        <Reveal>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold tracking-wide text-brand-cyan uppercase">
+              {t.scope.label}
+            </p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+              {t.scope.title}
+            </h2>
+            <p className="mt-4 text-muted-foreground">{t.scope.description}</p>
+          </div>
+        </Reveal>
+        <Reveal delay={100}>
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {pages.map(page => {
+              const Icon = SCOPE_ICONS[page.slug] ?? LayoutGrid;
+              return (
+                <Link
+                  key={page.slug}
+                  to={page.path}
+                  className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-brand-cyan/60"
+                >
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground transition-colors group-hover:text-brand-cyan">
+                    <Icon className="size-4" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-2 text-sm font-semibold">
+                      {t.pageMeta[page.slug].label}
+                      {page.status === 'development' && (
+                        <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
+                          {t.featurePage.statusInDevelopment}
+                        </span>
+                      )}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">
+                      {t.pageMeta[page.slug].tagline}
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 export function LandingPage() {
   const {t} = useLanguage();
   usePageMeta('CVP — Computer Vision Platform', t.hero.description);
@@ -116,6 +210,7 @@ export function LandingPage() {
     {icon: Images, label: t.modalities.tabs.images, to: paths.labelingImages},
     {icon: Video, label: t.modalities.tabs.videos, to: paths.labelingVideos},
     {icon: Box, label: t.modalities.tabs.pointClouds, to: paths.labelingPointClouds},
+    {icon: Activity, label: t.modalities.tabs.timeSeries, to: paths.labelingTimeSeries},
   ];
 
   const teaserPlans = PLANS.filter(plan => plan.code !== 'enterprise');
@@ -204,20 +299,46 @@ export function LandingPage() {
           copy={t.sections.pointClouds}
           to={paths.labelingPointClouds}
           layout="split"
-          mock={MockAutoSegment}
+          mock={MockPointceptAutoLabel}
+        />
+        <FeatureBand
+          copy={t.sections.timeSeries}
+          to={paths.labelingTimeSeries}
+          layout="stack"
+          tinted
+          mock={MockTimeseriesEditor}
+        />
+        <FeatureBand
+          copy={t.sections.ai}
+          to={paths.platformTraining}
+          layout="split"
+          mock={MockAutoLabelReview}
+        />
+        <FeatureBand
+          copy={t.sections.training}
+          to={paths.platformTraining}
+          layout="stack"
+          tinted
+          mock={MockTrainingWizard}
         />
         <FeatureBand
           copy={t.sections.review}
           to={paths.platformReview}
           layout="stack"
-          tinted
           mock={MockIssuePanel}
         />
         <FeatureBand
           copy={t.sections.workspace}
           to={paths.platformDatasets}
           layout="stack"
+          tinted
           mock={MockSampleGallery}
+        />
+        <FeatureBand
+          copy={t.sections.edge}
+          to={paths.moreAgents}
+          layout="stack"
+          mock={MockCollectorsTimeline}
         />
         <FeatureBand
           copy={t.sections.developers}
@@ -226,6 +347,8 @@ export function LandingPage() {
           tinted
           mock={MockApiSnippet}
         />
+
+        <ScopeGrid />
 
         {/* pricing teaser */}
         <section className="border-t border-border">

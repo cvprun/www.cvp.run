@@ -5,25 +5,29 @@ import {
   BoxSelect,
   Boxes as BoxesIcon,
   Eye,
+  FileBox,
   FileUp,
+  Grip,
   Hexagon,
+  Keyboard,
   Lasso,
   Locate,
   MessageSquarePlus,
   MessagesSquare,
   MousePointer2,
-  Move,
   Move3d,
   Palette,
+  PenLine,
   Redo2,
   Rotate3d,
   Ruler,
   Save,
   Scale3d,
+  Settings2,
   Shapes,
-  SlidersHorizontal,
-  Tags,
+  Sparkles,
   Undo2,
+  Wand2,
   Waypoints,
 } from 'lucide-react';
 import {useEffect, useMemo, useRef, useState} from 'react';
@@ -435,10 +439,42 @@ function drawOrtho(
 
 const ORTHO_AXES: OrthoAxis[] = ['top', 'front', 'side'];
 
+/** Labels added with the current editor chrome (app `annotate.tabs.*`,
+ * `annotate.autoLabel.button`). */
+const COPY = {
+  ko: {
+    tabs: {
+      objects: '오브젝트',
+      classes: '클래스',
+      sample: '샘플',
+      issues: '이슈',
+      settings: '설정',
+      points: '포인트',
+      dimensions: '치수',
+      guides: '가이드',
+    },
+    autoLabel: '자동 라벨링',
+  },
+  en: {
+    tabs: {
+      objects: 'Objects',
+      classes: 'Classes',
+      sample: 'Sample',
+      issues: 'Issues',
+      settings: 'Settings',
+      points: 'Points',
+      dimensions: 'Dimensions',
+      guides: 'Guides',
+    },
+    autoLabel: 'Auto-label',
+  },
+} as const;
+
 export function MockPointCloudEditor() {
-  const {t} = useLanguage();
+  const {t, lang} = useLanguage();
   const m = t.mocks.pointCloud;
   const e = t.mocks.editor;
+  const c = COPY[lang];
   const cloud = useCloud();
   const [mode, setMode] = useState<ColorMode>('label');
   const mainRef = useRef<HTMLCanvasElement>(null);
@@ -475,9 +511,9 @@ export function MockPointCloudEditor() {
     });
   });
 
+  // `EDITOR_KIND_TOOLS.point_cloud` in TOOL_DEFS order (no pan tool in 3D).
   const tools = [
     {icon: MousePointer2, active: false},
-    {icon: Move, active: false},
     {icon: Box, active: true},
     {icon: Locate, active: false},
     {icon: Waypoints, active: false},
@@ -485,15 +521,24 @@ export function MockPointCloudEditor() {
     {icon: Bone, active: false},
     {icon: Lasso, active: false},
     {icon: BoxSelect, active: false},
+    {icon: Ruler, active: false},
+    {icon: PenLine, active: false},
     {icon: MessageSquarePlus, active: false},
   ];
 
   const tabs = [
-    {icon: BoxesIcon, label: e.tabObjects, active: true},
-    {icon: SlidersHorizontal, label: e.tabProperties, active: false},
-    {icon: Shapes, label: e.tabClasses, active: false},
-    {icon: Tags, label: e.tabTags, active: false},
-    {icon: MessagesSquare, label: e.tabIssues, active: false},
+    {icon: BoxesIcon, label: c.tabs.objects, active: true},
+    {icon: Shapes, label: c.tabs.classes, active: false},
+    {icon: FileBox, label: c.tabs.sample, active: false},
+    {icon: MessagesSquare, label: c.tabs.issues, active: false},
+    {icon: Settings2, label: c.tabs.settings, active: false},
+  ];
+
+  const subtabs = [
+    {icon: BoxesIcon, label: c.tabs.objects, active: true},
+    {icon: Grip, label: c.tabs.points, active: false},
+    {icon: Ruler, label: c.tabs.dimensions, active: false},
+    {icon: PenLine, label: c.tabs.guides, active: false},
   ];
 
   const modes: {key: ColorMode; label: string}[] = [
@@ -520,7 +565,7 @@ export function MockPointCloudEditor() {
     <MockWindow>
       <MockChrome />
       {/* editor header */}
-      <div className="flex h-10 items-center gap-2 border-b border-border bg-background px-3 text-xs">
+      <div className="relative z-20 flex h-10 items-center gap-2 border-b border-border bg-background px-3 text-xs">
         <ArrowLeft className="size-3.5 text-muted-foreground" />
         <span className="font-medium">{m.fileName}</span>
         <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
@@ -528,7 +573,15 @@ export function MockPointCloudEditor() {
         </span>
         <span className="ml-auto flex items-center gap-1.5 text-muted-foreground">
           <FileUp className="size-3.5" />
-          <Ruler className="size-3.5" />
+          <Wand2 className="size-3.5" />
+          <Keyboard className="hidden size-3.5 sm:block" />
+          {/* auto-label (Pointcept on point clouds), shown with its hover tooltip */}
+          <span className="relative flex size-6 items-center justify-center rounded-md bg-accent text-foreground">
+            <Sparkles className="size-3.5" />
+            <span className="absolute top-full right-0 z-20 mt-1.5 rounded-md bg-primary px-2 py-1 text-[10px] whitespace-nowrap text-primary-foreground shadow">
+              {c.autoLabel} (A)
+            </span>
+          </span>
           <span className="mx-1 h-4 w-px bg-border" />
           <Undo2 className="size-3.5" />
           <Redo2 className="size-3.5 opacity-50" />
@@ -543,10 +596,10 @@ export function MockPointCloudEditor() {
         {/* tool sidebar */}
         <div className="flex w-11 shrink-0 flex-col items-center gap-0.5 border-r border-border bg-background py-2">
           {tools.map(({icon, active}, i) => (
-            <MockIconButton key={i} icon={icon} active={active} />
+            <MockIconButton key={i} icon={icon} active={active} size="sm" />
           ))}
           <span className="mt-auto">
-            <MockIconButton icon={Palette} />
+            <MockIconButton icon={Palette} size="sm" />
           </span>
         </div>
 
@@ -629,6 +682,23 @@ export function MockPointCloudEditor() {
                 )}
               >
                 <Icon className="size-3.5" />
+              </span>
+            ))}
+          </div>
+          {/* 3D objects sub-tabs: underline strip, icon + label */}
+          <div className="mx-1.5 mb-1 grid grid-cols-4 border-b border-border">
+            {subtabs.map(({icon: Icon, label, active}) => (
+              <span
+                key={label}
+                className={cn(
+                  '-mb-px flex h-6 min-w-0 items-center justify-center gap-0.5 border-b-2 px-0.5 text-[9px]',
+                  active
+                    ? 'border-primary text-foreground'
+                    : 'border-transparent text-muted-foreground',
+                )}
+              >
+                <Icon className="size-3 shrink-0" />
+                <span className="min-w-0 truncate">{label}</span>
               </span>
             ))}
           </div>

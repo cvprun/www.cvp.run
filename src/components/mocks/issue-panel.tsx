@@ -1,4 +1,4 @@
-import {Check, ChevronDown, MessageSquare, Send} from 'lucide-react';
+import {Check, ChevronDown, MessageSquare, Send, Trash2} from 'lucide-react';
 
 import {MockPanelFrame} from '@/components/mocks/panel-frame';
 import {useLanguage} from '@/lib/i18n';
@@ -125,7 +125,9 @@ export function MockIssuePanel() {
         {/* issues tab */}
         <aside className="flex w-full shrink-0 flex-col border-t border-border bg-card @2xl:w-72 @2xl:border-t-0 @2xl:border-l">
           <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
-            <span className="text-[11px] text-muted-foreground">{m.headerOpen}</span>
+            <span className="text-[11px] font-medium text-muted-foreground">
+              {m.headerOpen}
+            </span>
             <span className="flex gap-0.5 text-[10px]">
               <span className="rounded px-1.5 py-0.5 text-muted-foreground">
                 {m.filterAll}
@@ -161,14 +163,18 @@ export function MockIssuePanel() {
                 <span className="ml-1.5 text-[9px] text-muted-foreground">
                   {m.openAgo}
                 </span>
-                <p className="mt-0.5 text-[11px] leading-snug">{m.comment1}</p>
+                <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+                  {m.comment1}
+                </p>
               </div>
               <div>
                 <span className="text-[10px] font-medium">{m.me}</span>
                 <span className="ml-1.5 text-[9px] text-muted-foreground">
                   {m.openAgo}
                 </span>
-                <p className="mt-0.5 text-[11px] leading-snug">{m.comment2}</p>
+                <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+                  {m.comment2}
+                </p>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="min-h-7 flex-1 rounded border border-border px-2 py-1.5 text-[10px] text-muted-foreground">
@@ -183,6 +189,9 @@ export function MockIssuePanel() {
             <div className="mt-2 flex items-center gap-2">
               <span className="flex h-7 flex-1 items-center justify-center rounded-md bg-primary text-[11px] font-medium text-primary-foreground">
                 {m.resolve}
+              </span>
+              <span className="flex h-7 items-center px-2 text-muted-foreground">
+                <Trash2 className="size-3.5" />
               </span>
             </div>
           </div>

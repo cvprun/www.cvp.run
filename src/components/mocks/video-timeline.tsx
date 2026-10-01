@@ -10,7 +10,7 @@ import {
   Shapes,
   SkipBack,
   SkipForward,
-  SlidersHorizontal,
+  Settings2,
   Tags,
   Boxes as BoxesIcon,
 } from 'lucide-react';
@@ -229,7 +229,7 @@ function Polygon({shape}: {shape: Shape}) {
 }
 
 export function MockVideoTimeline() {
-  const {t} = useLanguage();
+  const {t, lang} = useLanguage();
   const m = t.mocks.timeline;
   const e = t.mocks.editor;
 
@@ -237,10 +237,10 @@ export function MockVideoTimeline() {
 
   const tabs = [
     {icon: BoxesIcon, label: e.tabObjects, active: true},
-    {icon: SlidersHorizontal, label: e.tabProperties, active: false},
     {icon: Shapes, label: e.tabClasses, active: false},
     {icon: Tags, label: e.tabTags, active: false},
     {icon: MessagesSquare, label: e.tabIssues, active: false},
+    {icon: Settings2, label: lang === 'ko' ? '설정' : 'Settings', active: false},
   ];
 
   return (
@@ -395,14 +395,14 @@ export function MockVideoTimeline() {
         </div>
 
         {/* objects panel — tracked instances, video mode */}
-        <aside className="hidden w-52 shrink-0 flex-col border-l border-border bg-muted/30 @3xl:flex">
-          <div className="grid grid-cols-5 gap-0.5 p-1.5">
+        <aside className="hidden w-52 shrink-0 flex-col border-l border-border bg-sidebar @3xl:flex">
+          <div className="m-1.5 grid grid-cols-5 gap-0.5 rounded-md bg-muted p-0.5">
             {tabs.map(({icon: Icon, label, active}) => (
               <span
                 key={label}
                 title={label}
                 className={cn(
-                  'flex h-8 items-center justify-center rounded',
+                  'flex h-7 items-center justify-center rounded',
                   active ? 'bg-background shadow-sm' : 'text-muted-foreground',
                 )}
               >

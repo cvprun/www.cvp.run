@@ -1,7 +1,7 @@
-import {ArrowLeft, Play, Save, Search, Square} from 'lucide-react';
+import {GripVertical, LayoutGrid, Play, Plus, Save, Search, Square} from 'lucide-react';
 import type {CSSProperties, ReactNode} from 'react';
 
-import {MockChrome, MockWindow} from '@/components/mocks/mock-ui';
+import {MockAppFrame, MockButton} from '@/components/mocks/app-frame';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
@@ -18,6 +18,43 @@ const PORT = {
   annotation: '#F97316',
 } as const;
 const EXEC_RUNNING = '#FACC15';
+const PORT_FLOAT = '#A3D977';
+const PORT_STRING = '#F0B53D';
+
+const COPY = {
+  ko: {layout: '레이아웃', variables: '변수'},
+  en: {layout: 'Layout', variables: 'Variables'},
+} as const;
+
+function VariableCard({
+  color,
+  name,
+  type,
+  value,
+}: {
+  color: string;
+  name: string;
+  type: string;
+  value: string;
+}) {
+  return (
+    <div className="space-y-1 rounded-sm border border-border bg-background p-1.5">
+      <div className="flex items-center gap-1">
+        <GripVertical className="size-3 shrink-0 text-muted-foreground" />
+        <span className="size-2 shrink-0 rounded-full" style={{background: color}} />
+        <span className="truncate font-mono text-[10px]">{name}</span>
+      </div>
+      <div className="flex items-center gap-1 text-[9px]">
+        <span className="rounded border border-border px-1 py-0.5 text-muted-foreground">
+          {type}
+        </span>
+        <span className="min-w-0 flex-1 truncate rounded border border-border px-1 py-0.5 font-mono">
+          {value}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function ExecPin() {
   return (
@@ -144,34 +181,42 @@ function PaletteGroup({
 }
 
 export function MockGraphEditor() {
-  const {t} = useLanguage();
+  const {t, lang} = useLanguage();
   const m = t.mocks.graphEditor;
+  const c = COPY[lang];
 
   return (
-    <MockWindow>
-      <MockChrome />
-      {/* editor header */}
-      <div className="flex h-10 items-center gap-2 border-b border-border bg-background px-3 text-xs">
-        <ArrowLeft className="size-3.5 text-muted-foreground" />
-        <span className="font-mono text-[11px] font-medium">{m.graphName}</span>
-        <span className="ml-2 flex items-center gap-1 rounded-md bg-emerald-600 px-2 py-1 text-[10px] font-medium text-white">
-          <Play className="size-3" />
-          {m.run}
-        </span>
-        <span className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[10px] text-muted-foreground">
-          <Square className="size-3" />
-          {m.stop}
-        </span>
-        <span className="ml-auto text-[10px] text-muted-foreground">{m.autosaved}</span>
-        <span className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[10px] text-muted-foreground">
-          <Save className="size-3" />
+    <MockAppFrame
+      activeNav="graphs"
+      crumbs={[{label: m.graphName}]}
+      title={m.graphName}
+      meta={<span className="text-[10px] text-muted-foreground">{m.autosaved}</span>}
+      actions={
+        <MockButton icon={Save} variant="default">
           {m.save}
-        </span>
+        </MockButton>
+      }
+      fill
+    >
+      {/* editor toolbar */}
+      <div className="flex h-9 items-center gap-1.5 border-b border-border px-4">
+        <MockButton icon={Play} className="bg-emerald-600 text-white">
+          {m.run}
+        </MockButton>
+        <MockButton icon={Square} className="bg-destructive text-white">
+          {m.stop}
+        </MockButton>
+        <MockButton
+          icon={LayoutGrid}
+          className="bg-secondary text-secondary-foreground"
+        >
+          {c.layout}
+        </MockButton>
       </div>
 
-      <div className="flex h-[24rem] sm:h-[26rem]">
+      <div className="flex h-[23rem]">
         {/* node palette */}
-        <aside className="hidden w-40 shrink-0 flex-col border-r border-border bg-card md:flex">
+        <aside className="hidden w-40 shrink-0 flex-col border-r border-border bg-card @2xl:flex">
           <div className="p-2">
             <span className="flex h-7 items-center gap-1.5 rounded-md border border-border bg-background px-2 text-[10px] text-muted-foreground">
               <Search className="size-3" />
@@ -200,6 +245,28 @@ export function MockGraphEditor() {
               items={[m.nodeLoadImage, m.nodeRunModel, m.nodeSaveAnn]}
             />
           </div>
+          <div className="border-t border-border">
+            <div className="flex h-7 items-center justify-between px-2">
+              <span className="text-[9px] tracking-wide text-muted-foreground uppercase">
+                {c.variables}
+              </span>
+              <Plus className="size-3 text-muted-foreground" />
+            </div>
+            <div className="space-y-1.5 px-2 pb-2">
+              <VariableCard
+                color={PORT_FLOAT}
+                name="threshold"
+                type="float"
+                value="0.5"
+              />
+              <VariableCard
+                color={PORT_STRING}
+                name="outputDir"
+                type="string"
+                value="/labels"
+              />
+            </div>
+          </div>
         </aside>
 
         {/* canvas + log */}
@@ -216,7 +283,7 @@ export function MockGraphEditor() {
             <svg className="absolute inset-0 h-full w-full">
               {/* exec: start → load image */}
               <path
-                d="M 122 52 C 150 52, 150 46, 178 46"
+                d="M 122 52 C 135 52, 135 46, 148 46"
                 fill="none"
                 style={{stroke: 'var(--foreground)'}}
                 strokeWidth={2.5}
@@ -224,7 +291,7 @@ export function MockGraphEditor() {
               />
               {/* exec (running): load image → run model */}
               <path
-                d="M 322 46 C 350 46, 340 120, 368 120"
+                d="M 292 46 C 310 46, 296 120, 314 120"
                 fill="none"
                 stroke={EXEC_RUNNING}
                 strokeWidth={2.5}
@@ -233,12 +300,12 @@ export function MockGraphEditor() {
                 <animateMotion
                   dur="1.2s"
                   repeatCount="indefinite"
-                  path="M 322 46 C 350 46, 340 120, 368 120"
+                  path="M 292 46 C 310 46, 296 120, 314 120"
                 />
               </circle>
               {/* exec: run model → save annotations */}
               <path
-                d="M 512 120 C 540 120, 530 60, 558 60"
+                d="M 458 120 C 476 120, 462 60, 480 60"
                 fill="none"
                 style={{stroke: 'var(--foreground)'}}
                 strokeWidth={2.5}
@@ -246,14 +313,14 @@ export function MockGraphEditor() {
               />
               {/* data: image → run model */}
               <path
-                d="M 322 66 C 352 66, 338 140, 368 140"
+                d="M 292 66 C 310 66, 296 140, 314 140"
                 fill="none"
                 stroke={PORT.image}
                 strokeWidth={1.5}
               />
               {/* data: annotations → save */}
               <path
-                d="M 512 140 C 542 140, 528 80, 558 80"
+                d="M 458 140 C 476 140, 462 80, 480 80"
                 fill="none"
                 stroke={PORT.annotation}
                 strokeWidth={1.5}
@@ -263,7 +330,7 @@ export function MockGraphEditor() {
             <EventNode style={{left: 8, top: 30}} title={m.nodeStart} />
 
             <BlueprintNode
-              style={{left: 180, top: 24}}
+              style={{left: 150, top: 24}}
               title={m.nodeLoadImage}
               color={CAT.cvp}
             >
@@ -289,7 +356,7 @@ export function MockGraphEditor() {
             </BlueprintNode>
 
             <BlueprintNode
-              style={{left: 370, top: 98}}
+              style={{left: 316, top: 98}}
               title={m.nodeRunModel}
               color={CAT.cvp}
               executing
@@ -328,7 +395,7 @@ export function MockGraphEditor() {
             </BlueprintNode>
 
             <BlueprintNode
-              style={{left: 560, top: 38}}
+              style={{left: 482, top: 38}}
               title={m.nodeSaveAnn}
               color={CAT.cvp}
             >
@@ -376,7 +443,7 @@ export function MockGraphEditor() {
         </div>
 
         {/* inspector */}
-        <aside className="hidden w-40 shrink-0 flex-col border-l border-border bg-card lg:flex">
+        <aside className="hidden w-40 shrink-0 flex-col border-l border-border bg-card @6xl:flex">
           <div className="border-b border-border px-3 py-2 text-[11px] font-semibold">
             {m.inspector}
           </div>
@@ -413,6 +480,6 @@ export function MockGraphEditor() {
           </div>
         </aside>
       </div>
-    </MockWindow>
+    </MockAppFrame>
   );
 }

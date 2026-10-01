@@ -18,7 +18,7 @@ export const common = {
       images: {
         label: '이미지 라벨링',
         nav: '이미지',
-        tagline: '박스 · 폴리곤 · 키포인트를 빠르게',
+        tagline: '13종 도구 · 매직 완드 · 자동 라벨링',
       },
       videos: {
         label: '비디오 라벨링',
@@ -28,12 +28,22 @@ export const common = {
       pointClouds: {
         label: '3D 포인트클라우드',
         nav: '3D 포인트클라우드',
-        tagline: 'BEV · 인스턴스 · 자동 분할',
+        tagline: '큐보이드 · 세그먼트 · Pointcept AI',
+      },
+      timeSeries: {
+        label: '시계열 라벨링',
+        nav: '시계열',
+        tagline: '센서 · 설비 신호의 구간 · 이벤트 라벨',
       },
       datasets: {
         label: '데이터셋 관리',
         nav: '데이터셋',
-        tagline: '이미지 · 비디오 · 3D를 한 곳에서',
+        tagline: '업로드 위저드 · QA & 통계 · 내보내기',
+      },
+      training: {
+        label: '학습 & AI 라벨링',
+        nav: '학습 & AI',
+        tagline: '훈련 위저드 · 내 GPU로 추론 · 실험 추적',
       },
       review: {
         label: '리뷰 & QA',
@@ -43,62 +53,77 @@ export const common = {
       collaboration: {
         label: '팀 협업',
         nav: '팀 협업',
-        tagline: '멤버 · 위키 · 파일 · 동영상',
+        tagline: '위키 · 파일 · 동영상 · 멤버',
       },
       developers: {
         label: '개발자',
         nav: '개발자',
-        tagline: '토큰 API · 제품키 라이선싱',
-      },
-      apps: {
-        label: '어플리케이션',
-        nav: '어플리케이션',
-        tagline: '50+ CV 유틸리티 도구 모음',
-      },
-      graphs: {
-        label: '그래프',
-        nav: '그래프',
-        tagline: '노드 기반 비전 파이프라인',
+        tagline: 'CLI · MLflow 토큰 · 제품키',
       },
       agents: {
         label: '에이전트',
         nav: '에이전트',
-        tagline: '엣지 장비 원격 실행',
+        tagline: '내 장비에서 도는 AI · 산업 앱',
       },
-      clusters: {
-        label: '클러스터',
-        nav: '클러스터',
-        tagline: 'Kubernetes 클러스터 제어',
+      collectors: {
+        label: '수집기',
+        nav: '수집기',
+        tagline: '현장 카메라 · 센서 데이터 수집',
       },
-      vms: {
-        label: '관제 (VMS)',
-        nav: '관제 (VMS)',
-        tagline: 'CCTV 통합 관제',
-      },
-      manufacturing: {
-        label: '제조 (MES)',
-        nav: '제조 (MES)',
-        tagline: '작업지시 · 추적성 · 설비',
+      twin: {
+        label: '디지털 트윈',
+        nav: '디지털 트윈',
+        tagline: '3D 공장 · 실시간 바인딩 · VR',
       },
       mlflow: {
         label: 'MLOps',
         nav: 'MLOps',
-        tagline: 'MLflow 실험 추적 · 모델 레지스트리',
+        tagline: 'MLflow 호환 추적 · 모델 레지스트리',
+      },
+      graphs: {
+        label: '그래프',
+        nav: '그래프',
+        tagline: '블루프린트식 비전 파이프라인',
       },
       grids: {
         label: '그리드',
         nav: '그리드',
-        tagline: '스프레드시트형 데이터베이스',
+        tagline: '7가지 보기의 스프레드시트형 DB',
       },
       maps: {
         label: '지도',
         nav: '지도',
-        tagline: 'GIS 레이어 · 피처 드로잉',
+        tagline: '레이어 · 피처 드로잉',
       },
       meetings: {
-        label: '회의록',
-        nav: '회의록',
-        tagline: '녹음 → 전사 → 요약 자동화',
+        label: '회의 · 회의록',
+        nav: '회의 · 회의록',
+        tagline: '화상 회의 · 녹음 → 전사 → 요약',
+      },
+      signatures: {
+        label: '전자서명',
+        nav: '전자서명',
+        tagline: '결재선 · 서명 원장 · 무결성 검증',
+      },
+      memory: {
+        label: '메모리 맵',
+        nav: '메모리 맵',
+        tagline: 'PLC 레지스터를 닮은 공유 메모리',
+      },
+      registry: {
+        label: '레지스트리',
+        nav: '레지스트리',
+        tagline: 'Docker · Helm · pip · npm',
+      },
+      apps: {
+        label: '어플리케이션',
+        nav: '어플리케이션',
+        tagline: '브라우저 안의 CV · 개발 유틸리티',
+      },
+      store: {
+        label: '스토어',
+        nav: '스토어',
+        tagline: '위키 · 그리드 · 데이터셋 마켓플레이스',
       },
     },
 
@@ -142,13 +167,13 @@ export const common = {
 
     footer: {
       description:
-        'CVP — 이미지, 비디오, 3D 포인트클라우드를 하나의 워크스페이스에서 라벨링하고 관리하는 비전 데이터 플랫폼.',
+        'CVP — 이미지·비디오·3D·시계열 데이터를 수집하고, 라벨링하고, 학습까지 잇는 비전 데이터 플랫폼.',
       labelingTitle: '라벨링',
       platformTitle: '플랫폼',
       moreTitle: '더 보기',
       companyTitle: '제품',
       pricing: '가격',
-      roadmapNote: '에이전트 · MLOps · 관제 등 더 많은 기능을 준비하고 있습니다.',
+      roadmapNote: '베타 — 기능과 가격은 정식 출시 전에 바뀔 수 있습니다.',
       copyright: '© 2026 CVP. All rights reserved.',
     },
 
@@ -159,7 +184,7 @@ export const common = {
     },
 
     misc: {
-      mockNote: '* 실제 컴포넌트로 재현한 화면입니다.',
+      mockNote: '* 실제 앱 화면을 재현한 데모입니다.',
       dataNote:
         '사진·영상·포인트 클라우드는 공개 데이터셋의 실제 데이터입니다 — Open Images(CC BY 2.0) · COCO(CC BY 4.0) · DAVIS 2017(CC BY 4.0) · Wikimedia Commons(CC0) · PandaSet(CC0)',
       betaBadge: '베타',
@@ -183,87 +208,112 @@ export const common = {
       images: {
         label: 'Image labeling',
         nav: 'Images',
-        tagline: 'Boxes, polygons, and keypoints — fast',
+        tagline: '13 tools · magic wand · auto-label',
       },
       videos: {
         label: 'Video labeling',
-        nav: 'Videos',
-        tagline: 'Timeline, keyframes, track interpolation',
+        nav: 'Video',
+        tagline: 'Timeline · keyframes · track interpolation',
       },
       pointClouds: {
         label: '3D point clouds',
         nav: '3D point clouds',
-        tagline: 'BEV, instances, auto-segmentation',
+        tagline: 'Cuboids · segments · Pointcept AI',
+      },
+      timeSeries: {
+        label: 'Time-series labeling',
+        nav: 'Time series',
+        tagline: 'Ranges and events on sensor signals',
       },
       datasets: {
         label: 'Dataset management',
         nav: 'Datasets',
-        tagline: 'Images, video, and 3D in one place',
+        tagline: 'Upload wizard · QA & stats · export',
+      },
+      training: {
+        label: 'Training & AI labeling',
+        nav: 'Training & AI',
+        tagline: 'Training wizard · inference on your GPU',
       },
       review: {
         label: 'Review & QA',
         nav: 'Review & QA',
-        tagline: 'Pin comments for label quality',
+        tagline: 'Label quality through pinned comments',
       },
       collaboration: {
         label: 'Team collaboration',
         nav: 'Collaboration',
-        tagline: 'Members, wiki, files, and video',
+        tagline: 'Wiki · files · video · members',
       },
       developers: {
         label: 'Developers',
         nav: 'Developers',
-        tagline: 'Token API and license keys',
-      },
-      apps: {
-        label: 'Applications',
-        nav: 'Applications',
-        tagline: '50+ CV utility tools',
-      },
-      graphs: {
-        label: 'Graphs',
-        nav: 'Graphs',
-        tagline: 'Node-based vision pipelines',
+        tagline: 'CLI · MLflow tokens · product keys',
       },
       agents: {
         label: 'Agents',
         nav: 'Agents',
-        tagline: 'Remote execution on edge devices',
+        tagline: 'AI and industrial apps on your machines',
       },
-      clusters: {
-        label: 'Clusters',
-        nav: 'Clusters',
-        tagline: 'Kubernetes cluster control',
+      collectors: {
+        label: 'Collectors',
+        nav: 'Collectors',
+        tagline: 'Camera and sensor data from the floor',
       },
-      vms: {
-        label: 'Monitoring (VMS)',
-        nav: 'Monitoring (VMS)',
-        tagline: 'Unified CCTV monitoring',
-      },
-      manufacturing: {
-        label: 'Manufacturing (MES)',
-        nav: 'Manufacturing (MES)',
-        tagline: 'Work orders · traceability · equipment',
+      twin: {
+        label: 'Digital twin',
+        nav: 'Digital twin',
+        tagline: '3D plants · live bindings · VR',
       },
       mlflow: {
         label: 'MLOps',
         nav: 'MLOps',
-        tagline: 'MLflow tracking · model registry',
+        tagline: 'MLflow-compatible tracking · model registry',
+      },
+      graphs: {
+        label: 'Graphs',
+        nav: 'Graphs',
+        tagline: 'Blueprint-style vision pipelines',
       },
       grids: {
         label: 'Grids',
         nav: 'Grids',
-        tagline: 'Spreadsheet-style database',
+        tagline: 'A spreadsheet database with 7 views',
       },
       maps: {
         label: 'Maps',
         nav: 'Maps',
-        tagline: 'GIS layers · feature drawing',
+        tagline: 'Layers · feature drawing',
       },
       meetings: {
         label: 'Meetings',
         nav: 'Meetings',
-        tagline: 'Record → transcribe → summarize',
+        tagline: 'Video calls · record → transcribe → summarize',
+      },
+      signatures: {
+        label: 'E-signatures',
+        nav: 'E-signatures',
+        tagline: 'Approval lines · signature ledger',
+      },
+      memory: {
+        label: 'Memory maps',
+        nav: 'Memory maps',
+        tagline: 'Shared memory shaped like PLC registers',
+      },
+      registry: {
+        label: 'Registry',
+        nav: 'Registry',
+        tagline: 'Docker · Helm · pip · npm',
+      },
+      apps: {
+        label: 'Applications',
+        nav: 'Applications',
+        tagline: 'CV and developer utilities in the browser',
+      },
+      store: {
+        label: 'Store',
+        nav: 'Store',
+        tagline: 'A marketplace for wikis, grids, and datasets',
       },
     },
 
@@ -307,13 +357,14 @@ export const common = {
 
     footer: {
       description:
-        'CVP — the vision data platform for labeling and managing images, video, and 3D point clouds in one workspace.',
+        'CVP — the vision data platform that collects, labels, and trains on images, video, 3D, and time series.',
       labelingTitle: 'Labeling',
       platformTitle: 'Platform',
       moreTitle: 'More',
       companyTitle: 'Product',
       pricing: 'Pricing',
-      roadmapNote: 'Agents, MLOps, monitoring, and more are on the roadmap.',
+      roadmapNote:
+        'Beta — features and pricing may change before general availability.',
       copyright: '© 2026 CVP. All rights reserved.',
     },
 
@@ -324,7 +375,7 @@ export const common = {
     },
 
     misc: {
-      mockNote: '* Recreated with real product components.',
+      mockNote: '* A demo recreated from the real app screen.',
       dataNote:
         'Photos, footage, and point clouds are real data from open datasets — Open Images (CC BY 2.0) · COCO (CC BY 4.0) · DAVIS 2017 (CC BY 4.0) · Wikimedia Commons (CC0) · PandaSet (CC0)',
       betaBadge: 'Beta',

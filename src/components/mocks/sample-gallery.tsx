@@ -1,14 +1,16 @@
 import {
+  ChartColumn,
   Check,
+  Download,
+  Upload,
   CircleCheck,
-  Database,
   File,
   FileCheck,
   FileImage,
   FilePenLine,
   Images,
+  Layers,
   MessageSquareWarning,
-  Plus,
   Shapes,
   Tags,
   Trash2,
@@ -16,7 +18,7 @@ import {
 } from 'lucide-react';
 
 import {ViewModeSwitcher} from '@/components/mocks/dataset-grid';
-import {MockAppFrame} from '@/components/mocks/app-frame';
+import {MockAppFrame, MockButton} from '@/components/mocks/app-frame';
 import {Swatch} from '@/components/mocks/mock-ui';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
@@ -80,17 +82,17 @@ function StatusBadge({status}: {status: SampleStatus}) {
     in_progress: {
       icon: FilePenLine,
       label: m.statusInProgress,
-      className: 'bg-muted text-muted-foreground',
+      className: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
     },
     labeled: {
       icon: FileImage,
       label: m.statusLabeled,
-      className: 'bg-primary text-primary-foreground',
+      className: 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400',
     },
     reviewed: {
       icon: FileCheck,
       label: m.statusReviewed,
-      className: 'bg-primary text-primary-foreground',
+      className: 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400',
     },
   };
   const {icon: Icon, label, className} = map[status];
@@ -135,61 +137,34 @@ function StatChip({
 export function MockSampleGallery() {
   const {t} = useLanguage();
   const m = t.mocks.datasets;
-  const f = t.mocks.frame;
   const g = m.gallery;
 
   const tabs = [
     {icon: Images, label: g.tabSamples, active: true},
-    {icon: Shapes, label: g.tabClasses, active: false},
-    {icon: Tags, label: g.tabTags, active: false},
+    {icon: Upload, label: g.tabUpload},
+    {icon: Download, label: g.tabDownload},
+    {icon: Shapes, label: g.tabClasses},
+    {icon: Tags, label: g.tabTags},
+    {icon: ChartColumn, label: g.tabQa},
   ];
 
   return (
-    <MockAppFrame activeNav="datasets">
-      {/* dataset detail header */}
-      <p className="text-[10px] text-muted-foreground">
-        {f.nav.datasets} / {g.datasetName} / {g.breadcrumbSamples}
-      </p>
-      <div className="mt-1.5 flex flex-wrap items-end justify-between gap-2">
-        <span className="flex min-w-0 items-center gap-2">
-          <Database className="size-5 shrink-0 text-muted-foreground" />
-          <h3 className="truncate text-xl font-semibold tracking-tight">
-            {g.datasetName}
-          </h3>
-        </span>
-        <span className="flex shrink-0 items-center gap-1.5">
-          <span className="hidden items-center gap-1 rounded-md border border-destructive/40 px-2 py-1.5 text-[11px] text-destructive @2xl:flex">
-            <Trash2 className="size-3" />
+    <MockAppFrame
+      activeNav="datasets"
+      crumbs={[{icon: Images, label: g.datasetName}]}
+      title={g.datasetName}
+      titleIcon={Images}
+      actions={
+        <span className="hidden @2xl:flex">
+          <MockButton icon={Trash2} variant="destructive">
             {g.deleteSelected('2')}
-          </span>
-          <ViewModeSwitcher active="grid" />
-          <span className="flex items-center gap-1 rounded-md bg-primary px-2.5 py-1.5 text-[11px] font-medium text-primary-foreground">
-            <Plus className="size-3" />
-            {g.upload}
-          </span>
+          </MockButton>
         </span>
-      </div>
-
-      {/* dataset detail tabs */}
-      <nav className="mt-3 flex gap-1 border-b border-border">
-        {tabs.map(({icon: Icon, label, active}) => (
-          <span
-            key={label}
-            className={cn(
-              '-mb-px flex items-center gap-1.5 border-b-2 px-3 py-1.5 text-[11px] font-medium',
-              active
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground',
-            )}
-          >
-            <Icon className="size-3" />
-            {label}
-          </span>
-        ))}
-      </nav>
-
+      }
+      tabs={tabs}
+    >
       {/* labeling statistics */}
-      <div className="mt-3 rounded-lg border border-border bg-card p-3">
+      <div className="rounded-md border border-border bg-card p-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold">{m.statsTitle}</span>
           <span className="text-[10px] text-muted-foreground">{m.annotations}</span>
@@ -230,8 +205,14 @@ export function MockSampleGallery() {
         </div>
       </div>
 
+      {/* toolbar: label overlay toggle + view switcher */}
+      <div className="mt-3 flex items-center justify-end gap-1.5">
+        <MockButton icon={Layers}>{g.showLabels}</MockButton>
+        <ViewModeSwitcher active="grid" />
+      </div>
+
       {/* sample grid — real Open Images photos */}
-      <div className="mt-3 grid grid-cols-3 gap-2 @2xl:grid-cols-4 @5xl:grid-cols-6">
+      <div className="mt-2 grid grid-cols-3 gap-2 @2xl:grid-cols-4 @5xl:grid-cols-6">
         {SAMPLES.map(sample => (
           <div
             key={sample.file}

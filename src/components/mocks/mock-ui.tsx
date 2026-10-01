@@ -19,7 +19,7 @@ export function MockWindow({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-xl border border-border bg-background text-left',
+        'overflow-hidden [--radius:0.375rem] rounded-xl border border-border bg-background text-left',
         'shadow-2xl shadow-black/10 select-none',
         className,
       )}

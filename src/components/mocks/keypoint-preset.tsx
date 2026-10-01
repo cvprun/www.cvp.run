@@ -1,10 +1,19 @@
-import {Link2, MousePointer2, Plus} from 'lucide-react';
+import {
+  Link2,
+  Maximize,
+  Minus,
+  MousePointer2,
+  PanelRightClose,
+  Plus,
+} from 'lucide-react';
 
 import {MockPanelFrame} from '@/components/mocks/panel-frame';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
 const PRESET_COLOR = '#0070f3';
+
+const COPY = {ko: {help: '도움말'}, en: {help: 'Help'}} as const;
 
 /** COCO-17 joints as (x%, y%) on the canvas. */
 const JOINTS: [number, number, string][] = [
@@ -47,12 +56,13 @@ const BONES: [number, number][] = [
 ];
 
 export function MockKeypointPreset() {
-  const {t} = useLanguage();
+  const {t, lang} = useLanguage();
   const m = t.mocks.keypoints;
+  const c = COPY[lang];
 
   return (
-    <MockPanelFrame>
-      <div className="flex h-[19rem] sm:h-[22rem]">
+    <MockPanelFrame className="@container">
+      <div className="flex h-[21rem]">
         {/* canvas */}
         <div
           className="relative min-w-0 flex-1 overflow-hidden bg-background"
@@ -62,16 +72,30 @@ export function MockKeypointPreset() {
             backgroundSize: '20px 20px',
           }}
         >
-          {/* mode toggle */}
-          <div className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-md border border-border bg-background/95 p-1 shadow-sm">
-            <span className="flex items-center gap-1 rounded bg-primary px-2 py-1 text-[10px] text-primary-foreground">
-              <MousePointer2 className="size-3" />
-              {m.move}
+          {/* mode toggle (react-flow Panel top-left) */}
+          <div className="absolute top-2 left-2 z-10 rounded-md border border-border bg-background/95 p-1 shadow-sm">
+            <span className="flex items-center rounded-md border border-border">
+              <span className="flex items-center gap-1 rounded-l-md bg-primary px-2 py-1 text-[10px] font-medium text-primary-foreground">
+                <MousePointer2 className="size-3" />
+                {m.move}
+              </span>
+              <span className="flex items-center gap-1 rounded-r-md px-2 py-1 text-[10px] font-medium">
+                <Link2 className="size-3" />
+                {m.connect}
+              </span>
             </span>
-            <span className="flex items-center gap-1 rounded px-2 py-1 text-[10px] text-muted-foreground">
-              <Link2 className="size-3" />
-              {m.connect}
-            </span>
+          </div>
+
+          {/* react-flow Controls (bottom-left) */}
+          <div className="absolute bottom-2 left-2 z-10 flex flex-col overflow-hidden rounded border border-border bg-background shadow-sm">
+            {[Plus, Minus, Maximize].map((Icon, i) => (
+              <span
+                key={i}
+                className="flex size-5 items-center justify-center border-b border-border text-muted-foreground last:border-b-0"
+              >
+                <Icon className="size-3" />
+              </span>
+            ))}
           </div>
 
           {/* bones */}
@@ -111,29 +135,35 @@ export function MockKeypointPreset() {
         </div>
 
         {/* side panel */}
-        <aside className="hidden w-44 shrink-0 flex-col border-l border-border bg-card sm:flex">
-          <div className="flex gap-1 border-b border-border px-2 py-1.5 text-[10px]">
-            <span className="rounded px-1.5 py-1 text-muted-foreground">
-              {m.tabProperties}
-            </span>
-            <span className="rounded bg-muted px-1.5 py-1 font-medium">
-              {m.tabJoints}
-              <span className="ml-1 rounded bg-background px-1 tabular-nums">
-                {m.jointCount}
+        <aside className="hidden w-56 shrink-0 flex-col border-l border-border bg-card @md:flex">
+          <div className="flex items-center gap-1 border-b border-border px-1.5 py-1.5 text-[10px]">
+            <span className="flex min-w-0 items-center rounded-md bg-muted p-0.5">
+              <span className="rounded px-1.5 py-0.5 text-muted-foreground">
+                {m.tabProperties}
+              </span>
+              <span className="rounded bg-background px-1.5 py-0.5 font-medium shadow-sm">
+                {m.tabJoints}
+                <span className="ml-1 rounded bg-muted px-1 tabular-nums">
+                  {m.jointCount}
+                </span>
+              </span>
+              <span className="rounded px-1.5 py-0.5 text-muted-foreground">
+                {m.tabBones}
+              </span>
+              <span className="rounded px-1.5 py-0.5 text-muted-foreground">
+                {c.help}
               </span>
             </span>
-            <span className="rounded px-1.5 py-1 text-muted-foreground">
-              {m.tabBones}
-              <span className="ml-1 rounded bg-muted px-1 tabular-nums">
-                {m.boneCount}
-              </span>
+            <PanelRightClose className="ml-auto size-3.5 shrink-0 text-muted-foreground" />
+          </div>
+          <div className="p-1.5">
+            <span className="flex items-center justify-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-[10px] font-medium shadow-sm">
+              <Plus className="size-3" />
+              {m.addJoint}
             </span>
           </div>
-          <div className="border-b border-border px-3 py-2 text-[11px] font-medium">
-            {m.presetName}
-          </div>
-          <ul className="flex-1 space-y-0.5 overflow-hidden p-1.5">
-            {JOINTS.slice(0, 7).map(([, , name], i) => (
+          <ul className="flex-1 space-y-1 overflow-hidden px-1.5 pb-1.5">
+            {JOINTS.slice(0, 8).map(([, , name], i) => (
               <li
                 key={name}
                 className={cn(
@@ -151,12 +181,6 @@ export function MockKeypointPreset() {
               </li>
             ))}
           </ul>
-          <div className="border-t border-border p-2">
-            <span className="flex items-center justify-center gap-1 rounded-md border border-border px-2 py-1 text-[10px] text-muted-foreground">
-              <Plus className="size-3" />
-              {m.addJoint}
-            </span>
-          </div>
         </aside>
       </div>
     </MockPanelFrame>

@@ -1,4 +1,25 @@
-/** Terminal-style API example. Code is language-independent by design. */
+import type {ReactNode} from 'react';
+
+/**
+ * Terminal session using the real integration surfaces: the `cvp` CLI
+ * (docs/guides/cli.md in the app repo) and the project's MLflow-compatible
+ * tracking endpoint (docs/guides/mlflow-client.md). Commands are
+ * language-independent by design; outputs shown are only what the commands
+ * print verbatim (jq results).
+ */
+function Cmd({children}: {children: ReactNode}) {
+  return (
+    <span className="block">
+      <span className="text-neutral-500">$ </span>
+      {children}
+    </span>
+  );
+}
+
+function Comment({children}: {children: ReactNode}) {
+  return <span className="block text-neutral-500"># {children}</span>;
+}
+
 export function MockApiSnippet() {
   return (
     <div
@@ -11,51 +32,40 @@ export function MockApiSnippet() {
         <span className="size-2.5 rounded-full bg-green-400/80" />
         <span className="ml-2 font-mono text-[10px] text-neutral-500">terminal</span>
       </div>
-      <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed sm:text-xs">
+      <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-neutral-200 sm:text-xs">
         <code>
-          <span className="text-neutral-500">$ </span>
-          <span className="text-neutral-200">curl </span>
-          <span className="text-brand-cyan">
-            https://app.cvp.run/api/proj/&lt;project&gt;/datasets
-          </span>
-          {' \\\n'}
-          <span className="text-neutral-200">{'    -H '}</span>
-          <span className="text-violet-400">
-            &quot;Authorization: Bearer cvp_9f2a7b1c4e8d…&quot;
-          </span>
-          {'\n\n'}
-          <span className="text-neutral-500">{'{\n'}</span>
-          <span className="text-neutral-500">{'  '}</span>
-          <span className="text-sky-400">&quot;datasets&quot;</span>
-          <span className="text-neutral-500">: [</span>
+          <Comment>CLI — one binary, browser login</Comment>
+          <Cmd>
+            curl -fsSL{' '}
+            <span className="text-brand-cyan">https://app.cvp.run/cli/install.sh</span>{' '}
+            | sh
+          </Cmd>
+          <Cmd>cvp login</Cmd>
+          <Cmd>
+            cvp dataset upload <span className="text-amber-300">3f9c2a1e</span>{' '}
+            ./frames/*.jpg
+          </Cmd>
+          <Cmd>
+            cvp agent list <span className="text-violet-400">--json</span> | jq -r{' '}
+            <span className="text-emerald-400">
+              &apos;.[] | select(.status==&quot;active&quot;) | .name&apos;
+            </span>
+          </Cmd>
+          <span className="block text-neutral-400">gpu-node-01</span>
+          <span className="block text-neutral-400">line-02-edge</span>
           {'\n'}
-          <span className="text-neutral-500">{'    { '}</span>
-          <span className="text-sky-400">&quot;name&quot;</span>
-          <span className="text-neutral-500">: </span>
-          <span className="text-emerald-400">&quot;vehicle-detection-v3&quot;</span>
-          <span className="text-neutral-500">, </span>
-          <span className="text-sky-400">&quot;type&quot;</span>
-          <span className="text-neutral-500">: </span>
-          <span className="text-emerald-400">&quot;image&quot;</span>
-          <span className="text-neutral-500">, </span>
-          <span className="text-sky-400">&quot;samples&quot;</span>
-          <span className="text-neutral-500">: </span>
-          <span className="text-amber-300">1240</span>
-          <span className="text-neutral-500">{' },\n'}</span>
-          <span className="text-neutral-500">{'    { '}</span>
-          <span className="text-sky-400">&quot;name&quot;</span>
-          <span className="text-neutral-500">: </span>
-          <span className="text-emerald-400">&quot;warehouse-lidar&quot;</span>
-          <span className="text-neutral-500">, </span>
-          <span className="text-sky-400">&quot;type&quot;</span>
-          <span className="text-neutral-500">: </span>
-          <span className="text-emerald-400">&quot;point_cloud&quot;</span>
-          <span className="text-neutral-500">, </span>
-          <span className="text-sky-400">&quot;samples&quot;</span>
-          <span className="text-neutral-500">: </span>
-          <span className="text-amber-300">86</span>
-          <span className="text-neutral-500">{' }\n'}</span>
-          <span className="text-neutral-500">{'  ]\n}'}</span>
+          <Comment>MLflow — your training script, unchanged</Comment>
+          <Cmd>
+            export MLFLOW_TRACKING_URI=
+            <span className="text-brand-cyan">
+              https://app.cvp.run/api/proj/av-poc/mlflow
+            </span>
+          </Cmd>
+          <Cmd>
+            export MLFLOW_TRACKING_TOKEN=
+            <span className="text-violet-400">cvp_9f2a7b1c4e8d…</span>
+          </Cmd>
+          <Cmd>python train.py</Cmd>
         </code>
       </pre>
     </div>
