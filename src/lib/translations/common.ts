@@ -63,7 +63,7 @@ export const common = {
       agents: {
         label: '에이전트',
         nav: '에이전트',
-        tagline: '내 장비에서 도는 AI · 산업 앱',
+        tagline: '내 장비에서 실행되는 AI · 산업 앱',
       },
       collectors: {
         label: '수집기',
@@ -128,9 +128,9 @@ export const common = {
     },
 
     cta: {
-      title: '오늘 첫 라벨을 그려보세요',
+      title: '오늘 첫 라벨을 그려 보십시오',
       description:
-        '설치도, 영업 미팅도 없습니다. 무료 플랜으로 시작해 팀이 커지면 업그레이드하세요.',
+        '설치도, 영업 미팅도 없습니다. 무료 플랜으로 시작해 팀이 커지면 업그레이드할 수 있습니다.',
       primary: '무료로 시작',
       secondary: '가격 보기',
       comingSoonNote: 'app.cvp.run 정식 오픈을 준비하고 있습니다.',
@@ -138,14 +138,14 @@ export const common = {
 
     newsletter: {
       title: '뉴스레터',
-      description: '제품 소식과 업데이트를 이메일로 받아보세요.',
-      ctaLead: '뉴스레터로 새 기능 소식을 먼저 받아보세요.',
+      description: '제품 소식과 업데이트를 이메일로 전해 드립니다.',
+      ctaLead: '뉴스레터를 구독하면 새 기능 소식을 가장 먼저 받아 볼 수 있습니다.',
       emailLabel: '이메일 주소',
       emailPlaceholder: 'you@example.com',
       subscribe: '구독하기',
       submitting: '전송 중…',
-      success: '확인 메일을 보냈습니다. 받은편지함을 확인해 주세요.',
-      error: '요청에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+      success: '확인 메일을 보냈습니다. 받은편지함을 확인해 주십시오.',
+      error: '요청에 실패했습니다. 잠시 후 다시 시도해 주십시오.',
       confirmTitle: '뉴스레터 구독 확정',
       confirmDescription: '아래 버튼을 누르면 뉴스레터 구독이 확정됩니다.',
       confirmAction: '구독 확정하기',
@@ -154,7 +154,7 @@ export const common = {
         '이제 CVP 소식과 업데이트를 이메일로 받아보실 수 있습니다.',
       unsubscribeTitle: '뉴스레터 수신거부',
       unsubscribeDescription:
-        '아래 버튼을 누르면 더 이상 뉴스레터를 보내드리지 않습니다.',
+        '아래 버튼을 누르면 더 이상 뉴스레터를 발송하지 않습니다.',
       unsubscribeAction: '수신거부하기',
       unsubscribeSuccessTitle: '수신거부가 완료되었습니다',
       unsubscribeSuccessDescription:
@@ -162,7 +162,7 @@ export const common = {
       working: '처리 중…',
       invalidTitle: '링크가 유효하지 않습니다',
       invalidDescription:
-        '링크가 만료되었거나 이미 처리되었습니다. 필요하면 다시 가입을 시도해 주세요.',
+        '링크가 만료되었거나 이미 처리되었습니다. 필요한 경우 다시 구독을 신청해 주십시오.',
     },
 
     footer: {
@@ -173,13 +173,13 @@ export const common = {
       moreTitle: '더 보기',
       companyTitle: '제품',
       pricing: '가격',
-      roadmapNote: '베타 — 기능과 가격은 정식 출시 전에 바뀔 수 있습니다.',
+      roadmapNote: '베타 — 기능과 가격은 정식 출시 전에 변경될 수 있습니다.',
       copyright: '© 2026 CVP. All rights reserved.',
     },
 
     notFound: {
       title: '페이지를 찾을 수 없습니다',
-      description: '주소가 바뀌었거나 삭제된 페이지입니다.',
+      description: '주소가 변경되었거나 삭제된 페이지입니다.',
       back: '홈으로 돌아가기',
     },
 

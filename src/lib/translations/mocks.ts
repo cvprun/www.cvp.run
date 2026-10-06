@@ -129,8 +129,8 @@ export const mocks = {
         reviewer: 'reviewer',
         labeler: 'haneul',
         comment1:
-          '앞유리 너머에 서 있는 사람이 라벨링에서 빠졌어요. person 박스를 추가해 주세요.',
-        comment2: '가림이 60% 미만이라 라벨링 대상이 맞네요. 바로 추가하겠습니다.',
+          '앞유리 너머에 서 있는 사람이 라벨링에서 누락되었습니다. person 박스를 추가해 주십시오.',
+        comment2: '가림이 60% 미만이므로 라벨링 대상이 맞습니다. 바로 추가하겠습니다.',
         replyPlaceholder: '답글 입력…',
         resolve: '해결',
         resolvedAgo: '2h',
