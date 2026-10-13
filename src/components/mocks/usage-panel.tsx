@@ -19,7 +19,7 @@ const COPY = {
     total: '기간 합계',
     latest: '현재',
     metered: '종량 사용량',
-    meteredHint: '플랜 포함량을 넘긴 만큼만 크레딧에서 차감됩니다.',
+    meteredHint: '플랜 포함량을 초과한 만큼만 크레딧에서 차감됩니다.',
     monthly: '월간',
     overage: (v: string) => `초과 ${v}`,
     spend: '이번 달 과금',
@@ -29,7 +29,7 @@ const COPY = {
     costControl: '비용 제어 설정',
     quotas: '할당량',
     quotasHint:
-      '한도에 도달하면 새로 만드는 것만 막히고 기존 데이터는 그대로 남습니다.',
+      '한도에 도달하면 새 항목 생성만 제한되고 기존 데이터는 그대로 유지됩니다.',
     perGrid: '그리드 1개당 한도 · 가장 큰 그리드 기준',
     m: {
       agent_traffic: '에이전트 통신량',

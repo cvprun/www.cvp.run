@@ -23,13 +23,14 @@ const COPY = {
     datasetMatch: '이 데이터셋',
     scoreThreshold: '인스턴스 점수 하한',
     maxVoxels: '조각당 최대 복셀 수',
-    maxVoxelsHint: '비우면 에이전트 기본값을 씁니다. GPU 메모리가 부족하면 줄이세요.',
+    maxVoxelsHint:
+      '비워 두면 에이전트 기본값을 사용합니다. GPU 메모리가 부족하면 값을 줄이십시오.',
     mode: '기존 3D 세그멘테이션 처리',
     modeAdd: '추가',
-    modeAddHint: '기존 라벨은 두고, 새 인스턴스는 기존 번호 뒤에 이어 붙입니다.',
+    modeAddHint: '기존 라벨은 유지하고, 새 인스턴스는 기존 번호 뒤에 이어 붙입니다.',
     modeReplace: '대체',
     modeReplaceHint:
-      '기존 3D 세그멘테이션을 지우고 결과로 바꿉니다. 큐보이드 등 다른 도형은 그대로입니다.',
+      '기존 3D 세그멘테이션을 지우고 결과로 대체합니다. 큐보이드 등 다른 도형은 그대로 유지됩니다.',
     cancel: '취소',
     run: '실행',
     runs: ['사무실 3층 스캔 (3f9c2a1e)', '물류창고 A동 (b71e04d9)'],

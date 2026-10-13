@@ -75,11 +75,11 @@
   --sidebar-border: #e5e5e5;
 }
 
-/* app.cvp.run 과 같은 Geist(Vercel) 다크 팔레트. 여기가 defaultTheme="dark" 라
-   방문자가 처음 보는 화면이고, 이전 값(채도 0 / 배경 0.145 / 전경 0.985)은
-   Geist 가 아니라 stock shadcn 이라 제품 화면과 어긋났다. 세 가지 규칙(완전
-   중립 / 면이 아니라 선으로 분리 / 글자 등급화)과 바닥을 gray-100 에 두는
-   이유는 app.cvp.run/src/react-app/index.css 의 .dark 주석 참조. */
+/* app.cvp.run 과 같은 Geist(Vercel) 다크 팔레트. defaultTheme="dark" 이므로
+   방문자가 처음 보는 화면이 이 팔레트이다. 이전 값(채도 0 / 배경 0.145 / 전경
+   0.985)은 Geist 가 아닌 stock shadcn 값이어서 제품 화면과 어긋났다. 세 가지
+   규칙(완전한 중립 / 면이 아닌 선으로 분리 / 글자 등급화)과 바닥을 gray-100 에
+   두는 이유는 app.cvp.run/src/react-app/index.css 의 .dark 주석을 참조한다. */
 .dark {
   --background: #1a1a1a; /* gray-100 */
   --foreground: #ededed; /* gray-1000 */

@@ -26,7 +26,7 @@ const COPY = {
     install: '설치',
     create: '에이전트 생성',
     cardTitle: '에이전트',
-    cardDescription: '이 프로젝트에 연결된 에이전트를 관리하세요.',
+    cardDescription: '이 프로젝트에 연결된 에이전트를 관리합니다.',
     name: '이름',
     status: '상태',
     lastConnected: '마지막 연결',

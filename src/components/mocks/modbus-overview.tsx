@@ -48,7 +48,7 @@ const COPY = {
       latency: '수신 간격',
     },
     trafficTitle: '영역별 요청',
-    trafficSession: '이 화면을 연 뒤로 받은 기록 기준입니다.',
+    trafficSession: '이 화면을 연 이후 수신한 기록 기준입니다.',
     trafficCounts: (r: number, w: number, e: number) =>
       `읽기 ${r} · 쓰기 ${w} · 예외 ${e}`,
     kinds: {read: '읽기', write: '쓰기', exception: '예외'},

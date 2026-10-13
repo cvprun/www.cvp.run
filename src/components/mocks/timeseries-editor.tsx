@@ -48,7 +48,7 @@ const COPY = {
       ['기간', '168h'],
       ['결측', '0.2%'],
     ],
-    rulerHint: '여기를 끌면: 전체 채널',
+    rulerHint: '여기를 드래그하면: 전체 채널',
     classes: '클래스',
     selection: '선택한 라벨',
     start: '시작',

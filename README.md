@@ -43,9 +43,9 @@ CVP(Computer Vision Player) 제품 소개 사이트입니다.
 ./npm run deploy  # 빌드 후 wrangler pages deploy dist
 ```
 
-Pages 프로젝트 설정은 [`wrangler.jsonc`](./wrangler.jsonc)를 참고하세요.
+Pages 프로젝트 설정은 [`wrangler.jsonc`](./wrangler.jsonc)를 참고하십시오.
 
 ## 라이선스
 
-자세한 내용은 [LICENSE](./LICENSE) 파일을 참고하세요.
+자세한 내용은 [LICENSE](./LICENSE) 파일을 참고하십시오.
 **www.cvp.run**은 **MIT 라이선스**로 배포됩니다.

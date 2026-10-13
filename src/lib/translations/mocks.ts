@@ -136,7 +136,7 @@ export const mocks = {
         resolvedAgo: '2h',
         openAgo: '3m',
         newComment: '새 코멘트',
-        newCommentPlaceholder: '어노테이션에 대한 의견을 남겨주세요…',
+        newCommentPlaceholder: '어노테이션에 대한 의견 입력…',
         addComment: '코멘트 추가',
       },
 
@@ -201,7 +201,7 @@ export const mocks = {
         docH2a: '박스 라벨링 기준',
         docP1:
           '차량은 차체 전체를 포함하되, 사이드미러는 제외합니다. 가림이 60% 이상이면 라벨링하지 않습니다.',
-        docLi1: '트럭은 캐빈과 짐칸을 하나의 박스로 잡습니다.',
+        docLi1: '트럭은 캐빈과 짐칸을 하나의 박스로 라벨링합니다.',
         docLi2: '야간 이미지는 헤드라이트 번짐을 제외합니다.',
         docH2b: '키포인트',
         docP2: '보행자 키포인트는 COCO 17 스켈레톤 프리셋을 사용합니다.',
