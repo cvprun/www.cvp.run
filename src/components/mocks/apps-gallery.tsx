@@ -53,19 +53,22 @@ const COPY = {
       '모든 계산은 브라우저 안에서 수행되며 어떤 데이터도 외부로 전송되지 않습니다.',
     category: {vision: '비전', data: '데이터', utility: '유틸리티', game: '게임'},
     items: {
-      fov: ['FOV 계산기', '센서·렌즈·작업거리로부터 시야각, GSD, ppmm 계산.'],
+      fov: ['FOV 계산기', '센서·렌즈·작업거리로부터 시야각, GSD, ppmm을 계산합니다.'],
       lensPicker: [
         '렌즈 추천',
-        '필요 해상도(ppmm)로 대상 폭을 커버할 초점거리를 추천.',
+        '필요 해상도(ppmm)를 기준으로 대상 폭을 커버하는 초점거리를 추천합니다.',
       ],
       calibrate: [
         '카메라 캘리브레이션',
-        '체커보드 프레임을 수집해 내재 행렬·왜곡 계수 계산.',
+        '체커보드 프레임을 수집해 내부 파라미터 행렬과 왜곡 계수를 계산합니다.',
       ],
-      barcode: ['바코드 / QR', 'BarcodeDetector API 와 wasm 폴백으로 1D·2D 코드 감지.'],
+      barcode: [
+        '바코드 / QR',
+        'BarcodeDetector API 와 wasm 폴백으로 1D·2D 코드를 인식합니다.',
+      ],
       modeler: [
         '3D 모델러',
-        '스케치업 류의 직접 모델링 도구. 프리미티브를 배치·변형해 공장 셸·레이아웃을 저작합니다.',
+        'SketchUp과 같은 방식의 직접 모델링 도구입니다. 프리미티브를 배치·변형해 공장 건물 외피와 레이아웃을 제작합니다.',
       ],
       jsonFormatter: ['JSON 포맷터', 'JSON 을 정렬·검증하고 들여쓰기를 정돈합니다.'],
       codeEditor: [
@@ -74,15 +77,15 @@ const COPY = {
       ],
       httpClient: [
         'HTTP 클라이언트',
-        'REST API 요청을 작성·전송하고 응답을 확인하는 Insomnia 류 도구입니다.',
+        'REST API 요청을 작성·전송하고 응답을 확인하는, Insomnia와 유사한 도구입니다.',
       ],
       wifiQr: [
         'WiFi QR 생성기',
-        'SSID와 비밀번호를 담은 WiFi 접속 QR 코드를 2.4GHz·5GHz 대역별로 만들고 내려받거나 인쇄합니다.',
+        'SSID와 비밀번호를 담은 WiFi 접속 QR 코드를 2.4GHz·5GHz 대역별로 생성하고, 다운로드하거나 인쇄합니다.',
       ],
       hwpEditor: [
         'HWP 편집기',
-        'HWP·HWPX 한글 문서를 브라우저에서 열어 보고 편집합니다.',
+        'HWP·HWPX 한글 문서를 브라우저에서 열람하고 편집합니다.',
       ],
       drawEditor: [
         'Draw.io 에디터',

@@ -38,12 +38,18 @@ const COPY = {
       none: ['라벨 없음 (미디어만)', '어노테이션 없이 이미지·동영상만 업로드합니다.'],
       yolo: [
         'YOLO',
-        'Ultralytics YOLO: data.yaml, labels/*.txt, 이미지(탐지·세그멘테이션·포즈).',
+        'Ultralytics YOLO 의 data.yaml, labels/*.txt, 이미지로 구성됩니다(탐지·세그멘테이션·포즈).',
       ],
-      coco: ['COCO JSON', 'COCO instances·keypoints 매니페스트와 이미지.'],
-      voc: ['Pascal VOC', 'Annotations/ 에 이미지마다 XML, ImageSets/Main 분할(선택).'],
-      labelme: ['LabelMe', '이미지마다 JSON 하나, 보통 이미지와 같은 폴더.'],
-      cvp: ['CVP 네이티브', 'CVP 에서 내보낸 cvp.json(클래스 색 포함).'],
+      coco: ['COCO JSON', 'COCO instances·keypoints 매니페스트와 이미지로 구성됩니다.'],
+      voc: [
+        'Pascal VOC',
+        'Annotations/ 에 이미지별 XML이 있으며, ImageSets/Main 분할 정보는 선택 사항입니다.',
+      ],
+      labelme: [
+        'LabelMe',
+        '이미지마다 JSON 파일이 하나씩 있으며, 일반적으로 이미지와 같은 폴더에 위치합니다.',
+      ],
+      cvp: ['CVP 네이티브', 'CVP 에서 내보낸 cvp.json 파일입니다(클래스 색상 포함).'],
     },
   },
   en: {

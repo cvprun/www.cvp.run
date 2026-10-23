@@ -264,7 +264,7 @@ export const mocks = {
         logRunning: '실행 중',
         logClear: '지우기',
         log1: '이미지 로드 완료 (1024×768)',
-        log2: '추론 3건 탐지',
+        log2: '추론 결과 객체 3건 탐지',
         log3: '어노테이션 12건 저장',
       },
     },

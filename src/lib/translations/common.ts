@@ -43,7 +43,7 @@ export const common = {
       training: {
         label: '학습 & AI 라벨링',
         nav: '학습 & AI',
-        tagline: '훈련 위저드 · 내 GPU로 추론 · 실험 추적',
+        tagline: '훈련 위저드 · 자체 GPU 추론 · 실험 추적',
       },
       review: {
         label: '리뷰 & QA',
@@ -63,7 +63,7 @@ export const common = {
       agents: {
         label: '에이전트',
         nav: '에이전트',
-        tagline: '내 장비에서 실행되는 AI · 산업 앱',
+        tagline: '자체 장비에서 실행되는 AI · 산업 앱',
       },
       collectors: {
         label: '수집기',
@@ -108,7 +108,7 @@ export const common = {
       memory: {
         label: '메모리 맵',
         nav: '메모리 맵',
-        tagline: 'PLC 레지스터를 닮은 공유 메모리',
+        tagline: 'PLC 레지스터 방식의 공유 메모리',
       },
       registry: {
         label: '레지스트리',
@@ -116,8 +116,8 @@ export const common = {
         tagline: 'Docker · Helm · pip · npm',
       },
       apps: {
-        label: '어플리케이션',
-        nav: '어플리케이션',
+        label: '애플리케이션',
+        nav: '애플리케이션',
         tagline: '브라우저 안의 CV · 개발 유틸리티',
       },
       store: {
@@ -130,35 +130,35 @@ export const common = {
     cta: {
       title: '오늘 첫 라벨을 그려 보십시오',
       description:
-        '설치도, 영업 미팅도 없습니다. 무료 플랜으로 시작해 팀이 커지면 업그레이드할 수 있습니다.',
+        '별도 설치나 영업 미팅이 필요하지 않습니다. 무료 플랜으로 시작하고, 팀 규모가 커지면 상위 플랜으로 업그레이드할 수 있습니다.',
       primary: '무료로 시작',
       secondary: '가격 보기',
-      comingSoonNote: 'app.cvp.run 정식 오픈을 준비하고 있습니다.',
+      comingSoonNote: 'app.cvp.run은 정식 출시를 준비하고 있습니다.',
     },
 
     newsletter: {
       title: '뉴스레터',
       description: '제품 소식과 업데이트를 이메일로 전해 드립니다.',
-      ctaLead: '뉴스레터를 구독하면 새 기능 소식을 가장 먼저 받아 볼 수 있습니다.',
+      ctaLead: '뉴스레터를 구독하면 신규 기능 소식을 가장 먼저 전해 드립니다.',
       emailLabel: '이메일 주소',
       emailPlaceholder: 'you@example.com',
       subscribe: '구독하기',
       submitting: '전송 중…',
-      success: '확인 메일을 보냈습니다. 받은편지함을 확인해 주십시오.',
+      success: '확인 메일을 발송했습니다. 받은편지함을 확인해 주십시오.',
       error: '요청에 실패했습니다. 잠시 후 다시 시도해 주십시오.',
       confirmTitle: '뉴스레터 구독 확정',
       confirmDescription: '아래 버튼을 누르면 뉴스레터 구독이 확정됩니다.',
       confirmAction: '구독 확정하기',
       confirmSuccessTitle: '구독이 완료되었습니다',
       confirmSuccessDescription:
-        '이제 CVP 소식과 업데이트를 이메일로 받아보실 수 있습니다.',
+        '앞으로 CVP의 제품 소식과 업데이트를 이메일로 받아 보실 수 있습니다.',
       unsubscribeTitle: '뉴스레터 수신거부',
       unsubscribeDescription:
         '아래 버튼을 누르면 더 이상 뉴스레터를 발송하지 않습니다.',
       unsubscribeAction: '수신거부하기',
       unsubscribeSuccessTitle: '수신거부가 완료되었습니다',
       unsubscribeSuccessDescription:
-        '더 이상 메일이 발송되지 않습니다. 언제든 다시 구독하실 수 있습니다.',
+        '이후로는 뉴스레터가 발송되지 않습니다. 언제든지 다시 구독하실 수 있습니다.',
       working: '처리 중…',
       invalidTitle: '링크가 유효하지 않습니다',
       invalidDescription:
@@ -167,26 +167,27 @@ export const common = {
 
     footer: {
       description:
-        'CVP — 이미지·비디오·3D·시계열 데이터를 수집하고, 라벨링하고, 학습까지 잇는 비전 데이터 플랫폼.',
+        'CVP는 이미지·비디오·3D·시계열 데이터의 수집과 라벨링부터 모델 학습까지 하나로 연결하는 비전 데이터 플랫폼입니다.',
       labelingTitle: '라벨링',
       platformTitle: '플랫폼',
       moreTitle: '더 보기',
       companyTitle: '제품',
       pricing: '가격',
-      roadmapNote: '베타 — 기능과 가격은 정식 출시 전에 변경될 수 있습니다.',
+      roadmapNote:
+        '현재 베타 서비스입니다. 기능과 가격은 정식 출시 전에 변경될 수 있습니다.',
       copyright: '© 2026 CVP. All rights reserved.',
     },
 
     notFound: {
       title: '페이지를 찾을 수 없습니다',
-      description: '주소가 변경되었거나 삭제된 페이지입니다.',
+      description: '요청하신 페이지의 주소가 변경되었거나 페이지가 삭제되었습니다.',
       back: '홈으로 돌아가기',
     },
 
     misc: {
       mockNote: '* 실제 앱 화면을 재현한 데모입니다.',
       dataNote:
-        '사진·영상·포인트 클라우드는 공개 데이터셋의 실제 데이터입니다 — Open Images(CC BY 2.0) · COCO(CC BY 4.0) · DAVIS 2017(CC BY 4.0) · Wikimedia Commons(CC0) · PandaSet(CC0)',
+        '데모에 사용된 사진·영상·포인트클라우드는 공개 데이터셋의 실제 데이터입니다 — Open Images(CC BY 2.0) · COCO(CC BY 4.0) · DAVIS 2017(CC BY 4.0) · Wikimedia Commons(CC0) · PandaSet(CC0)',
       betaBadge: '베타',
     },
   },

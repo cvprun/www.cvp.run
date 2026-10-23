@@ -16,15 +16,15 @@
 
 앱(app.cvp.run)의 2026-07 이후 변화를 사이트 전체에 반영했다.
 
-- **삭제**: 앱에서 제거된 클러스터·VMS(관제)·제조(MES) 페이지와 목업(`cluster-control`·`vms-live`·`mes-topology`)을 지웠다.
+- **삭제**: 앱에서 제거된 클러스터·VMS(관제)·제조(MES) 페이지와 목업(`cluster-control`·`vms-live`·`mes-topology`)을 삭제했다.
   `/more/clusters`→에이전트, `/more/vms`→수집기, `/more/manufacturing`→디지털 트윈으로 리다이렉트(`LEGACY_REDIRECTS`).
-  가격표의 `projects` 한도(앱에서 폐기)도 뺐다.
+  가격표의 `projects` 한도(앱에서 폐기)도 제외했다.
 - **추가 페이지**: `/labeling/time-series`, `/platform/training`(학습 & AI 라벨링), `/more/{collectors,digital-twin,signatures,memory-maps,registry,store}`.
   에이전트·MLOps·그리드·지도·회의는 '개발 중' → '사용 가능'. 수집기만 현장 검증 중이라 '개발 중'.
-- **목업**: 공통 셸 `MockAppFrame` 을 앱의 현재 틀(기본 사이드바 청사진 + '에이전트 앱' 그룹, 브레드크럼 크롬 바, 제목 줄, 밑줄 탭, Geist 토큰, `--radius:0.375rem`)로 다시 만들고,
-  기존 목업을 전부 그 위로 옮겼다. 새 목업 22종: 시계열 에디터·열 역할, 자동 라벨링 검토·Pointcept 대화상자, QA 통계·업로드 위저드, 훈련 위저드·실험 실행·RF-DETR 추론·MLOps 개요·사용량,
+- **목업**: 공통 셸 `MockAppFrame` 을 앱의 현재 틀(기본 사이드바 청사진 + '에이전트 앱' 그룹, 브레드크럼 크롬 바, 제목 줄, 밑줄 탭, Geist 토큰, `--radius:0.375rem`)로 재구성하고,
+  기존 목업을 모두 그 위로 이전했다. 새 목업 22종: 시계열 에디터·열 역할, 자동 라벨링 검토·Pointcept 대화상자, QA 통계·업로드 위저드, 훈련 위저드·실험 실행·RF-DETR 추론·MLOps 개요·사용량,
   에이전트 앱·설치·Modbus, 수집기 개요·타임라인, 디지털 트윈 에디터, 전자서명, 메모리 맵 헥스, 레지스트리, 스토어, 화상 회의실.
-  각 목업은 앱 소스(컴포넌트·ko/en 로케일)를 읽고 만들었다.
+  각 목업은 앱 소스(컴포넌트·ko/en 로케일)를 분석해 제작했다.
 - **랜딩**: 4 모달리티, 시계열·AI 라벨링·학습·에이전트/수집기 밴드, '한 프로젝트 안에' 기능 그리드.
 - **가격**: `plan_limits` 전체(에이전트 통신량·그래프 노드 실행·MLOps 실험·트윈 씬 등) + 토큰(1 토큰 = 1센트, 패키지, 소비처) + 사용량 화면.
 
@@ -49,7 +49,7 @@
 ### OpenAI Codex 페이지 (디자인 레퍼런스)
 
 > ⚠️ WebFetch 403 + 브라우저 확장 미연결로 실시간 열람 실패. 아래는 모델 지식(2025년 개편판) 기반이므로,
-> **구현 착수 전 사람이 페이지를 직접 훑어 인상을 보정할 것을 권장.**
+> **구현 착수 전 사람이 페이지를 직접 검토해 인상을 보정할 것을 권장함.**
 
 - 핵심 문법: **섹션당 기능 1개 = 짧은 헤드라인 + 1~2문장 + 대형 제품 UI 미디어 1개**. 기능과 비주얼이 1:1로 대응.
 - 대형 디스플레이 타이포그래피(sentence case), 과감한 여백, 섹션 간 리듬감 있는 배경 전환.
@@ -182,21 +182,21 @@ Codex 스타일 유지, Supervisely식 깊이 추가:
 
 방식: app 저장소(`/home/zer0/Projects/app.cvp.run`)의 해당 컴포넌트를 **읽고** 레이아웃·색·구성 요소를 www의 독립 목업 컴포넌트로 재현(코드 직접 import는 하지 않음 — app은 Supabase·라우터 등 런타임 의존이 깊어 정적 사이트에 이식 비용이 과함). 데이터는 하드코딩 예시.
 
-| 목업 (신규)                      | app 근거 코드                                                                      | 사용 페이지                       |
-| -------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------- |
-| `MockImageEditor`                | `src/react-app/pages/(app)/annotate/` 2D 에디터 (캔버스+클래스 패널+이슈 탭)       | 랜딩 §3, /labeling/images         |
-| `MockVideoTimeline`              | 비디오 라벨링 타임라인 (눈금자·플레이헤드·트랙 마커·키프레임)                      | 랜딩 §4, /labeling/videos         |
-| `Mock3dEditor`                   | 3D 에디터 (포인트 렌더 느낌은 SVG/캔버스 저밀도 재현, BEV 미니맵, 인스턴스 리스트) | 랜딩 §1·5, /labeling/point-clouds |
-| `MockIssuePanel`                 | 이슈 탭 + 핀 코멘트 스레드                                                         | 랜딩 §6, /platform/review         |
-| `MockDatasetGrid`                | 데이터셋 목록/샘플 그리드 (타입 아이콘: image/video/point_cloud)                   | 랜딩 §7, /platform/datasets       |
-| `MockKeypointPreset`             | 키포인트 스켈레톤 그래픽 에디터(@xyflow 화면)                                      | /labeling/images                  |
-| `MockWiki` / `MockVideoLibrary`  | 위키 에디터 / 동영상 플레이어                                                      | /platform/collaboration           |
-| `MockTokenPanel` + `CodeSnippet` | 액세스 토큰 페이지 + curl/Python 예시                                              | /platform/developers              |
-| `MockLicensePanel`               | 제품키 발급 화면 + Ed25519 오프라인 검증 스니펫                                    | /platform/developers              |
+| 목업 (신규)                      | app 근거 코드                                                                     | 사용 페이지                       |
+| -------------------------------- | --------------------------------------------------------------------------------- | --------------------------------- |
+| `MockImageEditor`                | `src/react-app/pages/(app)/annotate/` 2D 에디터 (캔버스+클래스 패널+이슈 탭)      | 랜딩 §3, /labeling/images         |
+| `MockVideoTimeline`              | 비디오 라벨링 타임라인 (눈금자·플레이헤드·트랙 마커·키프레임)                     | 랜딩 §4, /labeling/videos         |
+| `Mock3dEditor`                   | 3D 에디터 (포인트 렌더링은 SVG/캔버스 저밀도로 재현, BEV 미니맵, 인스턴스 리스트) | 랜딩 §1·5, /labeling/point-clouds |
+| `MockIssuePanel`                 | 이슈 탭 + 핀 코멘트 스레드                                                        | 랜딩 §6, /platform/review         |
+| `MockDatasetGrid`                | 데이터셋 목록/샘플 그리드 (타입 아이콘: image/video/point_cloud)                  | 랜딩 §7, /platform/datasets       |
+| `MockKeypointPreset`             | 키포인트 스켈레톤 그래픽 에디터(@xyflow 화면)                                     | /labeling/images                  |
+| `MockWiki` / `MockVideoLibrary`  | 위키 에디터 / 동영상 플레이어                                                     | /platform/collaboration           |
+| `MockTokenPanel` + `CodeSnippet` | 액세스 토큰 페이지 + curl/Python 예시                                             | /platform/developers              |
+| `MockLicensePanel`               | 제품키 발급 화면 + Ed25519 오프라인 검증 스니펫                                   | /platform/developers              |
 
 - 기존 `screens.tsx`의 9종 관리 화면 목업은 재사용 가능한 것(dashboard, datasets 등)만 새 레지스트리로 이관, 비활성 기능 화면(vms·manufacturing·mlflow·agents·graphs)은 삭제.
 - `AppFrame`(브라우저 프레임)은 유지하되, 에디터류 목업은 프레임 없이 **UI 패널 단독 확대** 배치도 허용 (Codex가 터미널 UI를 크게 자르듯).
-- 3D 목업 주의: WebGL 도입은 과함. 사전 렌더한 포인트 산점 데이터(수백 점)를 SVG/canvas 2D로 그려 "느낌"을 재현하는 선에서. 필요 시 실제 앱 녹화 영상(webm)을 Phase 2에서 추가.
+- 3D 목업 주의: WebGL 도입은 과함. 사전 렌더한 포인트 산점 데이터(수백 점)를 SVG/canvas 2D로 그려 외형을 재현하는 수준으로 제한한다. 필요 시 실제 앱 녹화 영상(webm)을 Phase 2에서 추가.
 
 ---
 
@@ -266,7 +266,7 @@ src/
 | **6. 마감**         | SEO 메타/sitemap, OG 이미지, 반응형·접근성 점검, Lighthouse, 배포                      | Cloudflare Pages 배포           |
 | (후속)              | `/tools` 무료 도구 SEO 페이지, 실제 녹화 영상 교체, `/vs/cvat` 비교 페이지, 프리렌더링 | —                               |
 
-각 Phase 종료 시 `npm run build` + 로컬 확인. Phase 2의 3D 목업이 최대 불확실 구간이므로 저밀도 SVG 산점 방식으로 시작해 조기에 룩을 확정.
+각 Phase 종료 시 `npm run build` + 로컬 확인. Phase 2의 3D 목업이 최대 불확실 구간이므로 저밀도 SVG 산점 방식으로 시작해 시각적 방향을 조기에 확정한다.
 
 ---
 
