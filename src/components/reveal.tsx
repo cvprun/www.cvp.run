@@ -2,7 +2,7 @@ import {useEffect, useRef, useState, type ReactNode} from 'react';
 
 import {cn} from '@/lib/utils';
 
-/** Fade/slide-up on first scroll into view. Respects prefers-reduced-motion. */
+/** Short fade on first scroll into view. Respects prefers-reduced-motion. */
 export function Reveal({
   className,
   delay = 0,
@@ -41,8 +41,8 @@ export function Reveal({
     <div
       ref={ref}
       className={cn(
-        'transition-all duration-700 ease-out',
-        visible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+        'transition-all duration-500 ease-out',
+        visible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
         className,
       )}
       style={delay ? {transitionDelay: `${delay}ms`} : undefined}

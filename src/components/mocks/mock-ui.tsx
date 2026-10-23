@@ -30,14 +30,14 @@ export function MockWindow({
   );
 }
 
-/** Browser chrome bar (traffic lights + address) for full-app mockups. */
+/** Browser chrome bar (neutral window dots + address) for full-app mockups. */
 export function MockChrome() {
   return (
     <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-4 py-2.5">
       <span className="flex gap-1.5">
-        <span className="size-2.5 rounded-full bg-red-400/80" />
-        <span className="size-2.5 rounded-full bg-amber-400/80" />
-        <span className="size-2.5 rounded-full bg-green-400/80" />
+        <span className="size-2.5 rounded-full bg-foreground/15" />
+        <span className="size-2.5 rounded-full bg-foreground/15" />
+        <span className="size-2.5 rounded-full bg-foreground/15" />
       </span>
       <span className="mx-auto rounded-md border border-border bg-background/60 px-3 py-0.5 font-mono text-[11px] text-muted-foreground">
         app.cvp.run

@@ -14,7 +14,7 @@ export function NotFoundPage() {
     <div className="flex min-h-screen flex-col">
       <TopBar />
       <main className="mx-auto flex max-w-6xl flex-1 flex-col items-center justify-center px-4 py-32 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">{t.notFound.title}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{t.notFound.title}</h1>
         <p className="mt-3 text-muted-foreground">{t.notFound.description}</p>
         <Button asChild className="mt-8">
           <Link to={paths.home}>

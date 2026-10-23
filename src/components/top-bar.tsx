@@ -2,6 +2,7 @@ import {ChevronDown, Menu, X} from 'lucide-react';
 import {useEffect, useState} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 
+import {DevelopmentBadge} from '@/components/development-badge';
 import {LanguageSwitcher} from '@/components/language-switcher';
 import {Logo} from '@/components/logo';
 import {ModeToggle} from '@/components/mode-toggle';
@@ -35,11 +36,7 @@ function NavDropdown({category, label}: {category: FeatureCategory; label: strin
             <Link to={page.path} className="flex flex-col items-start gap-0.5">
               <span className="flex items-center gap-2 text-sm font-medium">
                 {t.pageMeta[page.slug].label}
-                {page.status === 'development' && (
-                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
-                    {t.featurePage.statusInDevelopment}
-                  </span>
-                )}
+                {page.status === 'development' && <DevelopmentBadge />}
               </span>
               <span className="text-xs text-muted-foreground">
                 {t.pageMeta[page.slug].tagline}
@@ -111,8 +108,7 @@ export function TopBar() {
               <a href={signup}>{t.nav.getStarted}</a>
             </Button>
           ) : (
-            <span className="ml-1 hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs text-muted-foreground sm:inline-flex">
-              <span className="size-1.5 animate-pulse rounded-full bg-brand-cyan" />
+            <span className="ml-1 hidden rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
               {t.nav.comingSoon}
             </span>
           )}
@@ -165,11 +161,7 @@ export function TopBar() {
               className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground/90"
             >
               {t.pageMeta[page.slug].label}
-              {page.status === 'development' && (
-                <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
-                  {t.featurePage.statusInDevelopment}
-                </span>
-              )}
+              {page.status === 'development' && <DevelopmentBadge />}
             </Link>
           ))}
           <Link

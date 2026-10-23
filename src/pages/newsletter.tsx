@@ -53,12 +53,14 @@ export function NewsletterActionPage({mode}: {mode: 'confirm' | 'unsubscribe'}) 
       <main className="mx-auto flex max-w-6xl flex-1 flex-col items-center justify-center px-4 py-32 text-center">
         {status === 'success' ? (
           <>
-            <h1 className="text-3xl font-bold tracking-tight">{copy.successTitle}</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              {copy.successTitle}
+            </h1>
             <p className="mt-3 text-muted-foreground">{copy.successDescription}</p>
           </>
         ) : status === 'invalid' ? (
           <>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-3xl font-semibold tracking-tight">
               {t.newsletter.invalidTitle}
             </h1>
             <p className="mt-3 text-muted-foreground">
@@ -67,7 +69,7 @@ export function NewsletterActionPage({mode}: {mode: 'confirm' | 'unsubscribe'}) 
           </>
         ) : (
           <>
-            <h1 className="text-3xl font-bold tracking-tight">{copy.title}</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">{copy.title}</h1>
             <p className="mt-3 text-muted-foreground">{copy.description}</p>
             <Button
               size="lg"

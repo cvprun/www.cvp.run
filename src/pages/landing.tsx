@@ -19,10 +19,11 @@ import {
   Workflow,
   type LucideIcon,
 } from 'lucide-react';
-import type {ComponentType} from 'react';
+import type {ComponentType, ReactNode} from 'react';
 import {Link} from 'react-router-dom';
 
 import {CtaButtons} from '@/components/cta-buttons';
+import {DevelopmentBadge} from '@/components/development-badge';
 import {FinalCta} from '@/components/final-cta';
 import {Footer} from '@/components/footer';
 import {MockApiSnippet} from '@/components/mocks/api-snippet';
@@ -37,6 +38,7 @@ import {MockTimeseriesEditor} from '@/components/mocks/timeseries-editor';
 import {MockTrainingWizard} from '@/components/mocks/training-wizard';
 import {MockVideoTimeline} from '@/components/mocks/video-timeline';
 import {Reveal} from '@/components/reveal';
+import {SectionHeader, SectionLabel} from '@/components/section-header';
 import {TopBar} from '@/components/top-bar';
 import {useLanguage} from '@/lib/i18n';
 import {PLANS, type PlanDef} from '@/lib/pricing';
@@ -62,23 +64,16 @@ function FeatureBand({
   mock: ComponentType;
 }) {
   const text = (
-    <div className={layout === 'split' ? 'max-w-xl' : 'max-w-2xl'}>
-      <p className="text-sm font-semibold tracking-wide text-brand-cyan uppercase">
-        {copy.kicker}
-      </p>
-      <h2 className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-        {copy.title}
-      </h2>
-      <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-        {copy.body}
-      </p>
-      <Link
-        to={to}
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-brand-cyan"
-      >
+    <div>
+      <SectionHeader
+        label={copy.kicker}
+        title={copy.title}
+        description={copy.body}
+        className={layout === 'split' ? 'max-w-xl' : undefined}
+      />
+      <ArrowLink to={to} className="mt-5">
         {copy.cta}
-        <ArrowRight className="size-4" />
-      </Link>
+      </ArrowLink>
     </div>
   );
 
@@ -105,17 +100,48 @@ function FeatureBand({
   );
 }
 
-function PlanTeaserCard({plan, t}: {plan: PlanDef; t: Translations}) {
-  const p = t.pricingPage;
+/** Text link with a trailing arrow, used under section copy. */
+function ArrowLink({
+  to,
+  className,
+  children,
+}: {
+  to: string;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <div
+    <Link
+      to={to}
       className={cn(
-        'rounded-xl border bg-card p-5',
-        plan.highlighted ? 'border-brand-cyan/60' : 'border-border',
+        'group inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline',
+        className,
       )}
     >
-      <span className="text-sm font-semibold">{p.planNames[plan.code]}</span>
-      <p className="mt-1 text-2xl font-bold tracking-tight">
+      {children}
+      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+    </Link>
+  );
+}
+
+/** One plan in the pricing teaser: a ruled column, the highlighted plan
+ * marked by a solid top rule instead of a colored card. */
+function PlanTeaser({plan, t}: {plan: PlanDef; t: Translations}) {
+  const p = t.pricingPage;
+  return (
+    <li
+      className={cn(
+        'border-t py-5',
+        plan.highlighted ? 'border-foreground' : 'border-border',
+      )}
+    >
+      <span className="flex items-baseline justify-between gap-2">
+        <span className="text-sm font-semibold">{p.planNames[plan.code]}</span>
+        {plan.highlighted && (
+          <span className="text-xs text-muted-foreground">{p.mostPopular}</span>
+        )}
+      </span>
+      <p className="mt-2 text-2xl font-semibold tracking-tight">
         {plan.monthlyUsd === null
           ? plan.code === 'free'
             ? p.freePrice
@@ -128,7 +154,7 @@ function PlanTeaserCard({plan, t}: {plan: PlanDef; t: Translations}) {
         )}
       </p>
       <p className="mt-2 text-xs text-muted-foreground">{p.planTaglines[plan.code]}</p>
-    </div>
+    </li>
   );
 }
 
@@ -156,46 +182,34 @@ function ScopeGrid() {
     <section className="border-t border-border bg-muted/20">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold tracking-wide text-brand-cyan uppercase">
-              {t.scope.label}
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-              {t.scope.title}
-            </h2>
-            <p className="mt-4 text-muted-foreground">{t.scope.description}</p>
-          </div>
+          <SectionHeader
+            label={t.scope.label}
+            title={t.scope.title}
+            description={t.scope.description}
+          />
         </Reveal>
         <Reveal delay={100}>
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-10 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
             {pages.map(page => {
               const Icon = SCOPE_ICONS[page.slug] ?? LayoutGrid;
               return (
-                <Link
-                  key={page.slug}
-                  to={page.path}
-                  className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-brand-cyan/60"
-                >
-                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground transition-colors group-hover:text-brand-cyan">
-                    <Icon className="size-4" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-2 text-sm font-semibold">
-                      {t.pageMeta[page.slug].label}
-                      {page.status === 'development' && (
-                        <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-px text-[9px] font-medium text-amber-600 dark:text-amber-400">
-                          {t.featurePage.statusInDevelopment}
-                        </span>
-                      )}
+                <li key={page.slug} className="border-t border-border">
+                  <Link to={page.path} className="group flex gap-3 py-4">
+                    <Icon className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-2 text-sm font-medium underline-offset-4 group-hover:underline">
+                        {t.pageMeta[page.slug].label}
+                        {page.status === 'development' && <DevelopmentBadge />}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">
+                        {t.pageMeta[page.slug].tagline}
+                      </span>
                     </span>
-                    <span className="mt-0.5 block text-xs text-muted-foreground">
-                      {t.pageMeta[page.slug].tagline}
-                    </span>
-                  </span>
-                </Link>
+                  </Link>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </Reveal>
       </div>
     </section>
@@ -207,10 +221,30 @@ export function LandingPage() {
   usePageMeta('CVP — Computer Vision Platform', t.hero.description);
 
   const modalityLinks = [
-    {icon: Images, label: t.modalities.tabs.images, to: paths.labelingImages},
-    {icon: Video, label: t.modalities.tabs.videos, to: paths.labelingVideos},
-    {icon: Box, label: t.modalities.tabs.pointClouds, to: paths.labelingPointClouds},
-    {icon: Activity, label: t.modalities.tabs.timeSeries, to: paths.labelingTimeSeries},
+    {
+      icon: Images,
+      label: t.modalities.tabs.images,
+      tagline: t.pageMeta.images.tagline,
+      to: paths.labelingImages,
+    },
+    {
+      icon: Video,
+      label: t.modalities.tabs.videos,
+      tagline: t.pageMeta.videos.tagline,
+      to: paths.labelingVideos,
+    },
+    {
+      icon: Box,
+      label: t.modalities.tabs.pointClouds,
+      tagline: t.pageMeta.pointClouds.tagline,
+      to: paths.labelingPointClouds,
+    },
+    {
+      icon: Activity,
+      label: t.modalities.tabs.timeSeries,
+      tagline: t.pageMeta.timeSeries.tagline,
+      to: paths.labelingTimeSeries,
+    },
   ];
 
   const teaserPlans = PLANS.filter(plan => plan.code !== 'enterprise');
@@ -220,19 +254,14 @@ export function LandingPage() {
       <TopBar />
       <main className="flex-1">
         {/* hero */}
-        <section className="relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-mesh-glow opacity-60" />
-          <div className="grid-pattern pointer-events-none absolute inset-0 -z-10 opacity-60" />
-
-          <div className="mx-auto max-w-6xl px-4 pt-20 pb-16 sm:px-6 sm:pt-28 sm:pb-20">
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur">
-                {t.hero.badge}
-              </span>
-              <h1 className="mt-6 text-4xl leading-[1.08] font-extrabold tracking-tight text-balance sm:text-6xl">
-                <span className="text-gradient-brand">{t.hero.title}</span>
+        <section>
+          <div className="mx-auto max-w-6xl px-4 pt-16 pb-16 sm:px-6 sm:pt-24 sm:pb-20">
+            <div className="max-w-3xl">
+              <SectionLabel>{t.hero.badge}</SectionLabel>
+              <h1 className="mt-4 text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-6xl">
+                {t.hero.title}
               </h1>
-              <p className="mx-auto mt-6 max-w-2xl text-base text-pretty text-muted-foreground sm:text-lg">
+              <p className="mt-6 max-w-2xl text-base text-pretty text-muted-foreground sm:text-lg">
                 {t.hero.description}
               </p>
               <div className="mt-9">
@@ -241,43 +270,42 @@ export function LandingPage() {
             </div>
 
             {/* hero mock: the 3D editor */}
-            <Reveal className="relative mx-auto mt-14 max-w-5xl" delay={150}>
-              <div className="pointer-events-none absolute -inset-x-8 -top-8 bottom-0 -z-10 bg-mesh-glow opacity-40" />
+            <Reveal className="mt-14" delay={150}>
               <MockPointCloudEditor />
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                {t.misc.mockNote}
-              </p>
-              <p className="mt-1 text-center text-[11px] text-muted-foreground/70">
+              <p className="mt-3 text-xs text-muted-foreground">{t.misc.mockNote}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground/70">
                 {t.misc.dataNote}
               </p>
             </Reveal>
           </div>
         </section>
 
-        {/* modality band */}
+        {/* modality index */}
         <section className="border-t border-border bg-muted/20">
-          <div className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 sm:py-20">
-            <p className="text-sm font-semibold tracking-wide text-brand-cyan uppercase">
-              {t.modalities.label}
-            </p>
-            <h2 className="mx-auto mt-3 max-w-2xl text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-              {t.modalities.title}
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              {t.modalities.description}
-            </p>
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              {modalityLinks.map(({icon: Icon, label, to}) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:border-brand-cyan/60 hover:text-brand-cyan"
-                >
-                  <Icon className="size-4" />
-                  {label}
-                </Link>
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <SectionHeader
+              label={t.modalities.label}
+              title={t.modalities.title}
+              description={t.modalities.description}
+            />
+            <ul className="mt-10 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
+              {modalityLinks.map(({icon: Icon, label, tagline, to}) => (
+                <li key={to} className="border-t border-border">
+                  <Link to={to} className="group block py-5">
+                    <span className="flex items-center gap-2 text-sm font-medium">
+                      <Icon className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+                      <span className="underline-offset-4 group-hover:underline">
+                        {label}
+                      </span>
+                      <ArrowRight className="ml-auto size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                    <span className="mt-1.5 block text-xs text-muted-foreground">
+                      {tagline}
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
 
@@ -353,31 +381,19 @@ export function LandingPage() {
         {/* pricing teaser */}
         <section className="border-t border-border">
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
-            <div className="mx-auto max-w-2xl text-center">
-              <p className="text-sm font-semibold tracking-wide text-brand-cyan uppercase">
-                {t.pricingTeaser.label}
-              </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-                {t.pricingTeaser.title}
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                {t.pricingTeaser.description}
-              </p>
-            </div>
-            <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-3">
+            <SectionHeader
+              label={t.pricingTeaser.label}
+              title={t.pricingTeaser.title}
+              description={t.pricingTeaser.description}
+            />
+            <ul className="mt-10 grid max-w-4xl gap-x-10 sm:grid-cols-3">
               {teaserPlans.map(plan => (
-                <PlanTeaserCard key={plan.code} plan={plan} t={t} />
+                <PlanTeaser key={plan.code} plan={plan} t={t} />
               ))}
-            </div>
-            <div className="mt-8 text-center">
-              <Link
-                to={paths.pricing}
-                className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-brand-cyan"
-              >
-                {t.pricingTeaser.cta}
-                <ArrowRight className="size-4" />
-              </Link>
-            </div>
+            </ul>
+            <ArrowLink to={paths.pricing} className="mt-6">
+              {t.pricingTeaser.cta}
+            </ArrowLink>
           </div>
         </section>
 

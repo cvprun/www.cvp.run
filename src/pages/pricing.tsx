@@ -53,17 +53,17 @@ function PlanCard({plan}: {plan: PlanDef}) {
   return (
     <div
       className={cn(
-        'relative flex flex-col rounded-2xl border bg-card p-6',
-        plan.highlighted ? 'border-brand-cyan/60 shadow-lg' : 'border-border',
+        'flex flex-col rounded-lg border bg-card p-6',
+        plan.highlighted ? 'border-foreground/60' : 'border-border',
       )}
     >
-      {plan.highlighted && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-cyan px-3 py-0.5 text-[11px] font-semibold text-neutral-900">
-          {p.mostPopular}
-        </span>
-      )}
-      <span className="text-sm font-semibold">{p.planNames[plan.code]}</span>
-      <span className="mt-2 text-3xl font-bold tracking-tight">
+      <span className="flex items-baseline justify-between gap-2">
+        <span className="text-sm font-semibold">{p.planNames[plan.code]}</span>
+        {plan.highlighted && (
+          <span className="text-xs text-muted-foreground">{p.mostPopular}</span>
+        )}
+      </span>
+      <span className="mt-2 text-3xl font-semibold tracking-tight">
         {priceLabel(plan, p)}
       </span>
       <p className="mt-2 min-h-8 text-xs text-muted-foreground">
@@ -72,7 +72,7 @@ function PlanCard({plan}: {plan: PlanDef}) {
       <ul className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
         {highlights.map(line => (
           <li key={line} className="flex items-start gap-2 text-muted-foreground">
-            <Check className="mt-0.5 size-3.5 shrink-0 text-brand-cyan" />
+            <Check className="mt-0.5 size-3.5 shrink-0 text-foreground" />
             {line}
           </li>
         ))}
@@ -97,7 +97,7 @@ function PlanCard({plan}: {plan: PlanDef}) {
 
 function BoolCell({value}: {value: boolean}) {
   return value ? (
-    <Check className="mx-auto size-4 text-brand-cyan" />
+    <Check className="mx-auto size-4 text-foreground" />
   ) : (
     <Minus className="mx-auto size-4 text-muted-foreground/40" />
   );
@@ -160,7 +160,7 @@ function ComparisonTable() {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full min-w-[40rem] border-collapse text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/30">
@@ -204,15 +204,14 @@ export function PricingPage() {
     <div className="flex min-h-screen flex-col">
       <TopBar />
       <main className="flex-1">
-        <section className="relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-mesh-glow opacity-30" />
+        <section>
           <div className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24">
-            <div className="mx-auto max-w-2xl text-center">
-              <h1 className="text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">
+            <div className="max-w-2xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
                 {p.title}
               </h1>
               <p className="mt-5 text-muted-foreground sm:text-lg">{p.description}</p>
-              <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-1.5 text-xs text-amber-600 dark:text-amber-400">
+              <p className="mt-5 border-l-2 border-amber-500/60 pl-3 text-xs text-muted-foreground">
                 {p.betaNote}
               </p>
             </div>
@@ -237,7 +236,7 @@ export function PricingPage() {
         <section className="border-t border-border">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_1.2fr]">
             <Reveal>
-              <h2 className="text-2xl font-bold tracking-tight text-balance sm:text-3xl">
+              <h2 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
                 {p.tokensTitle}
               </h2>
               <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -247,9 +246,9 @@ export function PricingPage() {
                 {TOKEN_PACKAGES.map(pkg => (
                   <div
                     key={pkg.usd}
-                    className="rounded-xl border border-border bg-card px-4 py-3"
+                    className="rounded-lg border border-border bg-card px-4 py-3"
                   >
-                    <span className="block text-lg font-bold tabular-nums">
+                    <span className="block text-lg font-semibold tabular-nums">
                       ${pkg.usd}
                     </span>
                     <span className="text-xs text-muted-foreground">
@@ -260,14 +259,11 @@ export function PricingPage() {
               </div>
             </Reveal>
             <Reveal delay={100}>
-              <dl className="overflow-hidden rounded-xl border border-border">
-                {p.tokenUses.map(([label, value], i) => (
+              <dl className="border-t border-border">
+                {p.tokenUses.map(([label, value]) => (
                   <div
                     key={label}
-                    className={cn(
-                      'grid gap-1 px-5 py-3.5 sm:grid-cols-[13rem_1fr] sm:gap-4',
-                      i % 2 === 1 && 'bg-muted/20',
-                    )}
+                    className="grid gap-1 border-b border-border py-3.5 sm:grid-cols-[13rem_1fr] sm:gap-4"
                   >
                     <dt className="text-sm font-medium">{label}</dt>
                     <dd className="text-sm text-muted-foreground">{value}</dd>
@@ -282,38 +278,36 @@ export function PricingPage() {
         <section className="border-t border-border bg-muted/20">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
             <Reveal>
-              <div className="mx-auto max-w-2xl text-center">
-                <h2 className="text-2xl font-bold tracking-tight text-balance sm:text-3xl">
+              <div className="max-w-2xl">
+                <h2 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
                   {p.usageTitle}
                 </h2>
                 <p className="mt-4 text-muted-foreground">{p.usageDescription}</p>
               </div>
             </Reveal>
-            <Reveal className="mx-auto mt-10 max-w-5xl" delay={100}>
+            <Reveal className="mt-10" delay={100}>
               <MockUsage />
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                {t.misc.mockNote}
-              </p>
+              <p className="mt-3 text-xs text-muted-foreground">{t.misc.mockNote}</p>
             </Reveal>
           </div>
         </section>
 
         {/* FAQ */}
         <section className="border-t border-border">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_2fr] lg:gap-10">
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               {p.faqTitle}
             </h2>
-            <div className="mx-auto mt-10 grid max-w-4xl gap-x-10 gap-y-8 sm:grid-cols-2">
+            <dl className="border-t border-border">
               {p.faq.map(item => (
-                <div key={item.q}>
-                  <h3 className="text-sm font-semibold">{item.q}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <div key={item.q} className="border-b border-border py-5">
+                  <dt className="text-sm font-semibold">{item.q}</dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {item.a}
-                  </p>
+                  </dd>
                 </div>
               ))}
-            </div>
+            </dl>
           </div>
         </section>
 

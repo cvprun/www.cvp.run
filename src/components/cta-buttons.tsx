@@ -5,15 +5,16 @@ import {Button} from '@/components/ui/button';
 import {useLanguage} from '@/lib/i18n';
 import {appLink, paths} from '@/lib/site';
 
-/** Primary "start for free" + secondary "see pricing" pair. Falls back to a
- * disabled coming-soon state until VITE_APP_URL is configured. */
+/** Primary "start for free" + secondary "see pricing" pair, left-aligned with
+ * the headline above it. Falls back to a disabled coming-soon state until
+ * VITE_APP_URL is configured. */
 export function CtaButtons({withNote = true}: {withNote?: boolean}) {
   const {t} = useLanguage();
   const signup = appLink('/signup');
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+    <div className="flex flex-col items-start gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         {signup ? (
           <Button asChild size="lg">
             <a href={signup}>

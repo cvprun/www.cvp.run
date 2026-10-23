@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import {Logo} from '@/components/logo';
 import {NewsletterForm} from '@/components/newsletter-form';
 import {useLanguage} from '@/lib/i18n';
+import {NEWSLETTER_API_URL} from '@/lib/newsletter';
 import {FEATURE_PAGES, paths} from '@/lib/site';
 
 export function Footer() {
@@ -21,11 +22,15 @@ export function Footer() {
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {t.footer.description}
             </p>
-            <h3 className="mt-8 text-sm font-semibold">{t.newsletter.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t.newsletter.description}
-            </p>
-            <NewsletterForm source="www-footer" className="mt-3" />
+            {NEWSLETTER_API_URL && (
+              <>
+                <h3 className="mt-8 text-sm font-semibold">{t.newsletter.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {t.newsletter.description}
+                </p>
+                <NewsletterForm source="www-footer" className="mt-3" />
+              </>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-12 sm:gap-16">

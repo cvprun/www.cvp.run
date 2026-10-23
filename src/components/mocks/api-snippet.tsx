@@ -27,9 +27,9 @@ export function MockApiSnippet() {
       aria-hidden
     >
       <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5">
-        <span className="size-2.5 rounded-full bg-red-400/80" />
-        <span className="size-2.5 rounded-full bg-amber-400/80" />
-        <span className="size-2.5 rounded-full bg-green-400/80" />
+        <span className="size-2.5 rounded-full bg-white/15" />
+        <span className="size-2.5 rounded-full bg-white/15" />
+        <span className="size-2.5 rounded-full bg-white/15" />
         <span className="ml-2 font-mono text-[10px] text-neutral-500">terminal</span>
       </div>
       <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-neutral-200 sm:text-xs">
