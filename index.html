@@ -1,29 +1,83 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      // 저장된 테마와 언어를 첫 페인트 전에 적용해 라이트 화면이 잠깐 보이는 현상을 막는다.
+      (function () {
+        try {
+          var root = document.documentElement;
+          var theme = localStorage.getItem('cvp-theme') === 'light' ? 'light' : 'dark';
+          root.classList.remove('light', 'dark');
+          root.classList.add(theme);
+          var lang = localStorage.getItem('cvp-lang');
+          if (lang === 'ko' || lang === 'en') {
+            root.lang = lang;
+          } else if (!/^ko/i.test(navigator.language || '')) {
+            root.lang = 'en';
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
+    <!-- route-meta:start -->
     <title>CVP — 비전 데이터의 워크스페이스</title>
     <meta
       name="description"
-      content="이미지, 비디오, 3D 포인트클라우드, 시계열 데이터를 하나의 워크스페이스에서 수집·라벨링·학습하고 관리합니다. 별도 설치 없이 브라우저에서 바로 시작할 수 있습니다."
+      content="이미지, 비디오, 3D 포인트클라우드, 시계열 데이터를 하나의 워크스페이스에서 수집·라벨링·학습·추론합니다. 별도 설치 없이 브라우저에서 바로 시작할 수 있습니다."
     />
+    <link rel="canonical" href="https://www.cvp.run/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CVP" />
     <meta property="og:title" content="CVP — 비전 데이터의 워크스페이스" />
     <meta
       property="og:description"
-      content="이미지·비디오·3D 포인트클라우드·시계열 데이터의 라벨링, 리뷰, 학습, 협업을 하나의 플랫폼에서 제공합니다. 영업 미팅 없이 오늘 바로 시작할 수 있습니다."
+      content="이미지, 비디오, 3D 포인트클라우드, 시계열 데이터를 하나의 워크스페이스에서 수집·라벨링·학습·추론합니다. 별도 설치 없이 브라우저에서 바로 시작할 수 있습니다."
     />
-    <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.cvp.run/" />
-    <link rel="canonical" href="https://www.cvp.run/" />
+    <meta property="og:image" content="https://www.cvp.run/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- route-meta:end -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://www.cvp.run/#organization",
+            "name": "CVP",
+            "url": "https://www.cvp.run/",
+            "logo": "https://www.cvp.run/favicon.svg"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.cvp.run/#website",
+            "name": "CVP",
+            "url": "https://www.cvp.run/",
+            "inLanguage": ["ko", "en"],
+            "publisher": {"@id": "https://www.cvp.run/#organization"}
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "CVP",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "url": "https://app.cvp.run/",
+            "publisher": {"@id": "https://www.cvp.run/#organization"},
+            "offers": {"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD"}
+          }
+        ]
+      }
+    </script>
   </head>
 
   <body>

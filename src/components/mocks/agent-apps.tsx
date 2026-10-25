@@ -1,7 +1,8 @@
 import {
   Activity,
   Box,
-  Cpu,
+  Download,
+  FileVideo2,
   HardDrive,
   Hourglass,
   LayoutDashboard,
@@ -14,7 +15,10 @@ import {
   RefreshCw,
   ScanSearch,
   ScrollText,
+  Server,
+  ShieldCheck,
   Trash2,
+  TriangleAlert,
   Wand2,
   Workflow,
   type LucideIcon,
@@ -25,31 +29,34 @@ import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
 /**
- * Agent detail, 어플리케이션 tab (`AgentDetailTabs` + `_AgentAppsTab.tsx`):
- * the published app instances the daemon supervises — app, instance key,
- * outline status badge + pid, argument summary and resource limits.
+ * Agent detail, 애플리케이션 tab (`AgentDetailTabs` + `_AgentAppsTab.tsx`):
+ * the published app instances the daemon supervises — app (with the
+ * compatibility icon when the host does not fit), instance key, outline
+ * status badge + pid, argument summary and resource limits. App names are the
+ * app's generalized catalog names (`constants/agentApps.ts`).
  */
 
 const COPY = {
   ko: {
     edit: '수정',
-    rotateToken: '토큰 로테이션',
+    rotateToken: '토큰 교체',
     remove: '삭제',
     active: '활성',
     tabs: {
       overview: '개요',
-      apps: '어플리케이션',
+      apps: '애플리케이션',
       resources: '리소스',
       metrics: '메트릭',
       storage: '저장소',
       logs: '로그',
       state: '상태 그래프',
     },
-    listTitle: '게시된 어플리케이션',
+    listTitle: '게시된 애플리케이션',
     listDescription:
       '데몬은 이 목록에 있는 앱만 실행합니다. 각 행이 하나의 인스턴스이며, 같은 앱을 여러 행으로 추가하면 동시에 처리할 수 있는 요청 수가 늘어납니다.',
+    check: '호환성 확인',
     sync: '동기화',
-    add: '어플리케이션 추가',
+    add: '애플리케이션 추가',
     cols: {
       app: '앱',
       instance: '인스턴스',
@@ -64,14 +71,18 @@ const COPY = {
       stopped: '중지됨',
     },
     apps: {
-      rfdetr: 'RF-DETR 비전 모델',
-      sam2: 'SAM2 세그멘테이션',
-      pointcept: 'Pointcept 3D 세그멘테이션',
-      timeseries: '시계열 예측',
-      modbus: 'Modbus 모니터',
       collectorSim: '수집기 시뮬레이터',
+      ffmpeg: '동영상 변환',
+      modbusServer: 'ModbusTCP 서버',
+      pointcept: '포인트 클라우드 세그멘테이션',
+      rfdetr: '이미지 객체 탐지',
+      sam2: '이미지 세그멘테이션',
+      ytdlp: '동영상 다운로드',
     },
+    caution: '추가 전에 확인할 점이 있음',
+    off: '꺼짐',
     memory: (v: string) => `메모리 ${v}`,
+    processes: (v: string) => `프로세스 ${v}`,
     gpusNone: 'GPU 없음',
   },
   en: {
@@ -91,6 +102,7 @@ const COPY = {
     listTitle: 'Published applications',
     listDescription:
       'The daemon runs exactly this list. One row is one instance; add more rows of the same app to take more requests at once.',
+    check: 'Check compatibility',
     sync: 'Sync',
     add: 'Add an application',
     cols: {
@@ -107,14 +119,18 @@ const COPY = {
       stopped: 'stopped',
     },
     apps: {
-      rfdetr: 'RF-DETR Vision',
-      sam2: 'SAM2 Segmentation',
-      pointcept: 'Pointcept 3D Segmentation',
-      timeseries: 'Time-series forecasting',
-      modbus: 'Modbus Monitor',
       collectorSim: 'Collector simulator',
+      ffmpeg: 'Video conversion',
+      modbusServer: 'ModbusTCP Server',
+      pointcept: 'Point cloud segmentation',
+      rfdetr: 'Image object detection',
+      sam2: 'Image segmentation',
+      ytdlp: 'Video Downloader',
     },
+    caution: 'Check before adding',
+    off: 'Off',
     memory: (v: string) => `Memory ${v}`,
+    processes: (v: string) => `Processes ${v}`,
     gpusNone: 'No GPU',
   },
 } as const;
@@ -133,7 +149,7 @@ const STATUS_TONE: Record<Status, string> = {
 
 type AppKey = keyof (typeof COPY)['ko']['apps'];
 
-type Limits = {memory?: string; cpu?: number; gpus?: string};
+type Limits = {memory?: string; cpu?: number; gpus?: string; processes?: string};
 
 type Row = {
   app: string;
@@ -141,6 +157,10 @@ type Row = {
   icon: LucideIcon;
   status: Status;
   pid?: number;
+  /** Host fits, with points to check (`AppStatusBadge` caution). */
+  caution?: boolean;
+  /** Instance turned off (`꺼짐` badge). */
+  off?: boolean;
   config: string;
   limits: Limits;
 };
@@ -154,49 +174,61 @@ const ROWS: Row[] = [
     status: 'running',
     pid: 48213,
     config: 'payload=video · intervalMs=1000',
-    limits: {memory: '512 MB', cpu: 50},
+    limits: {memory: '512 MiB', cpu: 50},
   },
   {
-    app: 'modbus-monitor',
-    key: 'modbus',
-    icon: Cpu,
-    status: 'stopped',
-    config: 'host=10.0.0.5 · port=502 · unitId=1',
-    limits: {},
+    app: 'ffmpeg',
+    key: 'ffmpeg',
+    icon: FileVideo2,
+    status: 'running',
+    pid: 51022,
+    config: '—',
+    limits: {memory: '4 GiB', gpus: '0'},
+  },
+  {
+    app: 'modbustcp-server',
+    key: 'modbusServer',
+    icon: Server,
+    status: 'running',
+    pid: 4410,
+    config: 'bindAddress=0.0.0.0 · port=5020 · unitId=1',
+    limits: {processes: '4096'},
   },
   {
     app: 'pointcept',
     key: 'pointcept',
     icon: Box,
     status: 'deferred',
+    caution: true,
     config: '—',
-    limits: {memory: '24 GB', cpu: 800, gpus: '1'},
+    limits: {memory: '24 GiB', cpu: 800, gpus: '1'},
   },
   {
     app: 'rfdetr',
     key: 'rfdetr',
     icon: ScanSearch,
     status: 'running',
-    pid: 12345,
+    pid: 4242,
     config: '—',
-    limits: {memory: '8 GB', cpu: 400, gpus: '0'},
+    limits: {memory: '8 GiB', cpu: 400, gpus: '0'},
   },
   {
     app: 'sam2',
     key: 'sam2',
     icon: Wand2,
     status: 'running',
-    pid: 12388,
+    pid: 4290,
     config: '—',
-    limits: {memory: '6 GB', cpu: 200, gpus: '0'},
+    limits: {memory: '6 GiB', cpu: 200, gpus: '0'},
   },
   {
-    app: 'timeseries',
-    key: 'timeseries',
-    icon: Activity,
-    status: 'starting',
-    config: '—',
-    limits: {memory: '4 GB', gpus: 'none'},
+    app: 'ytdlp',
+    key: 'ytdlp',
+    icon: Download,
+    status: 'stopped',
+    off: true,
+    config: 'format=bestvideo+bestaudio',
+    limits: {},
   },
 ];
 
@@ -220,6 +252,7 @@ export function MockAgentApps() {
     if (limits.cpu) parts.push(`CPU ${limits.cpu}%`);
     if (limits.gpus)
       parts.push(limits.gpus === 'none' ? c.gpusNone : `GPU ${limits.gpus}`);
+    if (limits.processes) parts.push(c.processes(limits.processes));
     return parts;
   };
 
@@ -273,6 +306,9 @@ export function MockAgentApps() {
             </p>
           </div>
           <span className="flex items-center gap-1.5">
+            <MockButton icon={ShieldCheck} className="hidden @2xl:inline-flex">
+              {c.check}
+            </MockButton>
             <MockButton icon={RefreshCw}>{c.sync}</MockButton>
             <MockButton icon={Plus} variant="default">
               {c.add}
@@ -309,6 +345,14 @@ export function MockAgentApps() {
                     <span className="flex min-w-0 items-center gap-1.5">
                       <Icon className="size-3.5 shrink-0 text-muted-foreground" />
                       <span className="truncate">{c.apps[row.key]}</span>
+                      {row.caution && (
+                        <span
+                          title={c.caution}
+                          className="flex size-4 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white"
+                        >
+                          <TriangleAlert className="size-2.5" />
+                        </span>
+                      )}
                     </span>
                   </td>
                   <td className="hidden px-2 py-2 font-mono text-[10px] whitespace-nowrap @xl:table-cell">
@@ -326,6 +370,11 @@ export function MockAgentApps() {
                       </span>
                       {row.status === 'deferred' && (
                         <Hourglass className="size-3 text-muted-foreground" />
+                      )}
+                      {row.off && (
+                        <span className="rounded-md border border-border px-1 text-[9px] text-muted-foreground">
+                          {c.off}
+                        </span>
                       )}
                       {row.pid !== undefined && (
                         <span className="hidden text-[10px] text-muted-foreground tabular-nums @2xl:inline">

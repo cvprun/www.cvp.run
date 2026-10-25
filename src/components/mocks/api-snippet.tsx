@@ -2,10 +2,10 @@ import type {ReactNode} from 'react';
 
 /**
  * Terminal session using the real integration surfaces: the `cvp` CLI
- * (docs/guides/cli.md in the app repo) and the project's MLflow-compatible
- * tracking endpoint (docs/guides/mlflow-client.md). Commands are
- * language-independent by design; outputs shown are only what the commands
- * print verbatim (jq results).
+ * (`docs/guides/cli.md` and the commands' `examples:` lists in the app repo),
+ * the project S3 endpoint (`docs/guides/s3-client.md`) and the
+ * MLflow-compatible tracking endpoint (`docs/guides/mlflow-client.md`).
+ * Commands are language-independent by design and no output is invented.
  */
 function Cmd({children}: {children: ReactNode}) {
   return (
@@ -18,6 +18,18 @@ function Cmd({children}: {children: ReactNode}) {
 
 function Comment({children}: {children: ReactNode}) {
   return <span className="block text-neutral-500"># {children}</span>;
+}
+
+function Url({children}: {children: ReactNode}) {
+  return <span className="text-brand-cyan">{children}</span>;
+}
+
+function Flag({children}: {children: ReactNode}) {
+  return <span className="text-violet-400">{children}</span>;
+}
+
+function Arg({children}: {children: ReactNode}) {
+  return <span className="text-amber-300">{children}</span>;
 }
 
 export function MockApiSnippet() {
@@ -34,36 +46,36 @@ export function MockApiSnippet() {
       </div>
       <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-neutral-200 sm:text-xs">
         <code>
-          <Comment>CLI — one binary, browser login</Comment>
+          <Comment>CLI — one executable, device-code login in the browser</Comment>
           <Cmd>
-            curl -fsSL{' '}
-            <span className="text-brand-cyan">https://app.cvp.run/cli/install.sh</span>{' '}
-            | sh
+            curl -fsSL <Url>https://app.cvp.run/cli/install.sh</Url> | sh
           </Cmd>
           <Cmd>cvp login</Cmd>
           <Cmd>
-            cvp dataset upload <span className="text-amber-300">3f9c2a1e</span>{' '}
-            ./frames/*.jpg
+            cvp dataset sample list <Arg>line-a-defects</Arg> <Flag>--status</Flag>{' '}
+            labeled <Flag>--comment</Flag> open
           </Cmd>
           <Cmd>
-            cvp agent list <span className="text-violet-400">--json</span> | jq -r{' '}
-            <span className="text-emerald-400">
-              &apos;.[] | select(.status==&quot;active&quot;) | .name&apos;
-            </span>
+            cvp infer run detection <Flag>--sample</Flag>{' '}
+            <Arg>Street/frame-001.jpg</Arg> <Flag>--threshold</Flag> 0.4
           </Cmd>
-          <span className="block text-neutral-400">gpu-node-01</span>
-          <span className="block text-neutral-400">line-02-edge</span>
+          <Cmd>
+            cvp mlops run logs <Arg>detector#3</Arg> <Flag>--follow</Flag>
+          </Cmd>
+          {'\n'}
+          <Comment>S3 — DVC, the aws CLI and other S3 clients</Comment>
+          <Cmd>
+            aws s3 sync ./data <Arg>s3://weld-line/data/</Arg>{' '}
+            <Flag>--endpoint-url</Flag> <Url>https://app.cvp.run/s3</Url>
+          </Cmd>
           {'\n'}
           <Comment>MLflow — your training script, unchanged</Comment>
           <Cmd>
             export MLFLOW_TRACKING_URI=
-            <span className="text-brand-cyan">
-              https://app.cvp.run/api/proj/av-poc/mlflow
-            </span>
+            <Url>https://app.cvp.run/api/proj/weld-line/mlflow</Url>
           </Cmd>
           <Cmd>
-            export MLFLOW_TRACKING_TOKEN=
-            <span className="text-violet-400">cvp_9f2a7b1c4e8d…</span>
+            export MLFLOW_TRACKING_TOKEN=<Flag>cvp_9f2a7b1c4e8d…</Flag>
           </Cmd>
           <Cmd>python train.py</Cmd>
         </code>

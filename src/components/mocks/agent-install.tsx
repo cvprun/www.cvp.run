@@ -67,8 +67,8 @@ const COMMANDS = {
 };
 
 const BINARIES = [
-  {arch: 'x64', size: '38.4 MB'},
-  {arch: 'arm64', size: '37.9 MB'},
+  {arch: 'x64', size: '77.7 MB'},
+  {arch: 'arm64', size: '77.5 MB'},
 ];
 
 /** `CodeBlock`: muted pre + copy button, bash tokens tinted. */

@@ -119,6 +119,95 @@ export function MockBadge({
   );
 }
 
+export type FlowCell = {
+  label: string;
+  value: string;
+  detail: string;
+  /** Amber detail line, as when the app flags a cell that needs attention. */
+  warn?: boolean;
+};
+
+/** `components/layouts/FlowStrip.tsx`: hairline-divided summary cells. */
+export function MockFlowStrip({
+  cells,
+  className,
+}: {
+  cells: FlowCell[];
+  className?: string;
+}) {
+  return (
+    <ol
+      className={cn(
+        'grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border @3xl:grid-cols-5',
+        className,
+      )}
+    >
+      {cells.map((cell, i) => (
+        <li
+          key={cell.label}
+          className={cn(
+            'flex flex-col gap-0.5 bg-card px-3 py-2.5',
+            // an odd last cell fills the two-column row instead of leaving a gap
+            i === cells.length - 1 &&
+              cells.length % 2 === 1 &&
+              'col-span-2 @3xl:col-span-1',
+          )}
+        >
+          <span className="text-[10px] font-medium text-muted-foreground">
+            {cell.label}
+          </span>
+          <span className="text-lg leading-tight font-semibold tabular-nums">
+            {cell.value}
+          </span>
+          <span
+            className={cn(
+              'truncate text-[9.5px]',
+              cell.warn
+                ? 'font-medium text-amber-700 dark:text-amber-400'
+                : 'text-muted-foreground',
+            )}
+          >
+            {cell.detail}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** App card with a titled header row and an optional "view all" link. */
+export function MockCard({
+  icon: Icon,
+  title,
+  link,
+  badge,
+  children,
+  className,
+}: {
+  icon?: LucideIcon;
+  title: string;
+  link?: string;
+  badge?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('min-w-0 rounded-md border border-border bg-card', className)}>
+      <div className="flex items-center gap-1.5 px-3 pt-2.5 pb-2">
+        {Icon && <Icon className="size-3.5 shrink-0 text-muted-foreground" />}
+        <span className="truncate text-[11.5px] font-semibold">{title}</span>
+        {badge}
+        {link && (
+          <span className="ml-auto shrink-0 text-[9.5px] text-muted-foreground">
+            {link} →
+          </span>
+        )}
+      </div>
+      <div className="px-3 pb-3">{children}</div>
+    </div>
+  );
+}
+
 /** Deterministic pseudo-random sequence (LCG) for point scatters. */
 export function seededRandom(seed: number): () => number {
   let state = seed >>> 0;

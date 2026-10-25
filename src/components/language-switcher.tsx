@@ -1,4 +1,4 @@
-import {Languages} from 'lucide-react';
+import {Check, Languages} from 'lucide-react';
 
 import {Button} from '@/components/ui/button';
 import {
@@ -16,12 +16,17 @@ const LABELS: Record<Language, string> = {
 };
 
 export function LanguageSwitcher() {
-  const {lang, setLang} = useLanguage();
+  const {lang, setLang, t} = useLanguage();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="언어 선택">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={t.nav.language}
+          title={t.nav.language}
+        >
           <Languages className="size-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -29,10 +34,12 @@ export function LanguageSwitcher() {
         {(Object.keys(LABELS) as Language[]).map(code => (
           <DropdownMenuItem
             key={code}
+            lang={code}
             onClick={() => setLang(code)}
-            className={code === lang ? 'font-semibold' : undefined}
+            className="justify-between gap-6"
           >
             {LABELS[code]}
+            {code === lang && <Check className="size-3.5" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

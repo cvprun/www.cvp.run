@@ -2,16 +2,15 @@
 import {
   Activity,
   BookOpen,
-  Box,
   BrainCircuit,
   ChevronRight,
   ChevronsUpDown,
   Clapperboard,
   Cpu,
+  CreditCard,
   Cuboid,
   Database,
   Download,
-  FileVideo2,
   Folder,
   FolderKanban,
   Gauge,
@@ -24,18 +23,17 @@ import {
   Mic,
   Package,
   PanelLeftClose,
+  Plug,
   Radar,
-  ScanSearch,
-  Server,
   Settings,
   ShieldCheck,
   Signature,
+  Sparkles,
   Table2,
-  Wand2,
   Workflow,
   type LucideIcon,
 } from 'lucide-react';
-import type {ReactNode} from 'react';
+import {useLayoutEffect, useRef, type ReactNode} from 'react';
 
 import {Logo} from '@/components/logo';
 import {MockChrome, MockWindow} from '@/components/mocks/mock-ui';
@@ -47,8 +45,9 @@ import {cn} from '@/lib/utils';
  * `_AppSidebar` + `_PageChromeBar` + `PageFrame`):
  *
  * - sidebar: logo, project switcher, the DEFAULT sidebar blueprint
- *   (`constants/projectSidebar.ts`, agent apps folded into one group),
- *   collapse toggle, user menu;
+ *   (`constants/projectSidebar.ts` as of 2026-10: the agent-app group holds
+ *   only the downloader; the model apps live under 추론, ModbusTCP and
+ *   결제 are top-level), collapse toggle, user menu;
  * - chrome bar: breadcrumb 홈 › project › section › …;
  * - page header: icon + h1 + meta | actions, then underline tabs.
  *
@@ -60,14 +59,9 @@ export type NavKey =
   | 'activity'
   | 'usage'
   | 'agents'
-  | 'rfdetr'
-  | 'modbus'
-  | 'sam2'
   | 'ytdlp'
-  | 'ffmpeg'
-  | 'pointcept'
-  | 'timeseries'
   | 'collectors'
+  | 'modbus'
   | 'files'
   | 'datasets'
   | 'grids'
@@ -79,12 +73,16 @@ export type NavKey =
   | 'memory'
   | 'videos'
   | 'apps'
+  | 'infer'
   | 'mlops'
   | 'registry'
   | 'license'
   | 'graphs'
+  | 'billing'
   | 'settings';
 
+/** `appSidebar.*` in the app's ko/en common.json. The ModbusTCP menu keeps
+ * the old key `modbus` there too (saved sidebars carry it). */
 const NAV_LABELS: Record<'ko' | 'en', Record<NavKey | 'agentApps', string>> = {
   ko: {
     dashboard: '대시보드',
@@ -92,14 +90,9 @@ const NAV_LABELS: Record<'ko' | 'en', Record<NavKey | 'agentApps', string>> = {
     usage: '사용량',
     agents: '에이전트',
     agentApps: '에이전트 앱',
-    rfdetr: 'RF-DETR',
-    modbus: 'Modbus',
-    sam2: 'SAM2',
     ytdlp: '다운로더',
-    ffmpeg: '변환기',
-    pointcept: 'Pointcept',
-    timeseries: '시계열',
-    collectors: 'Collectors',
+    collectors: '수집기',
+    modbus: 'ModbusTCP',
     files: '파일',
     datasets: '데이터셋',
     grids: '그리드',
@@ -110,11 +103,13 @@ const NAV_LABELS: Record<'ko' | 'en', Record<NavKey | 'agentApps', string>> = {
     twin: '디지털 트윈',
     memory: '메모리 맵',
     videos: '동영상',
-    apps: '어플리케이션',
+    apps: '애플리케이션',
+    infer: '추론',
     mlops: 'MLOps',
     registry: '레지스트리',
     license: '제품키',
     graphs: '그래프',
+    billing: '결제',
     settings: '설정',
   },
   en: {
@@ -123,14 +118,9 @@ const NAV_LABELS: Record<'ko' | 'en', Record<NavKey | 'agentApps', string>> = {
     usage: 'Usage',
     agents: 'Agents',
     agentApps: 'Agent apps',
-    rfdetr: 'RF-DETR',
-    modbus: 'Modbus',
-    sam2: 'SAM2',
     ytdlp: 'Downloader',
-    ffmpeg: 'Converter',
-    pointcept: 'Pointcept',
-    timeseries: 'Time series',
     collectors: 'Collectors',
+    modbus: 'ModbusTCP',
     files: 'Files',
     datasets: 'Datasets',
     grids: 'Grids',
@@ -142,10 +132,12 @@ const NAV_LABELS: Record<'ko' | 'en', Record<NavKey | 'agentApps', string>> = {
     memory: 'Memory maps',
     videos: 'Videos',
     apps: 'Applications',
+    infer: 'Inference',
     mlops: 'MLOps',
     registry: 'Registry',
     license: 'Product Keys',
     graphs: 'Graphs',
+    billing: 'Billing',
     settings: 'Settings',
   },
 };
@@ -155,14 +147,9 @@ export const NAV_ICONS: Record<NavKey, LucideIcon> = {
   activity: Activity,
   usage: Gauge,
   agents: Cpu,
-  rfdetr: ScanSearch,
-  modbus: Server,
-  sam2: Wand2,
   ytdlp: Download,
-  ffmpeg: FileVideo2,
-  pointcept: Box,
-  timeseries: Activity,
   collectors: Radar,
+  modbus: Plug,
   files: HardDrive,
   datasets: Database,
   grids: Table2,
@@ -174,25 +161,21 @@ export const NAV_ICONS: Record<NavKey, LucideIcon> = {
   memory: MemoryStick,
   videos: Clapperboard,
   apps: LayoutGrid,
+  infer: Sparkles,
   mlops: BrainCircuit,
   registry: Package,
   license: ShieldCheck,
   graphs: Workflow,
+  billing: CreditCard,
   settings: Settings,
 };
 
-const AGENT_APPS: NavKey[] = [
-  'rfdetr',
-  'modbus',
-  'sam2',
-  'ytdlp',
-  'ffmpeg',
-  'pointcept',
-  'timeseries',
-];
+/** `AGENT_APP_MENU_KEYS`: only the downloader is left in the group. */
+const AGENT_APPS: NavKey[] = ['ytdlp'];
 
 type NavEntry = NavKey | {group: NavKey[]};
 
+/** `PROJECT_MENUS` order through `defaultBlueprint()`. */
 const NAV_TREE: NavEntry[] = [
   'dashboard',
   'activity',
@@ -200,6 +183,7 @@ const NAV_TREE: NavEntry[] = [
   'agents',
   {group: AGENT_APPS},
   'collectors',
+  'modbus',
   'files',
   'datasets',
   'grids',
@@ -211,10 +195,12 @@ const NAV_TREE: NavEntry[] = [
   'memory',
   'videos',
   'apps',
+  'infer',
   'mlops',
   'registry',
   'license',
   'graphs',
+  'billing',
   'settings',
 ];
 
@@ -243,6 +229,7 @@ function NavRow({
 }) {
   return (
     <span
+      data-active={active || undefined}
       className={cn(
         'relative flex items-center gap-2 rounded-md px-2 py-[5px] text-[11px] tracking-[-0.011em]',
         active
@@ -259,6 +246,39 @@ function NavRow({
       {trailing}
     </span>
   );
+}
+
+/**
+ * The sidebar is clipped to the page body's height, like the app's scrolling
+ * sidebar on a short window; scroll it so the active menu stays in view.
+ */
+function useActiveNavInView() {
+  const ref = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const nav = ref.current;
+    if (!nav) {
+      return;
+    }
+    const align = () => {
+      const row = nav.querySelector<HTMLElement>('[data-active="true"]');
+      if (!row || nav.clientHeight === 0) {
+        return;
+      }
+      const offset =
+        row.getBoundingClientRect().top -
+        nav.getBoundingClientRect().top +
+        nav.scrollTop;
+      nav.scrollTop =
+        offset + row.offsetHeight > nav.clientHeight
+          ? offset - nav.clientHeight / 2
+          : 0;
+    };
+    align();
+    const observer = new ResizeObserver(align);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
 }
 
 /** Underline tab bar (`PageTabs`): icon + label, no horizontal padding. */
@@ -353,6 +373,7 @@ export function MockAppFrame({
   const appsOpen = AGENT_APPS.includes(activeNav);
   const SectionIcon = NAV_ICONS[activeNav];
   const TitleIcon = titleIcon ?? SectionIcon;
+  const navRef = useActiveNavInView();
 
   const trail: MockCrumb[] = [
     {icon: House, label: f.breadcrumbHome},
@@ -365,86 +386,88 @@ export function MockAppFrame({
     <MockWindow className={cn('@container', className)}>
       <MockChrome />
       <div className="flex min-h-[26rem] text-sm">
-        {/* sidebar */}
-        <aside className="hidden w-48 shrink-0 flex-col border-r border-sidebar-border bg-sidebar @3xl:flex">
-          <div className="flex flex-col gap-2.5 px-2.5 pt-3.5 pb-2.5">
-            <span className="flex h-6 items-center justify-center">
-              <Logo />
-            </span>
-            <span className="flex items-center gap-2 rounded-md p-1.5">
-              <span
-                className="flex size-6 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold text-white"
-                style={{background: 'oklch(0.62 0.14 250)'}}
-              >
-                {f.projectName.slice(0, 1)}
+        {/* sidebar — absolutely filled so the page body sets the height */}
+        <aside className="relative hidden w-48 shrink-0 border-r border-sidebar-border bg-sidebar @3xl:block">
+          <div className="absolute inset-0 flex flex-col">
+            <div className="flex flex-col gap-2.5 px-2.5 pt-3.5 pb-2.5">
+              <span className="flex h-6 items-center justify-center">
+                <Logo />
               </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[11px] font-semibold">
-                  {f.projectName}
+              <span className="flex items-center gap-2 rounded-md p-1.5">
+                <span
+                  className="flex size-6 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold text-white"
+                  style={{background: 'oklch(0.62 0.14 250)'}}
+                >
+                  {f.projectName.slice(0, 1)}
                 </span>
-                <span className="block text-[9px] text-sidebar-foreground/50">
-                  {f.plan}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[11px] font-semibold">
+                    {f.projectName}
+                  </span>
+                  <span className="block text-[9px] text-sidebar-foreground/50">
+                    {f.plan}
+                  </span>
                 </span>
+                <ChevronsUpDown className="size-3 shrink-0 text-sidebar-foreground/50" />
               </span>
-              <ChevronsUpDown className="size-3 shrink-0 text-sidebar-foreground/50" />
-            </span>
-          </div>
-
-          <nav className="min-h-0 flex-1 overflow-hidden px-1.5 py-1">
-            <div className="flex flex-col gap-px">
-              {NAV_TREE.map(entry =>
-                typeof entry === 'string' ? (
-                  <NavRow
-                    key={entry}
-                    icon={NAV_ICONS[entry]}
-                    label={labels[entry]}
-                    active={entry === activeNav}
-                  />
-                ) : (
-                  <div key="agent-apps" className="flex flex-col gap-px">
-                    <NavRow
-                      icon={Folder}
-                      label={labels.agentApps}
-                      trailing={
-                        <ChevronRight
-                          className={cn('size-3 shrink-0', appsOpen && 'rotate-90')}
-                        />
-                      }
-                    />
-                    {appsOpen &&
-                      entry.group.map(key => (
-                        <NavRow
-                          key={key}
-                          icon={NAV_ICONS[key]}
-                          label={labels[key]}
-                          active={key === activeNav}
-                          indent
-                        />
-                      ))}
-                  </div>
-                ),
-              )}
             </div>
-          </nav>
 
-          <div className="border-t border-sidebar-border px-1.5 py-1.5">
-            <NavRow icon={PanelLeftClose} label={f.collapse} />
-          </div>
-          <div className="border-t border-sidebar-border px-1.5 py-2">
-            <span className="flex items-center gap-2 rounded-md p-1.5">
-              <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-[10px] font-semibold text-sidebar-primary-foreground">
-                {f.userName.slice(0, 1)}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[11px] font-semibold">
-                  {f.userName}
+            <nav ref={navRef} className="min-h-0 flex-1 overflow-hidden px-1.5 py-1">
+              <div className="flex flex-col gap-px">
+                {NAV_TREE.map(entry =>
+                  typeof entry === 'string' ? (
+                    <NavRow
+                      key={entry}
+                      icon={NAV_ICONS[entry]}
+                      label={labels[entry]}
+                      active={entry === activeNav}
+                    />
+                  ) : (
+                    <div key="agent-apps" className="flex flex-col gap-px">
+                      <NavRow
+                        icon={Folder}
+                        label={labels.agentApps}
+                        trailing={
+                          <ChevronRight
+                            className={cn('size-3 shrink-0', appsOpen && 'rotate-90')}
+                          />
+                        }
+                      />
+                      {appsOpen &&
+                        entry.group.map(key => (
+                          <NavRow
+                            key={key}
+                            icon={NAV_ICONS[key]}
+                            label={labels[key]}
+                            active={key === activeNav}
+                            indent
+                          />
+                        ))}
+                    </div>
+                  ),
+                )}
+              </div>
+            </nav>
+
+            <div className="border-t border-sidebar-border px-1.5 py-1.5">
+              <NavRow icon={PanelLeftClose} label={f.collapse} />
+            </div>
+            <div className="border-t border-sidebar-border px-1.5 py-2">
+              <span className="flex items-center gap-2 rounded-md p-1.5">
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-[10px] font-semibold text-sidebar-primary-foreground">
+                  {f.userName.slice(0, 1)}
                 </span>
-                <span className="block truncate text-[9px] text-sidebar-foreground/50">
-                  {f.userEmail}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[11px] font-semibold">
+                    {f.userName}
+                  </span>
+                  <span className="block truncate text-[9px] text-sidebar-foreground/50">
+                    {f.userEmail}
+                  </span>
                 </span>
+                <ChevronsUpDown className="size-3 shrink-0 text-sidebar-foreground/50" />
               </span>
-              <ChevronsUpDown className="size-3 shrink-0 text-sidebar-foreground/50" />
-            </span>
+            </div>
           </div>
         </aside>
 

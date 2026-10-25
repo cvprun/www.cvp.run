@@ -2,8 +2,8 @@
  * Pricing single source of truth.
  *
  * Plan codes and limits mirror the app (`app.cvp.run/src/react-app/lib/plans.ts`
- * and `postgres/20-catalogs/03-plan_limits/70-datas.sql`). Prices are beta
- * placeholders until Paddle prices are finalized — update here only.
+ * and `postgres/200-catalogs/030-plan_limits/70-datas.sql`, 2026-10). Prices
+ * are beta placeholders until Paddle prices are finalized — update here only.
  */
 
 export type PlanCode = 'free' | 'starter' | 'pro' | 'enterprise';
@@ -22,11 +22,18 @@ export type PlanDef = {
     graphNodeRunsPerMonth: number;
     wikiPages: number;
     gridRows: number;
+    gridColumns: number;
     twinScenes: number;
+    twinRecordings: number;
+    graphs: number;
     mlflowExperiments: number;
     licenseKeys: number;
     memoryMaps: number;
+    /** Per-map size cap in KB (`memory_map_bytes` / 1024). */
+    memoryMapKb: number;
     mapFeatures: number;
+    /** `modbustcp_update_interval` floor in ms; -1 = no plan floor. */
+    modbusIntervalMs: number;
     videoEncryption: boolean;
     prioritySupport: boolean;
     auditLogs: boolean;
@@ -48,11 +55,16 @@ export const PLANS: readonly PlanDef[] = [
       graphNodeRunsPerMonth: 0,
       wikiPages: 20,
       gridRows: 1_000,
+      gridColumns: 30,
       twinScenes: 1,
+      twinRecordings: 20,
+      graphs: 10,
       mlflowExperiments: 3,
       licenseKeys: 5,
       memoryMaps: 2,
+      memoryMapKb: 64,
       mapFeatures: 5_000,
+      modbusIntervalMs: 1_000,
       videoEncryption: false,
       prioritySupport: false,
       auditLogs: false,
@@ -72,11 +84,16 @@ export const PLANS: readonly PlanDef[] = [
       graphNodeRunsPerMonth: 10_000,
       wikiPages: 200,
       gridRows: 10_000,
+      gridColumns: 100,
       twinScenes: 5,
+      twinRecordings: 200,
+      graphs: 100,
       mlflowExperiments: 20,
       licenseKeys: 100,
       memoryMaps: 10,
+      memoryMapKb: 1_024,
       mapFeatures: 50_000,
+      modbusIntervalMs: 500,
       videoEncryption: false,
       prioritySupport: false,
       auditLogs: false,
@@ -96,11 +113,16 @@ export const PLANS: readonly PlanDef[] = [
       graphNodeRunsPerMonth: 100_000,
       wikiPages: 1_000,
       gridRows: 100_000,
+      gridColumns: 300,
       twinScenes: 20,
+      twinRecordings: 2_000,
+      graphs: 1_000,
       mlflowExperiments: 100,
       licenseKeys: 1_000,
       memoryMaps: 50,
+      memoryMapKb: 16_384,
       mapFeatures: 500_000,
+      modbusIntervalMs: 200,
       videoEncryption: true,
       prioritySupport: true,
       auditLogs: true,
@@ -120,11 +142,16 @@ export const PLANS: readonly PlanDef[] = [
       graphNodeRunsPerMonth: -1,
       wikiPages: -1,
       gridRows: -1,
+      gridColumns: -1,
       twinScenes: -1,
+      twinRecordings: -1,
+      graphs: -1,
       mlflowExperiments: -1,
       licenseKeys: -1,
       memoryMaps: -1,
+      memoryMapKb: -1,
       mapFeatures: -1,
+      modbusIntervalMs: -1,
       videoEncryption: true,
       prioritySupport: true,
       auditLogs: true,
@@ -154,4 +181,11 @@ export function formatStorage(gb: number, unlimited: string): string {
     return unlimited;
   }
   return gb < 1 ? `${Math.round(gb * 1000)}MB` : `${gb}GB`;
+}
+
+export function formatKb(kb: number, unlimited: string): string {
+  if (kb === -1) {
+    return unlimited;
+  }
+  return kb >= 1024 ? `${kb / 1024}MB` : `${kb}KB`;
 }

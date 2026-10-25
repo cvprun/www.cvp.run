@@ -1,5 +1,5 @@
 import {
-  CreditCard,
+  Copy,
   HardDrive,
   KeyRound,
   MoreHorizontal,
@@ -15,19 +15,18 @@ import {MockBadge} from '@/components/mocks/mock-ui';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
+/**
+ * 설정 › 액세스 토큰 (`/proj/:id/tokens`, `_TokensTable.tsx`): the project
+ * tokens with their scope badges — MLflow experiments and models, the
+ * container registry, and the S3 storage scopes, whose rows can copy the
+ * derived S3 access key ID. Settings tabs as of 2026-10 (billing moved to
+ * the sidebar).
+ */
 const COPY = {
   ko: {
     title: '액세스 토큰',
     create: '토큰 생성',
-    tabs: [
-      '일반',
-      '스토리지',
-      '멤버',
-      '결제',
-      '액세스 토큰',
-      '메뉴 사용자화',
-      '위험 영역',
-    ],
+    tabs: ['일반', '스토리지', '멤버', '액세스 토큰', '메뉴 사용자화', '위험 영역'],
     cols: {
       name: '이름',
       scopes: '범위',
@@ -47,9 +46,12 @@ const COPY = {
       modelWrite: '모델: 쓰기',
       regPull: '레지스트리: 풀',
       regPush: '레지스트리: 푸시·풀',
+      storageRw: '저장소: 읽기·쓰기',
     },
+    copyKey: 'S3 액세스 키 ID 복사',
     rows: [
       ['CI 파이프라인', '학습 결과 MLflow 기록용'],
+      ['DVC 원격 저장소', '학습 데이터 버전 관리'],
       ['배포 서버', '모델 내려받기 전용'],
       ['빌드 러너', '컨테이너 이미지 푸시'],
     ],
@@ -61,7 +63,6 @@ const COPY = {
       'General',
       'Storage',
       'Members',
-      'Billing',
       'Access Tokens',
       'Customize menu',
       'Danger Zone',
@@ -85,9 +86,12 @@ const COPY = {
       modelWrite: 'Models: write',
       regPull: 'Registry: pull',
       regPush: 'Registry: push & pull',
+      storageRw: 'Storage: read & write',
     },
+    copyKey: 'Copy S3 access key ID',
     rows: [
       ['CI pipeline', 'Logs training runs to MLflow'],
+      ['DVC remote', 'Versions the training data'],
       ['Deploy server', 'Model download only'],
       ['Build runner', 'Pushes container images'],
     ],
@@ -98,7 +102,6 @@ const TAB_ICONS = [
   SlidersHorizontal,
   HardDrive,
   Users,
-  CreditCard,
   KeyRound,
   Settings2,
   TriangleAlert,
@@ -114,20 +117,31 @@ export function MockTokenPanel() {
       text: c.rows[0],
       scopes: [s.expWrite, s.modelWrite],
       active: true,
+      s3: false,
       expires: c.noExpiry,
-      lastUsed: '2026-09-30 14:12',
+      lastUsed: '2026-10-25 09:12',
     },
     {
       text: c.rows[1],
-      scopes: [s.modelRead],
+      scopes: [s.storageRw],
       active: true,
-      expires: '2026-12-31',
-      lastUsed: '2026-09-29 09:40',
+      s3: true,
+      expires: c.noExpiry,
+      lastUsed: '2026-10-24 18:40',
     },
     {
       text: c.rows[2],
+      scopes: [s.modelRead],
+      active: true,
+      s3: false,
+      expires: '2026-12-31',
+      lastUsed: '2026-10-23 09:40',
+    },
+    {
+      text: c.rows[3],
       scopes: [s.regPush],
       active: false,
+      s3: false,
       expires: '2026-10-15',
       lastUsed: c.never,
     },
@@ -144,7 +158,7 @@ export function MockTokenPanel() {
           {c.create}
         </MockButton>
       }
-      tabs={c.tabs.map((label, i) => ({icon: TAB_ICONS[i], label, active: i === 4}))}
+      tabs={c.tabs.map((label, i) => ({icon: TAB_ICONS[i], label, active: i === 3}))}
     >
       <div className="rounded-md border border-border bg-card p-3">
         <table className="w-full text-[11px]">
@@ -199,7 +213,14 @@ export function MockTokenPanel() {
                   {row.lastUsed}
                 </td>
                 <td className="px-2 py-2 text-muted-foreground">
-                  <MoreHorizontal className="size-3.5" />
+                  <span className="flex items-center gap-1.5">
+                    {row.s3 && (
+                      <span title={c.copyKey}>
+                        <Copy className="size-3.5" />
+                      </span>
+                    )}
+                    <MoreHorizontal className="size-3.5" />
+                  </span>
                 </td>
               </tr>
             ))}

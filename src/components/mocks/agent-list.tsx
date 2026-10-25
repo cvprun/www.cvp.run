@@ -1,13 +1,16 @@
 import {
+  ArrowDownWideNarrow,
   Cpu,
   Download,
-  Loader2,
-  MoreHorizontal,
+  KeyRound,
+  LayoutGrid,
+  ListFilter,
+  Play,
   Plus,
-  Radar,
-  ScanSearch,
-  Wand2,
-  type LucideIcon,
+  Search,
+  Square,
+  Table2,
+  Trash2,
 } from 'lucide-react';
 
 import {MockAppFrame, MockButton} from '@/components/mocks/app-frame';
@@ -15,112 +18,146 @@ import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
 /**
- * Agents list (`/proj/:id/agents`, `_AgentsTable.tsx`): section tabs
- * 에이전트/설치, a card with the agents table — name + UUID + running-app chips,
- * solid status badges, last connected / created, row menu.
+ * Agents list (`/proj/:id/agents`, `_AgentsTable.tsx`) on the list toolkit:
+ * search, the status segment with counts, filter/sort/view controls, then the
+ * table — name + slug, solid status badge, running-app chips, the reported
+ * host profile, CLI build with the update chip, last connected and the
+ * coloured row actions. Rows follow `_AgentsTable.stories.tsx`.
  */
-
 const COPY = {
   ko: {
-    title: '에이전트',
-    install: '설치',
+    tabs: ['에이전트', '설치'],
     create: '에이전트 생성',
-    cardTitle: '에이전트',
-    cardDescription: '이 프로젝트에 연결된 에이전트를 관리합니다.',
-    name: '이름',
-    status: '상태',
-    lastConnected: '마지막 연결',
-    createdAt: '생성일',
-    actions: '작업',
-    never: '없음',
-    active: '활성',
-    starting: '기동 중',
-    disconnected: '연결 끊김',
-    rfdetr: 'RF-DETR 비전 모델',
-    sam2: 'SAM2 세그멘테이션',
-    collectorSim: '수집기 시뮬레이터',
+    search: '이름·슬러그·호스트 검색',
+    segments: [
+      ['기본', '6', ''],
+      ['실행 중', '3', 'bg-emerald-500'],
+      ['확인 필요', '2', 'bg-amber-500'],
+      ['중지', '1', 'bg-slate-400'],
+    ],
+    filter: '필터',
+    sort: '마지막 연결',
+    cols: ['이름', '상태', '실행 중인 앱', '호스트', 'CLI', '마지막 연결'],
+    update: '업데이트',
+    noGpu: 'GPU 없음',
+    status: {
+      active: '활성',
+      disconnected: '연결 끊김',
+      start_failed: '기동 실패',
+      stopped: '중지됨',
+    },
+    reason: 'glibc 2.35 이상이 필요합니다',
   },
   en: {
-    title: 'Agents',
-    install: 'Install',
+    tabs: ['Agents', 'Install'],
     create: 'Create Agent',
-    cardTitle: 'Agents',
-    cardDescription: 'Manage agents connected to this project.',
-    name: 'Name',
-    status: 'Status',
-    lastConnected: 'Last Connected',
-    createdAt: 'Created',
-    actions: 'Actions',
-    never: 'Never',
-    active: 'Active',
-    starting: 'Starting',
-    disconnected: 'Disconnected',
-    rfdetr: 'RF-DETR Vision',
-    sam2: 'SAM2 Segmentation',
-    collectorSim: 'Collector simulator',
+    search: 'Search by name, slug or host',
+    segments: [
+      ['Default', '6', ''],
+      ['Running', '3', 'bg-emerald-500'],
+      ['Needs attention', '2', 'bg-amber-500'],
+      ['Stopped', '1', 'bg-slate-400'],
+    ],
+    filter: 'Filter',
+    sort: 'Last connected',
+    cols: ['Name', 'Status', 'Running apps', 'Host', 'CLI', 'Last Connected'],
+    update: 'Update',
+    noGpu: 'No GPU',
+    status: {
+      active: 'Active',
+      disconnected: 'Disconnected',
+      start_failed: 'Start failed',
+      stopped: 'Stopped',
+    },
+    reason: 'glibc 2.35 or newer is required',
   },
 } as const;
 
-type Status = 'active' | 'starting' | 'disconnected';
+type Status = 'active' | 'disconnected' | 'start_failed' | 'stopped';
 
 const STATUS_CLASS: Record<Status, string> = {
   active: 'bg-emerald-500 text-white',
-  starting: 'bg-blue-500 text-white',
   disconnected: 'bg-amber-500 text-white',
+  start_failed: 'bg-red-500 text-white',
+  stopped: 'bg-slate-500 text-white',
 };
 
-type Row = {
+type Agent = {
   name: string;
-  id: string;
+  slug: string;
   status: Status;
-  apps: {icon: LucideIcon; key: 'rfdetr' | 'sam2' | 'collectorSim'}[];
-  lastConnected: string | null;
-  created: string;
+  apps: string[];
+  host: string;
+  gpu: string | null;
+  cli: string;
+  outdated?: boolean;
+  /** Last connected, ko / en. */
+  last: [string, string];
 };
 
-const ROWS: Row[] = [
+const AGENTS: Agent[] = [
   {
-    name: 'gpu-node-01',
-    id: '7f3a9c1e-4b8d-4e21-9a0c-5d2e8b61f0a4',
+    name: 'GPU server 1',
+    slug: 'gpu-01',
     status: 'active',
-    apps: [
-      {icon: ScanSearch, key: 'rfdetr'},
-      {icon: Wand2, key: 'sam2'},
-    ],
-    lastConnected: '2026-10-01',
-    created: '2026-08-14',
+    apps: ['rfdetr', 'sam2'],
+    host: 'Linux · x64',
+    gpu: 'RTX 4090 · 24 GB',
+    cli: '0.14.2',
+    last: ['10:42', '10:42'],
   },
   {
-    name: 'line-02-edge',
-    id: '2c91d05f-a3e7-41b6-8f2d-0e7c9a4b1d63',
+    name: 'zer0-hp-zbook',
+    slug: 'zer0-hp-zbook',
     status: 'active',
-    apps: [{icon: Radar, key: 'collectorSim'}],
-    lastConnected: '2026-10-01',
-    created: '2026-09-03',
+    apps: ['pointcept', 'rfdetr', 'sam2'],
+    host: 'Linux · x64',
+    gpu: 'RTX PRO 2000 · 8 GB',
+    cli: '0.14.2',
+    last: ['10:40', '10:40'],
   },
   {
-    name: 'jetson-orin-03',
-    id: '9b4e21c7-60fa-4d18-b3e5-7a2c0f9d8e15',
-    status: 'starting',
-    apps: [],
-    lastConnected: null,
-    created: '2026-09-30',
+    name: 'Line 3 collector',
+    slug: 'line3-edge',
+    status: 'active',
+    apps: ['modbustcp-client'],
+    host: 'Linux · arm64',
+    gpu: null,
+    cli: '0.14.2',
+    last: ['10:42', '10:42'],
   },
   {
-    name: 'plc-gateway-04',
-    id: '5e08b7c2-d914-4a6f-8c31-b0e2f7a95d28',
+    name: 'Warehouse camera node',
+    slug: 'warehouse-cam',
     status: 'disconnected',
     apps: [],
-    lastConnected: '2026-09-27',
-    created: '2026-07-21',
+    host: 'Linux · x64',
+    gpu: null,
+    cli: '0.13.0',
+    outdated: true,
+    last: ['10월 24일', 'Oct 24'],
+  },
+  {
+    name: 'Jetson inspector',
+    slug: 'jetson-insp',
+    status: 'start_failed',
+    apps: [],
+    host: 'Linux · arm64',
+    gpu: 'Orin · 32 GB',
+    cli: '0.14.2',
+    last: ['10월 23일', 'Oct 23'],
+  },
+  {
+    name: 'QA laptop',
+    slug: 'qa-laptop',
+    status: 'stopped',
+    apps: [],
+    host: 'Windows · x64',
+    gpu: null,
+    cli: '0.14.2',
+    last: ['10월 21일', 'Oct 21'],
   },
 ];
-
-/** `toLocaleDateString()` as the app renders it in each language. */
-function localDate(iso: string, lang: 'ko' | 'en'): string {
-  const [y, m, d] = iso.split('-').map(Number);
-  return lang === 'ko' ? `${y}. ${m}. ${d}.` : `${m}/${d}/${y}`;
-}
 
 export function MockAgentList() {
   const {lang} = useLanguage();
@@ -129,94 +166,159 @@ export function MockAgentList() {
   return (
     <MockAppFrame
       activeNav="agents"
-      title={c.title}
+      title={lang === 'ko' ? '에이전트' : 'Agents'}
       actions={
         <MockButton icon={Plus} variant="default">
           {c.create}
         </MockButton>
       }
       tabs={[
-        {icon: Cpu, label: c.title, active: true},
-        {icon: Download, label: c.install},
+        {icon: Cpu, label: c.tabs[0], active: true},
+        {icon: Download, label: c.tabs[1]},
       ]}
     >
-      <div className="rounded-md border border-border bg-card">
-        <div className="px-4 pt-3.5 pb-2">
-          <p className="text-[13px] font-semibold tracking-[-0.01em]">{c.cardTitle}</p>
-          <p className="text-[10px] text-muted-foreground">{c.cardDescription}</p>
-        </div>
-        <div className="px-4 pb-3">
-          <table className="w-full text-[11px]">
-            <thead>
-              <tr className="h-8 border-b border-border text-left text-muted-foreground">
-                <th className="font-medium">{c.name}</th>
-                <th className="px-2 font-medium">{c.status}</th>
-                <th className="hidden px-2 font-medium @2xl:table-cell">
-                  {c.lastConnected}
-                </th>
-                <th className="hidden px-2 font-medium @3xl:table-cell">
-                  {c.createdAt}
-                </th>
-                <th className="w-8 font-medium" />
-              </tr>
-            </thead>
-            <tbody>
-              {ROWS.map((row, ri) => (
-                <tr key={row.id} className={cn(ri > 0 && 'border-t border-border')}>
-                  <td className="max-w-0 py-2">
-                    <span className="flex min-w-0 items-center gap-2.5">
-                      <span className="min-w-0 shrink-0">
-                        <span className="block text-[11px] leading-tight font-medium">
-                          {row.name}
-                        </span>
-                        <span className="block max-w-[11rem] truncate text-[9px] text-muted-foreground @3xl:max-w-none">
-                          {row.id}
-                        </span>
+      <div className="mb-2.5 flex flex-wrap items-center gap-2">
+        <span className="flex h-6 w-40 items-center gap-1.5 rounded-md border border-input bg-background px-2 text-[10px] text-muted-foreground">
+          <Search className="size-3 shrink-0" />
+          <span className="truncate">{c.search}</span>
+        </span>
+        <span className="flex gap-0.5 rounded-md bg-muted p-[3px]">
+          {c.segments.map(([label, count, dot], i) => (
+            <span
+              key={label}
+              className={cn(
+                'flex items-center gap-1 rounded-[4px] px-1.5 py-0.5 text-[9.5px] font-medium whitespace-nowrap',
+                i === 0 ? 'bg-background shadow-sm' : 'text-muted-foreground',
+                i >= 2 && 'hidden @2xl:flex',
+              )}
+            >
+              {dot && <span className={cn('size-1.5 rounded-full', dot)} />}
+              {label}
+              <span className="opacity-60 tabular-nums">{count}</span>
+            </span>
+          ))}
+        </span>
+        <span className="ml-auto flex items-center gap-1.5">
+          <MockButton icon={ListFilter} className="hidden @xl:inline-flex">
+            {c.filter}
+          </MockButton>
+          <MockButton icon={ArrowDownWideNarrow} className="hidden @3xl:inline-flex">
+            {c.sort}
+          </MockButton>
+          <span className="flex overflow-hidden rounded-md border border-border">
+            <span className="flex size-6 items-center justify-center bg-accent">
+              <Table2 className="size-3" />
+            </span>
+            <span className="flex size-6 items-center justify-center text-muted-foreground">
+              <LayoutGrid className="size-3" />
+            </span>
+          </span>
+        </span>
+      </div>
+
+      <div className="overflow-hidden rounded-md border border-border bg-card">
+        <table className="w-full text-[10px]">
+          <thead>
+            <tr className="bg-muted/50 text-left text-[9.5px] text-muted-foreground">
+              <th className="px-2.5 py-1.5 font-medium">{c.cols[0]}</th>
+              <th className="px-2 py-1.5 font-medium">{c.cols[1]}</th>
+              <th className="hidden px-2 py-1.5 font-medium @2xl:table-cell">
+                {c.cols[2]}
+              </th>
+              <th className="hidden px-2 py-1.5 font-medium @3xl:table-cell">
+                {c.cols[3]}
+              </th>
+              <th className="hidden px-2 py-1.5 font-medium @4xl:table-cell">
+                {c.cols[4]}
+              </th>
+              <th className="hidden px-2 py-1.5 font-medium @xl:table-cell">
+                {c.cols[5]}
+              </th>
+              <th className="w-16 px-2 py-1.5" />
+            </tr>
+          </thead>
+          <tbody>
+            {AGENTS.map(agent => (
+              <tr key={agent.slug} className="border-t border-border">
+                <td className="px-2.5 py-1.5">
+                  <span className="block font-medium">{agent.name}</span>
+                  <span className="block font-mono text-[9px] text-muted-foreground">
+                    {agent.slug}
+                  </span>
+                </td>
+                <td className="px-2 py-1.5">
+                  <span
+                    className={cn(
+                      'inline-flex rounded-md px-1.5 py-px text-[9px] font-semibold whitespace-nowrap',
+                      STATUS_CLASS[agent.status],
+                    )}
+                  >
+                    {c.status[agent.status]}
+                  </span>
+                  {agent.status === 'start_failed' && (
+                    <span className="mt-0.5 block text-[8.5px] text-muted-foreground">
+                      {c.reason}
+                    </span>
+                  )}
+                </td>
+                <td className="hidden px-2 py-1.5 @2xl:table-cell">
+                  <span className="flex gap-1">
+                    {agent.apps.slice(0, 2).map(app => (
+                      <span
+                        key={app}
+                        className="rounded border border-border px-1 font-mono text-[8.5px] text-muted-foreground"
+                      >
+                        {app}
                       </span>
-                      {row.status === 'active' && (
-                        <span className="hidden min-w-0 items-center gap-0.5 overflow-hidden @xl:flex">
-                          {row.apps.map(({icon: Icon, key}) => (
-                            <span
-                              key={key}
-                              className="flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-muted-foreground"
-                            >
-                              <Icon className="size-3" />
-                              {c[key]}
-                            </span>
-                          ))}
-                        </span>
-                      )}
-                    </span>
-                  </td>
-                  <td className="px-2 py-2">
-                    <span
+                    ))}
+                    {agent.apps.length > 2 && (
+                      <span className="rounded border border-dashed border-border px-1 text-[8.5px] text-muted-foreground">
+                        +{agent.apps.length - 2}
+                      </span>
+                    )}
+                  </span>
+                </td>
+                <td className="hidden px-2 py-1.5 @3xl:table-cell">
+                  <span className="block">{agent.host}</span>
+                  <span className="block text-[9px] text-muted-foreground">
+                    {agent.gpu ?? c.noGpu}
+                  </span>
+                </td>
+                <td className="hidden px-2 py-1.5 @4xl:table-cell">
+                  <span className="flex items-center gap-1">
+                    <span className="font-mono text-[9.5px]">{agent.cli}</span>
+                    {agent.outdated && (
+                      <span className="rounded bg-amber-100 px-1 text-[8.5px] text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
+                        {c.update}
+                      </span>
+                    )}
+                  </span>
+                </td>
+                <td className="hidden px-2 py-1.5 text-muted-foreground tabular-nums @xl:table-cell">
+                  {agent.last[lang === 'ko' ? 0 : 1]}
+                </td>
+                <td className="px-2 py-1.5">
+                  <span className="flex justify-end gap-1.5">
+                    {agent.status === 'active' ? (
+                      <Square className="size-3 text-amber-600" />
+                    ) : (
+                      <Play className="size-3 text-emerald-600" />
+                    )}
+                    <KeyRound className="size-3 text-sky-600" />
+                    <Trash2
                       className={cn(
-                        'inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap',
-                        STATUS_CLASS[row.status],
+                        'size-3',
+                        agent.status === 'active'
+                          ? 'text-muted-foreground/30'
+                          : 'text-red-600',
                       )}
-                    >
-                      {row.status === 'starting' && (
-                        <Loader2 className="mr-1 size-2.5 animate-spin" />
-                      )}
-                      {c[row.status]}
-                    </span>
-                  </td>
-                  <td className="hidden px-2 py-2 whitespace-nowrap text-muted-foreground @2xl:table-cell">
-                    {row.lastConnected ? localDate(row.lastConnected, lang) : c.never}
-                  </td>
-                  <td className="hidden px-2 py-2 whitespace-nowrap text-muted-foreground @3xl:table-cell">
-                    {localDate(row.created, lang)}
-                  </td>
-                  <td className="py-2 text-muted-foreground">
-                    <span className="flex size-6 items-center justify-center">
-                      <MoreHorizontal className="size-3.5" />
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    />
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </MockAppFrame>
   );

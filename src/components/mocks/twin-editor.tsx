@@ -3,8 +3,10 @@ import {
   AlignVerticalJustifyCenter,
   ArrowDownToLine,
   Bot,
+  Cable,
   Camera,
   ChevronDown,
+  ChevronRight,
   Copy,
   Eye,
   EyeOff,
@@ -12,7 +14,6 @@ import {
   HardHat,
   ImageIcon,
   Lock,
-  LockOpen,
   Magnet,
   Monitor,
   Move3d,
@@ -38,9 +39,12 @@ import {cn} from '@/lib/utils';
 /**
  * Digital twin scene editor (`/proj/:id/twin/:sceneId/edit`): asset browser
  * (catalog tab, search, category chips, asset tiles) | `TwinCanvas` with the
- * transform toolbar, selection toolbar and view menu | scene tree, binding
- * panel and node inspector. The 3D viewport is an isometric SVG rendering of
- * a welding cell on the canvas' `#0b1220` background.
+ * transform toolbar, selection toolbar and view menu | the scene tree with
+ * node details folded into rows (2026-10-13). The unfolded row is the
+ * kinematic cobot (RB10 preset) on its bindings sub-tab, its joints driven by
+ * an imported collector stream. The 3D
+ * viewport is an isometric SVG rendering of a welding cell on the canvas'
+ * `#0b1220` background.
  */
 
 const COPY = {
@@ -68,7 +72,7 @@ const COPY = {
     groups: {robot: '로봇', machine: '기계', vehicle: '차량', person: '사람'},
     assets: {
       robotArm: '로봇 암',
-      cobotArm: '협동로봇',
+      cobotArm: '기구학 협동로봇',
       weldingGantry: '겐트리 용접 시스템',
       weldingPositioner: '용접 포지셔너',
       agvCart: 'AGV 대차',
@@ -80,7 +84,7 @@ const COPY = {
     nodes: [
       '하늘·조명',
       '바닥',
-      '로봇 암 R1',
+      '기구학 협동로봇 R1',
       '용접 포지셔너 P1',
       '벨트 컨베이어 C1',
       'AGV 대차 02',
@@ -89,20 +93,24 @@ const COPY = {
       '디스플레이 패널',
     ],
     bindings: (n: number) => `바인딩 (${n})`,
+    props: '속성',
+    links: '데이터 연결',
     add: '추가',
-    modbus: 'Modbus 레지스터',
-    memory: '메모리 리전',
-    connector: '커넥터',
-    area: '레지스터 영역',
-    address: '레지스터 주소',
-    memoryMap: '메모리 맵',
-    region: '리전',
+    modbus: 'ModbusTCP 태그',
+    memory: '수집기 채널',
+    connector: 'ModbusTCP 장치',
+    area: 'ModbusTCP 장치',
+    address: '태그',
+    memoryMap: '수집기 · 스트림',
+    region: '채널',
+    model: '기종',
+    tcp: 'TCP 오프셋 (m)',
     name: '이름',
     position: '위치',
     rotation: '회전',
     scale: '크기',
     parameters: '파라미터',
-    reach: '리치 (m)',
+    reach: '기종',
     joint: (n: number) => `${n}축 (deg)`,
     tool: '엔드 이펙터',
     welder: '용접 토치',
@@ -137,7 +145,7 @@ const COPY = {
     },
     assets: {
       robotArm: 'Robot arm',
-      cobotArm: 'Collaborative robot',
+      cobotArm: 'Kinematic cobot',
       weldingGantry: 'Welding gantry',
       weldingPositioner: 'Welding positioner',
       agvCart: 'AGV cart',
@@ -149,7 +157,7 @@ const COPY = {
     nodes: [
       'Sky & lighting',
       'Floor',
-      'Robot arm R1',
+      'Kinematic cobot R1',
       'Welding positioner P1',
       'Belt conveyor C1',
       'AGV cart 02',
@@ -158,20 +166,24 @@ const COPY = {
       'Display panel',
     ],
     bindings: (n: number) => `Bindings (${n})`,
+    props: 'Properties',
+    links: 'Bindings',
     add: 'Add',
-    modbus: 'Modbus register',
-    memory: 'Memory region',
-    connector: 'Connector',
-    area: 'Register area',
-    address: 'Register address',
-    memoryMap: 'Memory map',
-    region: 'Region',
+    modbus: 'ModbusTCP tag',
+    memory: 'Collector channel',
+    connector: 'ModbusTCP device',
+    area: 'ModbusTCP device',
+    address: 'Tag',
+    memoryMap: 'Collector · stream',
+    region: 'Channel',
+    model: 'Model',
+    tcp: 'TCP offset (m)',
     name: 'Name',
     position: 'Position',
     rotation: 'Rotation',
     scale: 'Scale',
     parameters: 'Parameters',
-    reach: 'Reach (m)',
+    reach: 'Model',
     joint: (n: number) => `Joint ${n} (deg)`,
     tool: 'End effector',
     welder: 'Weld torch',
@@ -795,159 +807,124 @@ function Field({children, className}: {children: ReactNode; className?: string})
   );
 }
 
-function Vec({label, values}: {label: string; values: string[]}) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-[9.5px] font-medium">{label}</p>
-      <div className="grid grid-cols-3 gap-1">
-        {values.map((v, i) => (
-          <Field key={i}>{v}</Field>
-        ))}
-      </div>
-    </div>
-  );
-}
+/** Binding cards of the unfolded row: joints driven by an imported stream. */
+const JOINT_BINDINGS = [
+  {slot: 'j1', channel: 'j1 · J1'},
+  {slot: 'j2', channel: 'j2 · J2'},
+  {slot: 'j3', channel: 'j3 · J3'},
+];
 
+/**
+ * Scene tree as of 2026-10-13: node details fold into the rows. The selected
+ * cobot row is unfolded on its 데이터 연결 sub-tab, its joints bound to the
+ * channels of a robot teaching stream imported into a collector.
+ */
 function RightPanel({c}: {c: C}) {
   const badges = ['sun', 'B', 'B', 'B', 'B', 'A', 'B', 'B', 'B'];
+  const bindingCounts: Partial<Record<number, number>> = {2: 6, 3: 1, 4: 1};
+  const selected = 2;
+
   return (
-    <aside className="hidden w-52 shrink-0 flex-col overflow-hidden border-l border-border @4xl:flex">
-      {/* scene tree */}
+    <aside className="hidden w-56 shrink-0 flex-col overflow-hidden border-l border-border bg-sidebar @4xl:flex">
       <h4 className="border-b border-border px-2.5 py-1.5 text-[10px] font-medium text-muted-foreground">
         {c.sceneTree(c.nodes.length)}
       </h4>
-      <ul className="border-b border-border p-1">
+      <ul className="min-h-0 flex-1 space-y-0.5 overflow-hidden p-1.5">
         {c.nodes.map((name, i) => {
+          const open = i === selected;
           const hidden = i === 7;
+          const count = bindingCounts[i];
           return (
-            <li
-              key={name}
-              className={cn(
-                'flex items-center gap-1.5 rounded px-1.5 py-[3px]',
-                i === 2 && 'bg-accent',
-              )}
-            >
-              {badges[i] === 'sun' ? (
-                <Sun className="size-3 shrink-0 text-muted-foreground" />
-              ) : (
-                <span className="rounded bg-muted px-1 text-[8.5px] text-muted-foreground">
-                  {badges[i]}
-                </span>
-              )}
-              <span
+            <li key={name}>
+              <div
                 className={cn(
-                  'flex-1 truncate text-[10px]',
-                  hidden && 'text-muted-foreground line-through',
+                  'flex items-center gap-1 rounded border px-1 py-[3px]',
+                  open
+                    ? 'rounded-b-none border-primary bg-accent'
+                    : 'border-transparent',
                 )}
               >
-                {name}
-              </span>
-              {i === 1 && <Lock className="size-2.5 text-muted-foreground" />}
-              {hidden ? (
-                <EyeOff className="size-3 text-muted-foreground" />
-              ) : (
-                <Eye className="size-3 text-muted-foreground" />
+                <ChevronRight
+                  className={cn(
+                    'size-2.5 shrink-0 text-muted-foreground',
+                    open && 'rotate-90',
+                  )}
+                />
+                {badges[i] === 'sun' ? (
+                  <Sun className="size-3 shrink-0 text-muted-foreground" />
+                ) : (
+                  <span className="rounded bg-muted px-1 text-[8.5px] text-muted-foreground">
+                    {badges[i]}
+                  </span>
+                )}
+                <span
+                  className={cn(
+                    'flex-1 truncate text-[10px]',
+                    hidden && 'text-muted-foreground line-through',
+                  )}
+                >
+                  {name}
+                </span>
+                {count !== undefined && (
+                  <span className="inline-flex shrink-0 items-center gap-0.5 rounded bg-muted px-1 text-[8.5px] text-muted-foreground tabular-nums">
+                    <Cable className="size-2.5" />
+                    {count}
+                  </span>
+                )}
+                {i === 1 && <Lock className="size-2.5 text-muted-foreground" />}
+                {hidden ? (
+                  <EyeOff className="size-3 text-muted-foreground" />
+                ) : (
+                  <Eye className="size-3 text-muted-foreground" />
+                )}
+              </div>
+
+              {open && (
+                <div className="space-y-1.5 rounded-b border border-t-0 border-primary/40 bg-muted/30 p-1.5">
+                  <nav className="flex gap-3 border-b border-border text-[9px]">
+                    <span className="-mb-px border-b-2 border-transparent pb-1 text-muted-foreground">
+                      {c.props}
+                    </span>
+                    <span className="-mb-px border-b-2 border-primary pb-1 font-medium">
+                      {c.links}{' '}
+                      <span className="text-muted-foreground tabular-nums">6</span>
+                    </span>
+                  </nav>
+                  {JOINT_BINDINGS.map(b => (
+                    <div
+                      key={b.slot}
+                      className="space-y-1 rounded-lg border border-border bg-background p-1.5"
+                    >
+                      <div className="flex items-center gap-1">
+                        <Field className="w-10 justify-between font-mono">
+                          {b.slot}
+                        </Field>
+                        <Field className="min-w-0 flex-1 justify-between">
+                          <span className="truncate">{c.memory}</span>
+                          <ChevronDown className="size-2.5 shrink-0 text-muted-foreground" />
+                        </Field>
+                        <Trash2 className="size-3 shrink-0 text-destructive" />
+                      </div>
+                      <Field className="font-mono">
+                        <span className="truncate">Robot cell · import-weld-01</span>
+                      </Field>
+                      <Field className="justify-between font-mono">
+                        <span className="truncate">{b.channel}</span>
+                        <span className="font-sans text-[8.5px] text-muted-foreground">
+                          deg
+                        </span>
+                      </Field>
+                    </div>
+                  ))}
+                  <MockButton icon={Plus} variant="ghost" className="h-5 px-1">
+                    {c.add}
+                  </MockButton>
+                </div>
               )}
             </li>
           );
         })}
       </ul>
-
-      {/* bindings */}
-      <div className="flex items-center justify-between border-b border-border px-2.5 py-1">
-        <h4 className="text-[10px] font-medium text-muted-foreground">
-          {c.bindings(2)}
-        </h4>
-        <MockButton icon={Plus} variant="ghost" className="h-5 px-1">
-          {c.add}
-        </MockButton>
-      </div>
-      <div className="space-y-1.5 border-b border-border p-2">
-        {[
-          {
-            slot: 'j1',
-            kind: c.modbus,
-            rows: [
-              [c.area, 'Holding'],
-              [c.address, '40001'],
-            ],
-          },
-          {
-            slot: 'j2',
-            kind: c.memory,
-            rows: [
-              [c.memoryMap, 'plant-a'],
-              [c.region, 'holding'],
-            ],
-          },
-        ].map(b => (
-          <div key={b.slot} className="space-y-1 rounded-lg border border-border p-1.5">
-            <div className="flex gap-1">
-              <Field className="flex-1 justify-between font-mono">
-                {b.slot}
-                <ChevronDown className="size-2.5 text-muted-foreground" />
-              </Field>
-              <Trash2 className="size-3 self-center text-destructive" />
-            </div>
-            <Field className="justify-between">
-              {b.kind}
-              <ChevronDown className="size-2.5 text-muted-foreground" />
-            </Field>
-            <div className="grid grid-cols-2 gap-1">
-              {b.rows.map(([k, v]) => (
-                <div key={k} className="min-w-0">
-                  <p className="truncate text-[8.5px] text-muted-foreground">{k}</p>
-                  <Field className="font-mono">{v}</Field>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* node inspector */}
-      <div className="min-h-0 flex-1 space-y-2 overflow-hidden p-2.5">
-        <div className="space-y-0.5">
-          <p className="text-[9.5px] font-medium">{c.name}</p>
-          <Field>{c.nodes[2]}</Field>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Eye className="size-3" />
-          <LockOpen className="size-3" />
-          <Trash2 className="ml-auto size-3 text-destructive" />
-        </div>
-        <Vec label={c.position} values={['6', '0', '3.5']} />
-        <Vec label={c.rotation} values={['0', '35', '0']} />
-        <Vec label={c.scale} values={['1', '1', '1']} />
-        <div className="space-y-1.5 border-t border-border pt-2">
-          <p className="text-[9.5px] font-medium text-muted-foreground">
-            {c.parameters}
-          </p>
-          <div className="grid grid-cols-2 gap-x-1.5 gap-y-1">
-            {[
-              [c.reach, '1.4'],
-              [c.joint(1), '28'],
-              [c.joint(2), '-34'],
-              [c.joint(3), '62'],
-              [c.joint(4), '0'],
-              [c.joint(5), '-45'],
-              [c.joint(6), '15'],
-            ].map(([k, v]) => (
-              <div key={k} className="min-w-0 space-y-0.5">
-                <p className="truncate text-[8.5px]">{k}</p>
-                <Field>{v}</Field>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-0.5">
-            <p className="text-[8.5px]">{c.tool}</p>
-            <Field className="justify-between">
-              {c.welder}
-              <ChevronDown className="size-2.5 text-muted-foreground" />
-            </Field>
-          </div>
-        </div>
-      </div>
     </aside>
   );
 }

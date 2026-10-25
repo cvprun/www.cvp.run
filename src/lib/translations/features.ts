@@ -220,8 +220,8 @@ export const features = {
             body: '무효점(0,0,0)을 제외하고, RANSAC으로 바닥·테이블 등 지배 평면을 제거한 뒤, 격자 클러스터링으로 나머지 점을 인스턴스 단위로 묶습니다. 모든 처리는 GPU 없이 브라우저 안에서 수행됩니다.',
           },
           {
-            title: '기존 포맷과 라벨 필드를 손실 없이.',
-            body: 'LAS/LAZ는 브라우저에서 WASM으로 디코딩하고, 파일명이 같은 이미지는 텍스처로 적용합니다. PLY의 classification·instance 등 라벨 필드는 값을 분석해 시맨틱/인스턴스 여부를 판정한 뒤 가져오며, Pointcept 씬 폴더와 프로파일 스택은 폴더 단위로 업로드합니다.',
+            title: '기존 포맷과 라벨 필드를 규칙으로.',
+            body: 'LAS/LAZ는 브라우저에서 WASM으로 디코딩하고, 파일명이 같은 이미지는 텍스처로 적용합니다. PLY 라벨 필드는 값마다 클래스와 객체 분리 여부를 지정하는 규칙표로 가져오며, 규칙을 데이터셋에 저장해 샘플 전체에 기존 라벨 덮어쓰기·빈 점만 채우기·전체 대체 중 하나의 방식으로 일괄 적용합니다.',
           },
         ],
         specs: {
@@ -235,6 +235,10 @@ export const features = {
               '큐보이드 · 올가미/사각형 세그먼트 · 3D 점/폴리라인/폴리곤/키포인트 · 치수 · 가이드',
             ],
             ['AI', 'Pointcept PTv3 시맨틱 · PointGroup 인스턴스 · 파인튜닝 모델'],
+            [
+              '라벨 규칙',
+              'PLY 값 → 클래스 · 객체로 나누기 · 데이터셋에 저장 · 일괄 적용 · CLI cvp dataset label-fields',
+            ],
             ['색상 모드', 'RGB · 라벨 · 높이 · 강도 · 텍스처'],
             ['내보내기', 'Pointcept(.npy) · Labeled PLY · SemanticKITTI · TXT'],
           ],
@@ -283,8 +287,8 @@ export const features = {
             body: 'YOLO·COCO·Pascal VOC·LabelMe·CVP 포맷을 선택하면 필요한 폴더와 파일을 슬롯별로 입력받습니다. 업로드 전에 브라우저에서 내용을 검사해 결과를 치명·오류·경고·정보의 4단계로 표시하며, train/val/test 분할은 샘플 태그로 보존합니다.',
           },
           {
-            title: '진행률을 한눈에 확인하는 샘플 관리.',
-            body: '샘플마다 미라벨링·진행 중·라벨링 완료·검토 완료 상태가 부여되며, 썸네일에 라벨을 겹쳐 표시합니다. 여러 샘플을 선택해 상태를 일괄 변경할 수 있고, 포인트클라우드는 조감 썸네일로, 시계열은 스파크라인으로 미리 확인합니다.',
+            title: '조건 전체를 대상으로 하는 샘플 목록.',
+            body: '샘플 탭은 상태별 개수 세그먼트, 댓글·태그 필터, 정렬, 썸네일 크기와 라벨 표시를 제공합니다. 한 쪽을 모두 선택하면 조건에 맞는 모든 샘플로 선택을 넓힐 수 있으며, 상태 변경과 삭제는 확인 대화상자에서 대상과 조건을 확인한 뒤 진행됩니다. 같은 작업은 cvp dataset sample 명령으로도 실행합니다.',
           },
           {
             title: 'QA 통계로 데이터의 공백을 찾습니다.',
@@ -303,6 +307,10 @@ export const features = {
               'COCO · YOLO · VOC · LabelMe · CVAT · MOT · CSV · ImageFolder · CVP (백그라운드 zip)',
             ],
             [
+              '샘플 목록',
+              '상태 세그먼트 · 댓글/태그 필터 · 조건 전체 선택 · 일괄 상태 변경/삭제 · CLI',
+            ],
+            [
               'QA',
               '클래스 분포 · 동시 등장 · 객체 수/크기 · 태그 사용 · 시간 구간 통계',
             ],
@@ -312,21 +320,21 @@ export const features = {
       },
 
       training: {
-        title: '라벨로 모델을 학습하고, 모델로 다시 라벨을 생성합니다.',
+        title: '라벨로 모델을 학습하고, 그 모델로 다음 라벨을 생성합니다.',
         intro:
-          '11단계 훈련 위저드로 실험을 구성하면 자체 GPU 에이전트가 학습을 수행하며, 학습을 마친 모델은 곧바로 추론과 자동 라벨링에 사용할 수 있습니다. 모든 실행 기록은 MLflow 호환 추적 시스템에 저장됩니다.',
+          'MLOps의 4단계 훈련 위저드에서 태스크·데이터·설정·에이전트를 지정하면 자체 GPU 에이전트가 학습을 수행합니다. 학습 기록은 MLflow 런에 모두 남으며, 학습을 마친 모델은 라벨링 에디터의 자동 라벨링과 추론 화면에서 곧바로 사용됩니다.',
         sections: [
           {
-            title: '자체 GPU에서 실행되는 추론.',
-            body: 'RF-DETR(탐지·세그멘테이션·키포인트), SAM2, Pointcept, 시계열 예측 앱을 에이전트에서 활성화하면 프로젝트 화면에서 바로 추론을 실행할 수 있습니다. 모델 가중치는 명시적으로 다운로드하며, 추론 요청은 유휴 인스턴스로 전달됩니다. 클라우드 토큰은 소모되지 않습니다.',
+            title: '에디터 안에서 실행하는 자동 라벨링.',
+            body: '이미지 에디터에서 자동 라벨링(A)을 실행하면 객체 탐지 모델이 박스·마스크·키포인트 초안을 제안합니다. 모델 클래스를 프로젝트 클래스에 매핑하고 기존 객체와 겹치는 결과를 제외한 뒤 선택한 결과만 적용합니다. 포인트클라우드는 3D 분할 모델이, 시계열은 이상 탐지 모델이 같은 방식으로 초안을 제안하며, 모든 추론은 자체 에이전트에서 실행됩니다.',
           },
           {
-            title: '실행별로 기록되는 학습 추이와 결과.',
-            body: '에폭별 진행률, 손실·mAP 곡선, 로그가 실행 표에 누적됩니다. 완료된 실행은 "추론에 사용"으로 곧바로 앱에 연결되며, 시계열 실험은 백테스트 결과와 모델 리더보드를 제공합니다.',
+            title: '런마다 남는 결과와 근거.',
+            body: '런 상세의 요약은 주요 메트릭을 현재 @production 버전과 비교한 결과 타일, 학습 곡선, 주요 파라미터와 직전 런 대비 변경된 설정을 한 화면에 보여 줍니다. 파라미터·메트릭·아티팩트·로그에서 세부 기록을 확인하고, 검토를 마친 런은 모델 버전으로 등록합니다.',
           },
           {
-            title: '위저드의 구성 단계.',
-            body: '태스크 → 프레임워크 → 모델 → 학습 데이터 → 클래스 → Train/Val → 하이퍼파라미터 → 평가 → 내보내기 → GPU → 학습의 순서로 진행합니다. 이미지 태스크 3종, 3D 인스턴스 세그멘테이션, 시계열 예측·이상 탐지·분류를 모두 동일한 절차로 구성합니다.',
+            title: '네 단계로 구성하는 학습.',
+            body: '무엇을(태스크·프레임워크·모델) → 데이터(데이터셋·클래스·분할) → 설정(에폭·배치·학습률·고급 설정) → 실행(에이전트·장치·모델 자동 등록)의 순서로 진행합니다. 이미지 객체 탐지·인스턴스 세그멘테이션·키포인트, 3D 인스턴스 세그멘테이션, 시계열 예측·이상 탐지·분류의 7가지 태스크를 같은 절차로 구성하며, 파라미터 이름 옆의 도움말에서 의미와 읽는 법을 확인할 수 있습니다.',
           },
         ],
         specs: {
@@ -336,11 +344,57 @@ export const features = {
               '객체 탐지 · 인스턴스 세그멘테이션 · 키포인트 · 3D 인스턴스 세그멘테이션 · 시계열 예측/이상 탐지/분류',
             ],
             [
-              '프레임워크',
-              'RF-DETR · Pointcept(PTv3 · PointGroup) · AutoGluon-TimeSeries · Chronos-Bolt · MiniRocket',
+              '엔진',
+              'RF-DETR · Pointcept(PTv3 · PointGroup) · Chronos-Bolt · AutoGluon-TimeSeries · MiniRocket',
             ],
-            ['실행', '에이전트 GPU · 대기열 · 진행률 · 중단'],
-            ['추적', 'MLflow 호환 실험 · 메트릭 · 아티팩트 · 모델 레지스트리'],
+            [
+              '실행',
+              '자체 에이전트 GPU · 대기 · 진행률 · 중단 · 같은 설정으로 다시 실행',
+            ],
+            [
+              '기록',
+              'MLflow 런에 파라미터 · 시스템 메트릭 · 데이터셋 계보 · 가중치 기록 · 완료 시 모델 자동 등록',
+            ],
+            ['도움말', '파라미터 · 메트릭 용어집 · 도식 · CLI cvp mlops explain'],
+          ],
+        },
+      },
+
+      inference: {
+        title: '사전학습 모델과 학습한 모델을 하나의 추론 화면에서.',
+        intro:
+          '사이드바의 추론 메뉴에서 객체 탐지부터 시계열 분류까지 7가지 기능을 실행합니다. 추론은 자체 에이전트에 캐시된 모델로 처리되며, 데이터셋 샘플에 대한 결과는 곧바로 라벨로 저장할 수 있습니다.',
+        sections: [
+          {
+            title: '개요에서 시작합니다.',
+            body: '개요 탭은 준비된 기능, 온라인 에이전트, 캐시된 모델, 오늘의 추론과 저장된 라벨 수를 한 줄로 요약하고, 모델 다운로드나 학습이 필요한 기능을 확인이 필요한 항목으로 안내합니다. 기능 탭에서는 데이터 유형별로 각 기능의 준비 상태와 최근 추론을 확인합니다.',
+          },
+          {
+            title: '입력, 결과, 설정을 한 화면에.',
+            body: '기능 화면은 입력·결과·설정의 세 영역으로 구성됩니다. 입력은 샘플 이미지, 데이터셋 샘플, 프로젝트 파일, 업로드 중에서 선택하고, 모델 선택기에는 이미 내려받은 모델과 다운로드할 수 있는 모델이 함께 표시됩니다. 결과는 다시 추론하거나 JSON으로 내려받으며, 데이터셋 샘플을 입력한 경우 클래스를 매핑해 라벨로 저장합니다.',
+          },
+          {
+            title: '모델과 기록을 관리합니다.',
+            body: '모델 탭은 에이전트별 캐시 용량과 모델 파일을 보여 주며, 필요한 모델을 내려받거나 정리합니다. 히스토리 탭에는 모든 추론의 입력·모델·파라미터·결과가 90일 동안 기록되므로, 같은 설정으로 다시 추론하거나 지난 결과를 라벨로 저장할 수 있습니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            [
+              '기능',
+              '이미지 객체 탐지 · 이미지 세그멘테이션 · 포인트클라우드 시맨틱/인스턴스 세그멘테이션 · 시계열 예측/이상 탐지/분류',
+            ],
+            [
+              '엔진',
+              'RF-DETR · SAM 2 · Pointcept(PTv3 · PointGroup) · Chronos-Bolt · AutoGluon-TimeSeries · MiniRocket',
+            ],
+            ['입력', '샘플 이미지 · 데이터셋 샘플 · 프로젝트 파일 · 업로드'],
+            [
+              '결과',
+              '라벨로 저장(추가/대체) · JSON · CSV(예측) · 편집기에서 AI 라벨링(포인트클라우드)',
+            ],
+            ['실행', '자체 에이전트 · 장치 자동 선택(CPU · CUDA · MPS) · 요청 대기열'],
+            ['기록', '히스토리 90일 보관 · 같은 설정으로 다시 추론 · CLI cvp infer'],
           ],
         },
       },
@@ -376,7 +430,7 @@ export const features = {
       collaboration: {
         title: '라벨링 팀을 위한 협업 공간까지 하나로.',
         intro:
-          '멤버와 역할, 위키 문서, 파일, 동영상 라이브러리, 회의록이 프로젝트 단위로 통합됩니다. 라벨링 가이드라인을 별도의 도구로 관리할 필요가 없습니다.',
+          '멤버와 역할, 위키 문서, 파일, 활동 기록이 프로젝트 단위로 통합됩니다. 라벨링 가이드라인을 별도의 도구로 관리할 필요가 없습니다.',
         sections: [
           {
             title: '가이드라인은 위키에, 발표도 위키에서.',
@@ -387,8 +441,8 @@ export const features = {
             body: '폴더를 생성하고, 드래그로 여러 파일을 선택해 복사·이동하거나 휴지통으로 보냅니다. 이미지·영상·PDF·CSV·Parquet·JSON·포인트클라우드·3D 모델은 전용 뷰어로 열람하고, zip/tar 아카이브는 압축을 해제하지 않고 내부를 탐색합니다. 코드·JSON·헥스·이미지·Draw.io 편집기로 파일을 그 자리에서 수정할 수 있습니다.',
           },
           {
-            title: '영상은 동영상 라이브러리에서.',
-            body: '영상을 HLS로 인코딩해 어떤 환경에서도 끊김 없이 재생하고, 자막(ASS·SRT·VTT)과 챕터를 추가하며, 360°·VR 영상도 재생합니다. 휴대폰으로 촬영과 동시에 업로드하는 라이브 업로드와 공개 링크 공유도 지원합니다.',
+            title: '멤버와 역할, 그리고 활동.',
+            body: '이메일이나 초대 링크로 멤버를 초대하고 owner부터 guest까지의 역할로 권한을 구분합니다. 활동 탭에는 프로젝트의 주요 작업이 시간순으로 기록되며, 여러 사람이 화면을 함께 보는 자리에서는 프로젝트를 숨기고 PIN으로 내용을 가릴 수 있습니다.',
           },
         ],
         specs: {
@@ -401,27 +455,29 @@ export const features = {
               '파일',
               'Drive 스타일 탐색 · 휴지통/실행 취소 · 타입별 뷰어 · 아카이브 탐색 · 편집기',
             ],
-            [
-              '동영상',
-              'HLS · AES-128 암호화 · 자막 편집기 · 챕터 · 360°/VR · 라이브 업로드',
-            ],
-            ['멤버', '역할 기반 권한 · 이메일/링크 초대'],
+            ['멤버', '9단계 역할(owner ~ guest) · 이메일/링크 초대'],
+            ['활동', '프로젝트 활동 피드 · 대시보드 최근 활동'],
+            ['숨김 프로젝트', '목록에서 숨김 · 4자리 PIN 화면 가림'],
           ],
         },
       },
 
       developers: {
-        title: '한 줄로 설치하는 CLI, 두 줄로 연동하는 MLflow.',
+        title: 'CLI, S3, MLflow로 기존 도구와 연동합니다.',
         intro:
-          '단일 실행 파일 CLI로 파일·데이터셋·에이전트 작업을 스크립트로 자동화하고, 프로젝트 액세스 토큰으로 MLflow 추적과 레지스트리를 연동합니다. 설치형 소프트웨어를 위해 오프라인 검증이 가능한 제품키도 발급합니다.',
+          '단일 실행 파일 CLI로 데이터셋·추론·MLOps·동영상 작업을 터미널에서 자동화하고, 저장소 범위 토큰으로 DVC·aws CLI 같은 S3 클라이언트를 연결하며, 액세스 토큰으로 MLflow 추적과 레지스트리를 연동합니다. 설치형 소프트웨어를 위해 오프라인 검증이 가능한 제품키도 발급합니다.',
         sections: [
           {
-            title: '권한 범위를 지정해 발급하는 액세스 토큰.',
-            body: '토큰마다 실험·모델 레지스트리 읽기/쓰기, 컨테이너 레지스트리 풀/푸시 범위와 만료일을 지정합니다. 토큰 원문은 생성 직후 한 번만 표시되며 서버에는 해시만 저장됩니다. 유출이 의심되면 토큰 회전으로 즉시 교체할 수 있습니다.',
+            title: '터미널에서 다루는 플랫폼.',
+            body: 'curl 명령 한 줄로 설치하는 단일 실행 파일 CLI는 이후 배포에 맞춰 스스로 업데이트됩니다. cvp login으로 브라우저에서 기기를 승인한 뒤 dataset·files·infer·mlops·video·modbustcp·collector 명령을 스크립트에서 사용하며, 웹 화면의 주요 작업은 CLI 명령으로도 제공됩니다.',
           },
           {
-            title: '단일 실행 파일로 제공되는 CLI.',
-            body: 'Node.js 없이 curl 명령 한 줄로 설치하며, 이후 새 배포에 맞춰 자동으로 업데이트됩니다. cvp login으로 브라우저 인증을 마치면 cvp files, cvp dataset, cvp agent 명령을 --json 출력과 함께 스크립트에서 사용할 수 있습니다. 에이전트는 sudo cvp service install 명령으로 systemd 서비스에 등록됩니다.',
+            title: '프로젝트 저장소를 S3 클라이언트로.',
+            body: '저장소 범위를 지정해 토큰을 발급하면 S3 액세스 키 ID와 시크릿 액세스 키가 함께 표시됩니다. 엔드포인트와 버킷(프로젝트 슬러그)을 설정하면 DVC 원격 저장소나 aws CLI 같은 S3 호환 클라이언트로 파일을 조회·업로드·다운로드하며, 멀티파트 업로드와 서명된 URL도 지원합니다.',
+          },
+          {
+            title: '에이전트는 명령 한 줄로.',
+            body: '설치 화면에서 운영체제를 선택하면 토큰이 채워진 설치 명령이 생성됩니다. Linux에서는 systemd 서비스로 등록해 부팅 시 자동으로 실행되도록 구성하며, 앱을 추가하기 전에 cvp agent check로 호스트 호환성을 점검합니다.',
           },
           {
             title: '제품키는 발급부터 오프라인 검증까지.',
@@ -431,18 +487,22 @@ export const features = {
         specs: {
           rows: [
             [
+              'CLI',
+              'Linux · macOS · Windows 단일 실행 파일 · 자동 업데이트 · 기기 코드 로그인 · 셸 자동완성',
+            ],
+            [
+              'S3 호환',
+              'path-style 엔드포인트 · storage:read/write 범위 · 멀티파트 · 서명된 URL · DVC · aws CLI',
+            ],
+            [
               '액세스 토큰',
               '범위 기반 권한 · 만료일 · 회전/폐기 · 원문 1회 노출(해시 저장)',
             ],
-            [
-              'CLI',
-              'Linux · macOS · Windows 단일 실행 파일 · 자동 업데이트 · 개인 토큰(cvp_pat_)',
-            ],
+            ['MLflow', '트래킹 URI + 토큰 · 실험 · 모델 레지스트리 · 아티팩트'],
             [
               '제품키',
               '정책 · 발급/일시중지/취소 · 머신 활성화 · Ed25519 오프라인 검증',
             ],
-            ['연동', 'MLflow 트래킹 URI · 컨테이너/pip/npm 레지스트리'],
           ],
         },
       },
@@ -450,50 +510,57 @@ export const features = {
       agents: {
         title: '자체 장비에서 CVP의 작업을 실행하는 에이전트.',
         intro:
-          '머신마다 에이전트를 하나씩 설치하고 웹에서 앱을 활성화하면, 에이전트가 해당 앱을 자식 프로세스로 실행하고 상태를 감시합니다. AI 추론·학습부터 Modbus 설비 연동, 영상 변환까지 무거운 연산을 모두 자체 장비에서 처리합니다.',
+          '머신마다 에이전트를 하나씩 설치하고 웹에서 앱을 추가하면, 에이전트가 앱을 자식 프로세스로 실행하고 상태를 감시합니다. 추론과 학습, ModbusTCP 장치, 동영상 변환, 데이터 수집까지 무거운 연산과 현장 연동을 모두 자체 장비에서 처리합니다.',
         sections: [
           {
             title: '에이전트 하나, 앱 여러 개.',
-            body: 'RF-DETR, SAM2, Pointcept, 시계열 예측, Modbus 모니터·시뮬레이터, 동영상 다운로드·변환, 수집기 시뮬레이터 등의 앱을 인스턴스로 추가하고 실행 인자를 지정하면 준비가 완료됩니다. 인스턴스를 여러 개 구성하면 요청이 유휴 인스턴스로 분배됩니다.',
+            body: '이미지 객체 탐지·이미지 세그멘테이션·포인트클라우드 세그멘테이션·시계열 분석, 동영상 변환·다운로드, ModbusTCP 서버·클라이언트, 수집기 시뮬레이터를 인스턴스로 추가하고 실행 인자를 지정합니다. 에이전트 목록은 상태별 개수와 함께 각 호스트의 운영체제·GPU·CLI 버전을 보여 주며, 오래된 CLI는 업데이트 표시로 구분합니다.',
           },
           {
-            title: '공장 설비와 직접 연동됩니다.',
-            body: 'Modbus 모니터는 PLC 레지스터를 읽고, 시뮬레이터는 Modbus TCP 서버로 동작하며 값을 제공합니다. 레지스터 값은 메모리 맵에 미러링되어 디지털 트윈과 그리드로 전달되며, 통신 히스토리에는 읽기·쓰기·예외가 모두 기록됩니다.',
+            title: '추가하기 전에 호환성을 확인합니다.',
+            body: '앱 추가 마법사는 에이전트가 보고한 호스트 사양으로 운영체제·아키텍처·glibc·GPU·드라이버·디스크 여유를 점검하고, 설치될 패키지까지 미리 보여 줍니다. 실행할 수 없는 조합은 원인과 해결 방법을 함께 안내합니다.',
           },
           {
-            title: '자원은 한도로, 상태는 그래프로.',
-            body: '앱마다 메모리·CPU·GPU·프로세스 수 한도를 지정하면 cgroup으로 이를 강제합니다. CPU·메모리·GPU·네트워크 사용량을 실시간 차트로 확인하고, 에이전트에 축적된 로컬 시계열 메트릭을 PromQL로 조회합니다.',
+            title: '자원은 한도로, 상태는 숫자로.',
+            body: '앱마다 메모리·CPU·GPU·프로세스 수 한도를 지정하면 cgroup으로 이를 강제하며, 직접 지정한 한도의 합이 호스트 용량을 초과하면 경고합니다. 개요 탭은 CPU·메모리·GPU·디스크 사용량을 숫자로 보여 주고, 저장소 탭에서는 로그와 앱 디렉터리의 용량을 측정해 자동 정리 정책을 지정합니다.',
           },
         ],
         specs: {
           rows: [
-            ['설치', 'curl 한 줄 · systemd 서비스 등록 · 자동 업데이트'],
+            ['설치', 'curl 한 줄 · systemd 서비스 등록(Linux) · 자동 업데이트'],
             [
               '앱',
-              'RF-DETR · SAM2 · Pointcept · 시계열 · Modbus · 다운로더 · 변환기 · 수집기',
+              '객체 탐지 · 세그멘테이션 · 포인트클라우드 · 시계열 · 동영상 변환/다운로드 · ModbusTCP · 수집기',
             ],
-            ['자원 한도', '메모리 · CPU · GPU 마스크 · 프로세스 수 (cgroup v2)'],
-            ['모니터링', '리소스 차트 · PromQL 메트릭 · 로그 · 상태 그래프'],
+            [
+              '호환성',
+              '운영체제 · 아키텍처 · glibc · GPU · 드라이버 · 패키지 · 디스크 점검 · cvp agent check',
+            ],
+            [
+              '자원 한도',
+              '메모리 · CPU · GPU 마스크 · 프로세스 수 (cgroup v2) · 호스트 합계 경고',
+            ],
+            ['모니터링', '리소스 · 메트릭 · 저장소 · 로그 · 상태 그래프'],
           ],
         },
       },
 
       collectors: {
-        title: '현장의 카메라와 센서 데이터를 빠짐없이 수집.',
+        title: '현장 데이터를 세그먼트로 기록하는 수집기.',
         intro:
-          '에이전트가 영상·이미지·포인트클라우드·프로파일·시계열·레코드·파일의 7종 데이터를 세그먼트 단위로 수신해 로컬 디스크에 저장하고, 필요한 구간만 클라우드로 업로드합니다. 타임라인에서는 여러 스트림을 같은 시각으로 동기화해 재생합니다.',
+          '수집기는 에이전트가 영상·이미지·프로파일·포인트클라우드·시계열·레코드·파일의 7가지 데이터를 세그먼트 단위로 로컬 디스크에 기록하고, 정책에 따라 필요한 구간만 클라우드에 보관하는 공통 기반입니다. 현재는 시뮬레이터, ModbusTCP 장치 녹화, 로봇 교시 파일 가져오기를 지원합니다.',
         sections: [
           {
             title: '여러 스트림을 하나의 타임라인에.',
-            body: '수집기별 가용성 막대는 클라우드에 저장된 구간, 에이전트에만 있는 구간, 정리된 구간을 색상으로 구분합니다. 트랙을 선택해 펼치면 각 뷰어가 같은 재생 위치에 맞춰 함께 이동하며, 막대를 드래그해 중요한 구간을 핀으로 고정할 수 있습니다.',
-          },
-          {
-            title: '데이터 유형별 전용 뷰어.',
-            body: '영상은 실시간 플레이어로, 이미지는 프레임 스트립과 밝기 분포로, 프로파일은 단면 그래프와 높이맵으로, 포인트클라우드는 3D 뷰로, 시계열은 롤업 그래프와 표로, 레코드는 JSON 행으로 확인합니다.',
+            body: '수집기별 가용성 막대는 클라우드에 있는 구간, 에이전트에만 있는 구간, 정리된 구간을 색상으로 구분합니다. 트랙을 펼치면 각 뷰어가 같은 재생 위치에 맞춰 함께 이동하며, 막대를 드래그해 중요한 구간을 핀으로 고정합니다.',
           },
           {
             title: '예산 안에서, 정책대로.',
-            body: '에이전트마다 CPU·메모리·로컬 디스크 예산을 설정하며, 예산을 초과하면 수집기를 대기 상태로 전환합니다. 스트림별로 로컬·클라우드 보존 기간과 용량 상한, 업로드 조건(전체·열람한 구간·핀·끄기)을 지정합니다.',
+            body: '개요는 녹화 중·주의·정지 수와 로컬·클라우드 용량을 요약하고, 에이전트마다 CPU·메모리 예산과 디스크 하한선을 미터로 보여 줍니다. 스트림별로 로컬·클라우드 보존 기간과 용량 상한, 업로드 조건(업로드하지 않음·본 구간만·핀 구간만·전부)을 지정합니다.',
+          },
+          {
+            title: '로봇 교시 파일을 시계열로 가져옵니다.',
+            body: '용접 로봇의 교시 파일(.h5)을 업로드하면 순기구학과 역기구학으로 관절각과 TCP를 검증한 뒤, 파일마다 하나의 세그먼트로 클라우드 전용 시계열 스트림에 기록합니다. 가져온 스트림은 타임라인과 디지털 트윈 리플레이에서 다른 스트림과 같은 방식으로 재생됩니다.',
           },
         ],
         specs: {
@@ -504,13 +571,52 @@ export const features = {
             ],
             [
               '저장',
-              '에이전트 로컬 디스크 + 프로젝트 클라우드 · 스트림별 보존 정책 · 핀',
+              '에이전트 로컬 디스크 + 프로젝트 클라우드 · 스트림별 보존 정책 · 핀(최대 24시간)',
             ],
-            ['보기', '라이브 · 기록 · 타임라인(최대 4개 동시) · 가용성 막대'],
+            ['보기', '라이브 · 기록 · 타임라인 · 가용성 막대'],
+            [
+              '가져오기',
+              '로봇 교시 파일(.h5, RB10-1300) → 클라우드 전용 시계열 · CLI cvp collector',
+            ],
             [
               '현황',
-              '현재 수집기 시뮬레이터 제공 — CCTV · GigE · 3D 센서 · Modbus · HTTP · 파일 와처 순차 지원 예정',
+              '시뮬레이터 · ModbusTCP 장치 녹화 지원 — CCTV · GigE Vision · 3D 센서 · HTTP · 파일 와처는 준비 중',
             ],
+          ],
+        },
+      },
+
+      modbus: {
+        title: 'PLC와 직접 통신하는 ModbusTCP 장치.',
+        intro:
+          '에이전트에서 ModbusTCP 서버를 열거나 PLC에 클라이언트로 연결하고, 태그 단위로 값을 읽고 씁니다. 장치의 값은 수집기로 녹화되어 시계열로 남고, 디지털 트윈의 설비에 바인딩됩니다.',
+        sections: [
+          {
+            title: '서버와 클라이언트를 한 목록에서.',
+            body: '장치 목록은 실행 중·주의·태그·수집 중 수를 요약하고, 서버와 클라이언트를 유형별로 구분해 주소·폴링 주기·태그 수·수집 상태를 보여 줍니다. 장치 하나가 에이전트 앱 인스턴스 하나이므로 시작·정지와 설정을 목록에서 바로 처리합니다.',
+          },
+          {
+            title: '태그로 정의하는 레지스터.',
+            body: '태그마다 영역(홀딩·입력·코일·이산), 주소, 자료형(bit·u16·i16·u32·i32·f32·f64), 워드 순서, 배율과 오프셋을 지정합니다. 표·격자·카드의 세 가지 보기에서 실시간 값을 확인하고, 주소 표기를 0 기반과 4xxxx 형식 사이에서 전환하며, 태그 목록은 CSV로 가져오고 내보냅니다.',
+          },
+          {
+            title: '값 쓰기와 기록, 녹화까지.',
+            body: '쓰기 가능한 태그는 표에서 값을 입력해 장치에 기록하며, 클라이언트 장치에 쓸 때는 확인 절차를 거칩니다. 서버 장치는 사인·톱니·무작위 생성기로 시험 값을 생성할 수 있고, 히스토리 탭에는 읽기·쓰기·예외가 모두 기록됩니다. 수집 탭에서 녹화를 켜면 선택한 태그가 수집기 스트림으로 저장됩니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['장치', 'ModbusTCP 서버 · 클라이언트 (에이전트 앱 인스턴스)'],
+            [
+              '태그',
+              '홀딩 · 입력 · 코일 · 이산 · bit/u16/i16/u32/i32/f32/f64 · 워드 순서 · 배율/오프셋',
+            ],
+            ['보기', '표 · 격자(주소 매트릭스) · 카드 · 0 기반/4xxxx 주소 표기 · CSV'],
+            [
+              '갱신 주기 하한',
+              'Free 1000 ms · Starter 500 ms · Pro 200 ms · Enterprise 제한 없음',
+            ],
+            ['연동', '수집기 녹화 · 디지털 트윈 태그 바인딩 · CLI cvp modbustcp'],
           ],
         },
       },
@@ -518,15 +624,19 @@ export const features = {
       twin: {
         title: '공장을 3D로 구성하고, 실시간 데이터로 구동합니다.',
         intro:
-          '110종이 넘는 파라메트릭 설비 에셋으로 씬을 구성하고 Modbus 레지스터·메모리 리전·그리드 값에 바인딩합니다. 실시간 상태를 모니터링하고, 기록을 되돌려 재생하며, 가정 시나리오로 시뮬레이션하고, 1인칭 시점이나 VR로 현장을 탐색합니다.',
+          '110종이 넘는 파라메트릭 설비 에셋으로 씬을 구성하고 ModbusTCP 태그·수집기 채널·메모리 리전·그리드 값에 바인딩합니다. 실시간 상태를 모니터링하고, 기록이나 수집기 구간을 되감아 재생하며, 가정 시나리오로 시뮬레이션하고, 1인칭 시점이나 VR로 현장을 탐색합니다.',
         sections: [
           {
             title: '카탈로그에서 선택해 배치하는 공장.',
-            body: '카탈로그는 로봇 암·협동로봇·스카라, 벨트·롤러 컨베이어, 겐트리 용접 시스템과 포지셔너, CNC·사출기·프레스, AGV·지게차, 배관·밸브·펌프, 작업자까지 포함합니다. 축 각도와 엔드 이펙터 등 파라미터에 따라 형상이 변경되며, GLB 모델과 DXF 평면도도 가져올 수 있습니다.',
+            body: '카탈로그는 로봇 암·협동로봇·기구학 협동로봇·스카라, 벨트·롤러 컨베이어, 겐트리 용접 시스템, CNC·사출기·프레스, AGV·지게차, 배관·밸브·펌프, 작업자까지 포함합니다. 축 각도와 엔드 이펙터 등 파라미터에 따라 형상이 변경되며, GLB 모델과 DXF 평면도도 가져올 수 있습니다. 씬 트리의 행을 펼치면 속성과 데이터 연결을 그 자리에서 편집합니다.',
           },
           {
             title: '데이터가 수신되면 설비가 반응합니다.',
-            body: '노드 채널을 Modbus 레지스터, 그리드 셀, 메모리 리전, 동영상에 바인딩하고 경고·알람 임계값을 지정하면 설비가 상태에 따른 색상으로 표시됩니다. 같은 씬을 실시간·리플레이·What-if 시뮬레이션의 세 가지 모드로 확인합니다.',
+            body: '노드 채널을 ModbusTCP 태그, 수집기 채널, 메모리 리전, 그리드 셀, 지도 피처, 동영상에 바인딩하고 경고·알람 임계값을 지정하면 설비가 상태에 따른 색상으로 표시됩니다. 같은 씬을 실시간·리플레이·What-if 시뮬레이션의 세 가지 모드로 확인합니다.',
+          },
+          {
+            title: '용접 로봇의 궤적을 그대로 재생합니다.',
+            body: 'RB10 프리셋의 기구학 협동로봇은 URDF 기반 순기구학으로 여섯 관절과 TCP 위치를 계산합니다. 관절을 수집기의 시계열 채널에 바인딩하고 수집기 구간을 선택하면 기록된 동작이 선형 보간으로 재생되며, 용접 토치 끝점의 궤적선이 함께 표시됩니다.',
           },
           {
             title: '화면 밖으로, 현장 안으로.',
@@ -537,38 +647,49 @@ export const features = {
           rows: [
             [
               '에셋',
-              '110여 종 파라메트릭 빌더 · 사람 4종 · 환경(하늘 · 지면 · 공장동) · GLB 가져오기',
+              '110여 종 파라메트릭 빌더 · 기구학 협동로봇(RB10) · 사람 · 환경 · GLB · DXF 평면도',
             ],
             [
               '바인딩',
-              'Modbus 레지스터 · 그리드 셀/행 · 지도 피처 · 메모리 리전 · 동영상',
+              'ModbusTCP 태그 · 수집기 채널 · 메모리 리전 · 그리드 셀/행 · 지도 피처 · 동영상',
             ],
-            ['모드', '실시간 · 리플레이(기록) · What-if 시뮬레이션'],
-            ['몰입', '1인칭 · WebXR VR · 텔레포트 · 뷰 프리셋 · 씬 카메라'],
+            ['모드', '실시간 · 리플레이(기록 · 수집기 구간) · What-if 시뮬레이션'],
+            ['몰입', '1인칭 · WebXR VR · 텔레포트 · 뷰 프리셋'],
           ],
         },
       },
 
-      mlflow: {
-        title: '라벨링한 데이터를 모델로 연결하는 MLOps.',
+      mlops: {
+        title: '실험부터 모델 별칭까지, 학습 결과를 관리하는 MLOps.',
         intro:
-          'MLflow 호환 실험 추적과 모델 레지스트리, 아티팩트 저장소가 프로젝트에 내장되어 있습니다. 훈련 위저드의 실행과 기존 MLflow 클라이언트 코드의 실행이 모두 같은 위치에 기록됩니다.',
+          '개요·실험·런·비교·모델·연동의 6개 탭에서 학습의 전 과정을 관리합니다. 훈련 위저드의 학습과 기존 MLflow 클라이언트의 실행이 같은 실험 목록에 기록되며, 검토를 마친 런은 모델 버전으로 등록되고 별칭으로 배포 단계를 구분합니다.',
         sections: [
           {
-            title: '기존 MLflow 코드를 수정 없이.',
-            body: 'tracking URI를 프로젝트 주소로 변경하고 액세스 토큰만 설정하면 기존 학습 스크립트가 그대로 동작합니다. 실행을 검색하고, 메트릭·파라미터 열을 선택해 표로 비교하며, 선택한 실행을 차트에 겹쳐 분석합니다.',
+            title: '해야 할 일부터 보여 주는 개요와 런 목록.',
+            body: '개요는 진행 중인 학습, 검토를 기다리는 런, 최근 실행, 등록된 모델을 모아 보여 줍니다. 런 탭은 상태별 개수와 실험 문맥 막대를 제공하며, 실험을 하나 선택하면 주요 메트릭과 학습률·에폭 열이 추가되고 여러 런을 선택해 비교 화면으로 이동합니다.',
           },
           {
-            title: '레지스트리에서 배포까지.',
-            body: '검증된 모델을 레지스트리에 등록하고 버전·별칭·스테이지(Staging·Production·Archived)를 관리합니다. 개요 탭은 수집 → 라벨링 → 학습 → 레지스트리 → 배포 → 모니터링 파이프라인 전체를 한눈에 보여 줍니다.',
+            title: '별칭으로 운영하는 모델 레지스트리.',
+            body: '모델마다 @production·@staging·@previous 별칭 레인이 표시되며, 챔피언과 도전자 비교에서 지표 차이를 확인한 뒤 한 번의 동작으로 별칭을 옮깁니다. 별칭을 잃는 버전에는 @previous가 남으므로 언제든지 되돌릴 수 있습니다.',
+          },
+          {
+            title: '기존 MLflow 코드를 수정 없이.',
+            body: '연동 탭에서 MLflow용 토큰을 발급하고 트래킹 주소와 토큰의 두 값만 설정하면 기존 학습 스크립트의 실행이 그대로 기록됩니다. 수신 확인 단계에서 기록이 수신되는지 바로 확인할 수 있으며, SDK로 기록한 실험도 같은 목록에서 비교합니다.',
           },
         ],
         specs: {
           rows: [
-            ['추적', 'MLflow 호환 실험 · 실행 · 메트릭 · 파라미터 · 태그 · 비교'],
-            ['레지스트리', '모델 버전 · 별칭 · 스테이지'],
-            ['아티팩트', '프로젝트 스토리지 저장 · 파일 브라우저'],
-            ['인증', '프로젝트 액세스 토큰 (실험 · 모델 레지스트리 범위)'],
+            ['탭', '개요 · 실험 · 런 · 비교 · 모델 · 연동'],
+            ['런 상세', '요약 · 파라미터(직전 런 비교) · 메트릭 · 아티팩트 · 로그'],
+            [
+              '레지스트리',
+              '모델 버전 · @production/@staging/@previous 별칭 · 챔피언/도전자 비교',
+            ],
+            ['호환', 'MLflow 2.10 이상 권장 · 프로젝트 액세스 토큰(실험 · 모델 범위)'],
+            [
+              'CLI',
+              'cvp mlops overview · experiment · run · model · connect · explain',
+            ],
           ],
         },
       },
@@ -708,15 +829,15 @@ export const features = {
       memory: {
         title: 'PLC 레지스터처럼 사용하는 공유 메모리.',
         intro:
-          '바이트 단위로 주소가 지정된 메모리 맵에 설비 값을 집약합니다. 헥스로 확인하고, 타입 배열로 해석하며, 리전으로 이름을 붙여 Modbus와 디지털 트윈 사이의 데이터 버스로 활용합니다.',
+          '바이트 단위로 주소가 지정된 메모리 맵에 PLC 레지스터 덤프, 시뮬레이션 상태, 장비 설정처럼 주소로 다루는 값을 보관합니다. 헥스로 확인하고, 타입 배열로 해석하며, 리전으로 이름을 붙여 디지털 트윈에 연결합니다.',
         sections: [
           {
             title: '헥스, 타입 배열, 리전.',
             body: '4 KiB 페이지 단위 헥스 에디터로 바이트를 확인하고 수정합니다. 같은 영역을 u8부터 f64까지의 타입과 리틀/빅 엔디안 방식으로 해석하며, 자주 확인하는 범위는 리전으로 이름을 붙여 값만 모아 봅니다.',
           },
           {
-            title: 'Modbus와 디지털 트윈을 잇는 데이터 버스.',
-            body: 'Modbus 커넥터가 레지스터를 메모리 맵에 미러링하면 영역마다 리전이 자동으로 생성됩니다. 시뮬레이터에서는 맵에서 수정한 값이 레지스터에 기록되고, 디지털 트윈은 리전 원소에 바인딩해 값을 읽습니다.',
+            title: '디지털 트윈이 읽는 공유 데이터.',
+            body: '리전으로 이름을 붙인 값은 디지털 트윈 노드에 바인딩해 설비 상태로 표시합니다. 저장 공간은 실제로 기록한 부분만 차지하므로 맵을 크게 할당해도 비용이 늘지 않으며, 맵 크기 상한은 플랜에 따라 64 KB부터 16 MB까지입니다.',
           },
         ],
         specs: {
@@ -726,10 +847,46 @@ export const features = {
               '타입',
               'u8 · i8 · u16 · i16 · u32 · i32 · u64 · i64 · f32 · f64 · 리틀/빅 엔디안',
             ],
+            ['연동', '디지털 트윈 메모리 리전 바인딩'],
             [
-              '연동',
-              'Modbus 미러(모니터 단방향 · 시뮬레이터 양방향) · 디지털 트윈 바인딩',
+              '맵 크기',
+              'Free 64 KB · Starter 1 MB · Pro 16 MB · Enterprise 무제한 (맵당)',
             ],
+          ],
+        },
+      },
+
+      media: {
+        title: '업로드부터 스트리밍까지, 팀의 영상을 한곳에서.',
+        intro:
+          '동영상 라이브러리는 원본 파일과 HLS 스트리밍 자산을 함께 관리합니다. 재생되지 않는 형식은 에이전트의 변환기가 HLS로 인코딩하고, 카메라·휴대폰·화면을 녹화하는 동안에도 시청할 수 있으며, 민감한 영상은 AES-128로 암호화합니다.',
+        sections: [
+          {
+            title: '인코딩은 브라우저 또는 에이전트에서.',
+            body: '업로드 1단계에서 HLS 스트리밍과 원본 보관 중 하나를 선택하고, 인코딩을 브라우저만·필요할 때 변환기·모두 변환기 중에서 지정합니다. 고급 설정에서 화질(CRF), 인코딩 속도, 하드웨어 가속, 해상도·프레임레이트 상한, 오디오를 조정하며, 변환기에 넘긴 파일은 탭을 닫아도 에이전트가 이어서 처리합니다.',
+          },
+          {
+            title: '녹화하는 동안에도 시청합니다.',
+            body: '이 브라우저의 카메라나 화면·창을 녹화하거나, QR 코드로 휴대폰을 연결해 촬영합니다. 녹화 중에도 2초 단위 조각이 업로드되어 시청자가 거의 실시간으로 영상을 확인하며, 세션 페이지에서 진행 중인 녹화와 지난 녹화를 관리합니다.',
+          },
+          {
+            title: '재생목록, 자막, 챕터, 360°.',
+            body: '재생목록 갤러리로 영상을 정리하고, 자막(ASS·SRT·VTT)을 편집하며, 설명의 시간 표기로 챕터를 지정합니다. 360°·VR 영상은 구면으로 재생하고 WebXR 헤드셋으로 시청할 수 있으며, 암호화하지 않은 영상은 공개 링크로 공유합니다.',
+          },
+        ],
+        specs: {
+          rows: [
+            [
+              '업로드',
+              'HLS 스트리밍 · 원본 보관 · 브라우저 리먹싱 · 에이전트 변환기 · CLI cvp video upload',
+            ],
+            [
+              '인코딩',
+              'CRF 18/23/28/직접 지정 · NVENC · QSV · VAAPI · VideoToolbox · 해상도·프레임레이트 상한',
+            ],
+            ['녹화', '카메라 · 화면·창 · 휴대폰(QR) · 녹화 중 시청 · 세션 관리'],
+            ['보안', 'AES-128 HLS 암호화(Pro 이상) · 공개 링크(암호화하지 않은 영상)'],
+            ['재생', '자막 편집기 · 챕터 · 재생목록 · 360°/VR · 조회수'],
           ],
         },
       },
@@ -997,8 +1154,8 @@ export const features = {
             body: 'Filter invalid (0,0,0) points, remove dominant planes like floors and tables with RANSAC, then cluster the rest into instances on a voxel grid — all in the browser, no GPU required.',
           },
           {
-            title: 'Your formats and label fields, as-is.',
-            body: 'LAS/LAZ decodes in-browser via WASM, and a same-name image becomes the texture. Label fields like classification or instance in PLY are detected from their values as semantic or instance, and Pointcept scene folders and profile stacks upload folder-by-folder.',
+            title: 'Your formats and label fields, by rule.',
+            body: 'LAS/LAZ decodes in-browser via WASM, and a same-name image becomes the texture. PLY label fields import through a rule table that maps each value to a class and decides whether to split it into objects; save the rules on the dataset and apply them to every sample — overwrite, fill empty points only, or replace all.',
           },
         ],
         specs: {
@@ -1012,6 +1169,10 @@ export const features = {
               'Cuboid · lasso/rect segment · 3D point/polyline/polygon/keypoints · dimension · guide',
             ],
             ['AI', 'Pointcept PTv3 semantic · PointGroup instance · fine-tuned models'],
+            [
+              'Label rules',
+              'PLY value → class · split into objects · saved on the dataset · bulk apply · CLI cvp dataset label-fields',
+            ],
             ['Color modes', 'RGB · label · height · intensity · texture'],
             ['Export', 'Pointcept (.npy) · labeled PLY · SemanticKITTI · TXT'],
           ],
@@ -1069,8 +1230,8 @@ export const features = {
             body: 'Pick YOLO, COCO, Pascal VOC, LabelMe, or CVP and the wizard asks for each folder or file in its own slot. Contents are checked in the browser before upload and reported at four levels (fatal, error, warning, info), and train/val/test splits are kept as sample tags.',
           },
           {
-            title: 'Sample management with visible progress.',
-            body: 'Every sample is unlabeled, in progress, labeled, or reviewed, with labels overlaid on thumbnails. Change status in bulk; point clouds preview as top-down thumbnails and time series as sparklines.',
+            title: 'A sample list that works on every match.',
+            body: 'The samples tab offers a status segment with counts, comment and tag filters, sorting, thumbnail sizes, and label overlays. Select a whole page and widen the selection to every matching sample; status changes and deletes confirm the target and conditions before they run. The same actions run from cvp dataset sample.',
           },
           {
             title: 'Find the gaps with QA stats.',
@@ -1089,6 +1250,10 @@ export const features = {
               'COCO · YOLO · VOC · LabelMe · CVAT · MOT · CSV · ImageFolder · CVP (background zip)',
             ],
             [
+              'Sample list',
+              'Status segment · comment/tag filters · select all matching · bulk status/delete · CLI',
+            ],
+            [
               'QA',
               'Class distribution · co-occurrence · object count/size · tag usage · time-range stats',
             ],
@@ -1098,37 +1263,89 @@ export const features = {
       },
 
       training: {
-        title: 'Labels become models, and models draw labels again.',
+        title: 'Train on your labels, then label with what you trained.',
         intro:
-          'Configure an experiment in an 11-step training wizard, your GPU agent trains it, and the finished model goes straight to inference and auto-labeling. Every run lands in MLflow-compatible tracking.',
+          'Pick task, data, settings, and agent in the four-step training wizard under MLOps and your own GPU agent trains it. Every run is recorded in MLflow, and finished models go straight into auto-labeling in the editor and into the inference screens.',
         sections: [
           {
-            title: 'Inference on your own GPU.',
-            body: 'Turn on RF-DETR (detection, segmentation, keypoints), SAM2, Pointcept, or time-series forecasting on an agent and run inference right from the project. Weights are downloaded explicitly, and requests go to an idle instance. No cloud tokens involved.',
+            title: 'Auto-labeling, right in the editor.',
+            body: 'Run Auto-label (A) in the image editor and an object detection model proposes boxes, masks, and keypoints. Map model classes to project classes, drop results that overlap existing objects, and apply only what you pick. Point clouds get drafts from a 3D segmentation model and time series from an anomaly model the same way — all inference runs on your own agent.',
           },
           {
-            title: 'Every run keeps its curves and results.',
-            body: 'Per-epoch progress, loss and mAP curves, and logs pile up in the runs table. A finished run links straight into its app with "Use for inference", and time-series experiments show backtest results and a model leaderboard.',
+            title: 'Every run keeps its results and its reasons.',
+            body: 'The run summary sets result tiles against the current @production version beside the training curves, the key parameters, and the settings that changed since the previous run. Parameters, metrics, artifacts, and logs hold the full record, and a reviewed run is registered as a model version.',
           },
           {
-            title: 'What the wizard walks you through.',
-            body: 'Task → framework → model → training data → classes → train/val → hyperparameters → evaluation → export → GPU → train. Three image tasks, 3D instance segmentation, and time-series forecasting, anomaly detection, and classification share the same flow.',
+            title: 'Training in four steps.',
+            body: 'What (task, framework, model) → Data (dataset, classes, split) → Settings (epochs, batch, learning rate, advanced) → Run (agent, device, auto-register). Image object detection, instance segmentation, and keypoints, 3D instance segmentation, and time-series forecasting, anomaly detection, and classification all follow the same flow, and the help next to each parameter explains what it means and how to read it.',
           },
         ],
         specs: {
           rows: [
             [
               'Tasks',
-              'Detection · instance segmentation · keypoints · 3D instance segmentation · time-series forecast/anomaly/classify',
+              'Object detection · instance segmentation · keypoints · 3D instance segmentation · time-series forecast/anomaly/classify',
             ],
             [
-              'Frameworks',
-              'RF-DETR · Pointcept (PTv3 · PointGroup) · AutoGluon-TimeSeries · Chronos-Bolt · MiniRocket',
+              'Engines',
+              'RF-DETR · Pointcept (PTv3 · PointGroup) · Chronos-Bolt · AutoGluon-TimeSeries · MiniRocket',
             ],
-            ['Runs', 'Agent GPUs · queue · progress · stop'],
+            [
+              'Execution',
+              'Your agent GPU · queue · progress · stop · run again with the same settings',
+            ],
             [
               'Tracking',
-              'MLflow-compatible experiments · metrics · artifacts · model registry',
+              'Params, system metrics, dataset lineage, and weights logged to MLflow · auto-register on finish',
+            ],
+            [
+              'Help',
+              'Parameter and metric glossary · diagrams · CLI cvp mlops explain',
+            ],
+          ],
+        },
+      },
+
+      inference: {
+        title: 'Pretrained and trained models, one inference screen.',
+        intro:
+          'Run seven features from object detection to time-series classification from the Inference menu in the sidebar. Inference uses models cached on your own agents, and results on dataset samples save straight back as labels.',
+        sections: [
+          {
+            title: 'Start at the overview.',
+            body: 'The overview sums up ready features, online agents, cached models, today’s runs, and saved labels in one strip, and lists the features that still need a model download or training. The features tab shows each feature’s readiness and latest run by data type.',
+          },
+          {
+            title: 'Input, result, and settings on one screen.',
+            body: 'A feature screen has three panels: input, result, and settings. Take input from a sample image, a dataset sample, a project file, or an upload; the model picker lists models already cached and ones you can download. Run again or download JSON, and when the input is a dataset sample, map classes and save the result as labels.',
+          },
+          {
+            title: 'Manage models and history.',
+            body: 'The models tab shows the cache size and model files per agent and downloads or clears models. History keeps every run’s input, model, parameters, and result for 90 days, so you can rerun with the same settings or save an earlier result as labels.',
+          },
+        ],
+        specs: {
+          rows: [
+            [
+              'Features',
+              'Image object detection · image segmentation · point cloud semantic/instance segmentation · time-series forecast/anomaly/classify',
+            ],
+            [
+              'Engines',
+              'RF-DETR · SAM 2 · Pointcept (PTv3 · PointGroup) · Chronos-Bolt · AutoGluon-TimeSeries · MiniRocket',
+            ],
+            ['Input', 'Sample image · dataset sample · project file · upload'],
+            [
+              'Results',
+              'Save as labels (append/replace) · JSON · CSV (forecast) · AI labeling in the editor (point clouds)',
+            ],
+            [
+              'Execution',
+              'Your agents · automatic device (CPU · CUDA · MPS) · request queue',
+            ],
+            [
+              'History',
+              '90-day history · rerun with the same settings · CLI cvp infer',
             ],
           ],
         },
@@ -1171,7 +1388,7 @@ export const features = {
       collaboration: {
         title: 'Your labeling team’s workspace, included.',
         intro:
-          'Members and roles, wiki docs, files, a video library, and meeting notes are bundled per project. Stop keeping labeling guidelines in another tool.',
+          'Members and roles, wiki docs, files, and activity are bundled per project. Stop keeping labeling guidelines in another tool.',
         sections: [
           {
             title: 'Guidelines in the wiki — and present from it.',
@@ -1182,8 +1399,8 @@ export const features = {
             body: 'Create folders, drag-select, and copy, move, or trash. Images, video, PDF, CSV, Parquet, JSON, point clouds, and 3D models open in dedicated viewers; zip and tar are browsable without extracting. Fix things in place with code, JSON, hex, image, and Draw.io editors.',
           },
           {
-            title: 'Footage in a library.',
-            body: 'Encode to HLS for smooth playback anywhere, add subtitles (ASS, SRT, VTT) and chapters, and play 360° and VR video. Live upload while you record from a phone, and share with public links.',
+            title: 'Members, roles, and activity.',
+            body: 'Invite members by email or link and separate permissions with roles from owner to guest. The activity tab records the project’s main actions in order, and when a screen is shared in a room you can hide the project behind a PIN.',
           },
         ],
         specs: {
@@ -1196,99 +1413,115 @@ export const features = {
               'Files',
               'Drive-style browsing · trash/undo · typed viewers · archive browsing · editors',
             ],
-            [
-              'Video',
-              'HLS · AES-128 encryption · subtitle editor · chapters · 360°/VR · live upload',
-            ],
-            ['Members', 'Role-based permissions · email/link invites'],
+            ['Members', 'Nine roles (owner to guest) · email/link invites'],
+            ['Activity', 'Project activity feed · recent activity on the dashboard'],
+            ['Hidden projects', 'Hidden from lists · 4-digit PIN privacy screen'],
           ],
         },
       },
 
       developers: {
-        title: 'A one-line CLI, and MLflow in two lines.',
+        title: 'Plug into your tools with the CLI, S3, and MLflow.',
         intro:
-          'Script files, datasets, and agents with a single-binary CLI, connect MLflow tracking and registries with project access tokens, and issue offline-verifiable product keys for installed software.',
+          'Automate datasets, inference, MLOps, and video from the terminal with a single-binary CLI, connect S3 clients such as DVC and the aws CLI with a storage-scoped token, and link MLflow tracking and the registry with access tokens. Issue offline-verifiable product keys for installed software.',
         sections: [
           {
-            title: 'Scoped access tokens.',
-            body: 'Each token gets scopes — experiments and model registry read/write, container registry pull/push — and an expiry. The secret is shown exactly once and only a hash is stored. Suspect a leak? Rotate once.',
+            title: 'The platform, from your terminal.',
+            body: 'Install the single-binary CLI with one curl command and it keeps itself up to date with each release. Approve the device in the browser with cvp login, then script dataset, files, infer, mlops, video, modbustcp, and collector commands — the main actions in the web app are available as CLI commands too.',
           },
           {
-            title: 'The CLI is one binary.',
-            body: 'Install with one curl line, no Node.js required, and it keeps itself updated with each release. After cvp login in the browser, script cvp files, cvp dataset, and cvp agent with --json output. sudo cvp service install turns an agent into a systemd service.',
+            title: 'Your project storage, from S3 clients.',
+            body: 'Create a token with a storage scope and you get an S3 access key ID and secret access key with it. Point an endpoint and bucket (the project slug) at them and DVC remotes, the aws CLI, and other S3-compatible clients list, upload, and download files — multipart uploads and presigned URLs included.',
           },
           {
-            title: 'Product keys, issued to verified offline.',
-            body: 'Define policies (duration, machine count, features) and issue keys per customer. License files are Ed25519-signed, so installed software verifies them offline with an embedded public key. Track machine activations and expiry strategy (restrict/block) from the dashboard.',
+            title: 'Agents in one command.',
+            body: 'Pick an OS on the install screen and you get the install command with your token filled in. On Linux, register it as a systemd service so it starts on boot, and check a host’s compatibility with cvp agent check before adding an app.',
+          },
+          {
+            title: 'Product keys, from issuing to offline checks.',
+            body: 'Define policies (term, machine count, features) and issue a key per customer. License files are Ed25519-signed, so installed software verifies them with the embedded public key and no network. Track machine activations and expiry strategy (restrict or block) on the dashboard.',
           },
         ],
         specs: {
           rows: [
             [
-              'Access tokens',
-              'Scoped permissions · expiry · rotate/revoke · shown once (hashed at rest)',
+              'CLI',
+              'Single binary for Linux · macOS · Windows · auto-update · device-code login · shell completion',
             ],
             [
-              'CLI',
-              'Single binary for Linux · macOS · Windows · auto-update · personal tokens (cvp_pat_)',
+              'S3-compatible',
+              'Path-style endpoint · storage:read/write scopes · multipart · presigned URLs · DVC · aws CLI',
+            ],
+            [
+              'Access tokens',
+              'Scoped permissions · expiry · rotate/revoke · shown once (hash stored)',
+            ],
+            [
+              'MLflow',
+              'Tracking URI + token · experiments · model registry · artifacts',
             ],
             [
               'Product keys',
               'Policies · issue/suspend/revoke · machine activation · Ed25519 offline verification',
             ],
-            ['Integrations', 'MLflow tracking URI · container/pip/npm registries'],
           ],
         },
       },
 
       agents: {
-        title: 'Agents: CVP’s hands on your own machines.',
+        title: 'Agents run CVP’s work on your own hardware.',
         intro:
-          'Install one agent per machine, switch apps on from the web, and the agent runs and supervises them as child processes. From AI inference and training to Modbus equipment and video conversion — the heavy lifting stays on your hardware.',
+          'Install one agent per machine and add apps from the web — the agent runs each app as a child process and supervises it. Inference and training, ModbusTCP devices, video conversion, and data collection all run on your machines.',
         sections: [
           {
             title: 'One agent, many apps.',
-            body: 'RF-DETR, SAM2, Pointcept, time-series forecasting, Modbus monitor and simulator, video download and conversion, collector simulator — add an app as an instance and set its arguments. With several instances, requests spread across the idle ones.',
+            body: 'Add image object detection, image segmentation, point cloud segmentation, time-series analysis, video conversion and download, ModbusTCP server and client, and the collector simulator as instances and set their arguments. The agents list shows status counts and each host’s OS, GPU, and CLI version, and flags outdated CLIs for update.',
           },
           {
-            title: 'Straight into factory equipment.',
-            body: 'The Modbus monitor reads PLC registers; the simulator serves as a Modbus TCP server. Registers mirror into a memory map that feeds digital twins and grids, and the traffic history keeps every read, write, and exception.',
+            title: 'Check compatibility before you add.',
+            body: 'The add-app wizard checks the agent’s reported host — OS, architecture, glibc, GPU, driver, free disk — and previews the package it will install. When a combination cannot run, it says why and how to fix it.',
           },
           {
-            title: 'Resources by limit, state by chart.',
-            body: 'Set memory, CPU, GPU, and process limits per app, enforced with cgroups. Watch CPU, memory, GPU, and network on live charts, and query the agent’s local time series with PromQL.',
+            title: 'Resources by limit, status by number.',
+            body: 'Set memory, CPU, GPU, and process limits per app and the agent enforces them with cgroups, warning when the limits you set add up to more than the host has. The overview tab shows CPU, memory, GPU, and disk usage as numbers, and the storage tab measures logs and app directories and sets an automatic cleanup policy.',
           },
         ],
         specs: {
           rows: [
-            ['Install', 'One curl line · systemd service · auto-update'],
+            ['Install', 'One curl line · systemd service (Linux) · auto-update'],
             [
               'Apps',
-              'RF-DETR · SAM2 · Pointcept · time series · Modbus · downloader · converter · collectors',
+              'Object detection · segmentation · point clouds · time series · video conversion/download · ModbusTCP · collectors',
             ],
-            ['Resource limits', 'Memory · CPU · GPU mask · process count (cgroup v2)'],
-            ['Monitoring', 'Resource charts · PromQL metrics · logs · state graph'],
+            [
+              'Compatibility',
+              'OS · architecture · glibc · GPU · driver · package · disk checks · cvp agent check',
+            ],
+            [
+              'Resource limits',
+              'Memory · CPU · GPU mask · process count (cgroup v2) · host total warning',
+            ],
+            ['Monitoring', 'Resources · metrics · storage · logs · state graph'],
           ],
         },
       },
 
       collectors: {
-        title: 'Every camera and sensor on the floor, captured.',
+        title: 'Collectors record field data as segments.',
         intro:
-          'Agents receive seven payload kinds — video, image, point cloud, profile, time series, record, and file — as segments, keep them on local disk, and upload only the spans you need. Scrub many streams in sync on one timeline.',
+          'Collectors are the shared layer that lets an agent record seven kinds of data — video, images, profiles, point clouds, time series, records, and files — as segments on its local disk, keeping only the ranges your policy asks for in the cloud. Today they support the simulator, recording ModbusTCP devices, and importing robot teaching files.',
         sections: [
           {
             title: 'Many streams, one timeline.',
-            body: 'Each collector’s availability bar colors spans in the cloud, on the agent only, or already purged. Open tracks as viewers that follow the same playhead, and drag across the bar to pin the spans that matter.',
-          },
-          {
-            title: 'A viewer for every kind of data.',
-            body: 'Video in a live player, images as a frame strip with a brightness histogram, profiles as cross-sections and a heightmap, point clouds in 3D, time series as rollup charts and tables, records as JSON rows.',
+            body: 'Per-collector availability bars color ranges in the cloud, on the agent only, and purged. Expand tracks and every viewer follows the same playhead; drag along a bar to pin an important range.',
           },
           {
             title: 'Within budget, by policy.',
-            body: 'Give each agent a CPU, memory, and local-disk budget; collectors wait when it runs out. Per stream, set local and cloud retention and size caps, and when to upload (all, viewed spans, pinned, or off).',
+            body: 'The overview sums up recording, attention, and stopped counts with local and cloud usage, and shows each agent’s CPU and memory budget and disk high-water mark as meters. Per stream, set local and cloud retention, size caps, and the upload condition (never, viewed ranges, pinned ranges, everything).',
+          },
+          {
+            title: 'Robot teaching files as time series.',
+            body: 'Upload welding-robot teaching files (.h5) and they are checked with forward and inverse kinematics — joints against the TCP — then stored one segment per file in a cloud-only time-series stream. Imported streams play in the timeline and in digital twin replay like any other stream.',
           },
         ],
         specs: {
@@ -1299,80 +1532,140 @@ export const features = {
             ],
             [
               'Storage',
-              'Agent local disk + project cloud · per-stream retention · pins',
+              'Agent local disk + project cloud · per-stream retention · pins (up to 24 h)',
             ],
+            ['Views', 'Live · history · timeline · availability bars'],
             [
-              'Viewing',
-              'Live · history · timeline (up to 4 at once) · availability bars',
+              'Import',
+              'Robot teaching files (.h5, RB10-1300) → cloud-only time series · CLI cvp collector',
             ],
             [
               'Status',
-              'Collector simulator today — CCTV · GigE · 3D sensors · Modbus · HTTP · file watcher coming',
+              'Simulator · ModbusTCP device recording — CCTV · GigE Vision · 3D sensors · HTTP · file watcher coming soon',
+            ],
+          ],
+        },
+      },
+
+      modbus: {
+        title: 'ModbusTCP devices that talk to your PLCs.',
+        intro:
+          'Open a ModbusTCP server on an agent or connect to a PLC as a client, then read and write values tag by tag. Device values record into collectors as time series and bind to equipment in the digital twin.',
+        sections: [
+          {
+            title: 'Servers and clients in one list.',
+            body: 'The device list sums up running, attention, tag, and collecting counts, and splits servers from clients with address, polling interval, tag count, and collection state. Each device is one agent app instance, so start, stop, and settings live right in the list.',
+          },
+          {
+            title: 'Registers defined as tags.',
+            body: 'Give each tag an area (holding, input, coil, discrete), an address, a type (bit, u16, i16, u32, i32, f32, f64), a word order, and a scale and offset. Watch live values in table, grid, and card views, switch the address notation between zero-based and 4xxxx, and import or export the tag list as CSV.',
+          },
+          {
+            title: 'Writes, history, and recording.',
+            body: 'Writable tags take a value right in the table and write it to the device — writes to a client device ask for confirmation. Server devices can generate test values with sine, ramp, and random generators, and the history tab logs every read, write, and exception. Turn on recording in the collect tab and the chosen tags are saved as a collector stream.',
+          },
+        ],
+        specs: {
+          rows: [
+            ['Devices', 'ModbusTCP server · client (agent app instances)'],
+            [
+              'Tags',
+              'Holding · input · coil · discrete · bit/u16/i16/u32/i32/f32/f64 · word order · scale/offset',
+            ],
+            [
+              'Views',
+              'Table · grid (address matrix) · cards · zero-based/4xxxx notation · CSV',
+            ],
+            [
+              'Update interval floor',
+              'Free 1000 ms · Starter 500 ms · Pro 200 ms · Enterprise no floor',
+            ],
+            [
+              'Integrations',
+              'Collector recording · digital twin tag bindings · CLI cvp modbustcp',
             ],
           ],
         },
       },
 
       twin: {
-        title: 'Lay out the plant in 3D; live values move it.',
+        title: 'Build the plant in 3D, drive it with live data.',
         intro:
-          'Build scenes from 110+ parametric equipment assets and bind them to Modbus registers, memory regions, and grid values. Watch live, rewind recordings, simulate what-if scenarios, and walk the floor in first person or VR.',
+          'Compose scenes from 110+ parametric equipment assets and bind them to ModbusTCP tags, collector channels, memory regions, and grid values. Monitor live state, rewind recordings or collector ranges, simulate what-if scenarios, and walk the floor in first person or VR.',
         sections: [
           {
-            title: 'A factory dragged from the catalog.',
-            body: 'Robot arms, cobots, SCARAs, belt and roller conveyors, gantry welding systems and positioners, CNC machines, injection molders, presses, AGVs, forklifts, piping, valves, pumps, and workers. Parameters like joint angles and end effectors reshape them, and GLB models and DXF floor plans import too.',
+            title: 'A plant you pick from a catalog.',
+            body: 'Robot arms, cobots, a kinematic cobot, SCARA, belt and roller conveyors, welding gantries, CNC, injection molding, presses, AGVs, forklifts, pipes, valves, pumps, and workers. Shapes follow parameters like joint angles and end effectors, and GLB models and DXF floor plans import too. Unfold a scene-tree row to edit its properties and bindings in place.',
           },
           {
-            title: 'Values arrive, equipment reacts.',
-            body: 'Bind node channels to Modbus registers, grid cells, memory regions, or videos and set warning and alarm thresholds — equipment glows in status colors. View the same scene live, as a replay, or as a what-if simulation.',
+            title: 'Equipment reacts when data arrives.',
+            body: 'Bind node channels to ModbusTCP tags, collector channels, memory regions, grid cells, map features, or video, set warn and alarm thresholds, and equipment shows its state in color. Watch the same scene live, in replay, or in what-if simulation.',
+          },
+          {
+            title: 'Replay a welding robot’s path, as recorded.',
+            body: 'The kinematic cobot with the RB10 preset computes its six joints and TCP position by URDF forward kinematics. Bind the joints to a collector’s time-series channels, pick a collector range, and the recorded motion plays back with linear interpolation while the weld torch tip draws its trail.',
           },
           {
             title: 'Off the screen, onto the floor.',
-            body: 'Enter the site to walk in first person with WASD, or put on a WebXR headset to teleport and check alarms on a wrist panel. Display panels and video walls play footage from the library.',
+            body: 'Choose “Enter site” to walk in first person with WASD; join with a WebXR headset to teleport and check alarms on a wrist panel. Display panels and video walls play clips from the video library.',
           },
         ],
         specs: {
           rows: [
             [
               'Assets',
-              '110+ parametric builders · 4 people · environment (sky, ground, factory hall) · GLB import',
+              '110+ parametric builders · kinematic cobot (RB10) · people · environment · GLB · DXF floor plans',
             ],
             [
               'Bindings',
-              'Modbus registers · grid cells/rows · map features · memory regions · videos',
+              'ModbusTCP tags · collector channels · memory regions · grid cells/rows · map features · video',
             ],
-            ['Modes', 'Live · replay (recordings) · what-if simulation'],
             [
-              'Immersion',
-              'First person · WebXR VR · teleport · view presets · scene cameras',
+              'Modes',
+              'Live · replay (recordings · collector ranges) · what-if simulation',
             ],
+            ['Immersion', 'First person · WebXR VR · teleport · view presets'],
           ],
         },
       },
 
-      mlflow: {
-        title: 'The path from labeled data to models.',
+      mlops: {
+        title: 'From experiments to model aliases — MLOps for your results.',
         intro:
-          'MLflow-compatible experiment tracking, model registry, and artifact storage built into the project. Training-wizard runs and your existing MLflow client code land in the same place.',
+          'Six tabs — overview, experiments, runs, compare, models, connect — cover the whole training lifecycle. Runs from the training wizard and from your existing MLflow clients land in the same experiment list, and reviewed runs become model versions whose aliases mark the release stage.',
         sections: [
           {
-            title: 'Your MLflow client, unchanged.',
-            body: 'Point the tracking URI at your project and add an access token — existing training scripts just work. Search runs, pick metric and parameter columns to compare in a table, and overlay selected runs on charts.',
+            title: 'An overview that leads with the work to do.',
+            body: 'The overview gathers training in progress, runs waiting for review, recent runs, and registered models. The runs tab adds status counts and an experiment context bar; pick one experiment to add its primary metric, learning rate, and epochs columns, then select runs to compare.',
           },
           {
-            title: 'From registry to deployment.',
-            body: 'Register validated models and manage versions, aliases, and stages (Staging, Production, Archived). The overview tab maps the whole pipeline: collect → label → train → registry → deploy → monitor.',
+            title: 'A model registry run by aliases.',
+            body: 'Each model shows @production, @staging, and @previous alias lanes. Check the metric deltas in the champion-and-challenger view, then move an alias in one action — the version that loses it keeps @previous, so you can always roll back.',
+          },
+          {
+            title: 'Your MLflow code, unchanged.',
+            body: 'Create an MLflow token on the connect tab and set just two values — the tracking address and the token — and your existing training scripts log runs as they are. The delivery check confirms runs are arriving, and SDK experiments are compared in the same list.',
           },
         ],
         specs: {
           rows: [
+            ['Tabs', 'Overview · experiments · runs · compare · models · connect'],
             [
-              'Tracking',
-              'MLflow-compatible experiments · runs · metrics · params · tags · compare',
+              'Run detail',
+              'Summary · parameters (vs. previous run) · metrics · artifacts · logs',
             ],
-            ['Registry', 'Model versions · aliases · stages'],
-            ['Artifacts', 'Stored in project storage · file browser'],
-            ['Auth', 'Project access tokens (experiments · model registry scopes)'],
+            [
+              'Registry',
+              'Model versions · @production/@staging/@previous aliases · champion vs. challenger',
+            ],
+            [
+              'Compatibility',
+              'MLflow 2.10+ recommended · project access tokens (experiments · models scopes)',
+            ],
+            [
+              'CLI',
+              'cvp mlops overview · experiment · run · model · connect · explain',
+            ],
           ],
         },
       },
@@ -1518,27 +1811,72 @@ export const features = {
       memory: {
         title: 'Shared memory you use like PLC registers.',
         intro:
-          'Gather equipment values in a byte-addressed memory map. Inspect in hex, read as typed arrays, and name regions — a data bus between Modbus and your digital twin.',
+          'Keep values you address by location — PLC register dumps, simulation state, equipment settings — in byte-addressed memory maps. Inspect them in hex, read them as typed arrays, and name regions to connect them to the digital twin.',
         sections: [
           {
             title: 'Hex, typed arrays, regions.',
-            body: 'View and edit bytes in a hex editor paged by 4 KiB. Read the same span as u8 through f64, little- or big-endian, and name the ranges you watch as regions to see just their values.',
+            body: 'View and edit bytes in a hex editor paged at 4 KiB. Read the same span as u8 through f64, little or big endian, and name the ranges you watch as regions to see just their values.',
           },
           {
-            title: 'The bus between Modbus and twins.',
-            body: 'When a Modbus connector mirrors registers into a map, a region is created per area automatically. With the simulator, edits to the map are written back to registers, and digital twins read region elements through bindings.',
+            title: 'Shared data the digital twin reads.',
+            body: 'Named regions bind to digital twin nodes and show as equipment state. Storage counts only what you actually write, so a large map costs nothing extra, and the per-map size cap ranges from 64 KB to 16 MB by plan.',
           },
         ],
         specs: {
           rows: [
-            ['Views', 'Hex (4 KiB pages) · typed array · regions'],
+            ['Views', 'Hex (4 KiB pages) · typed arrays · regions'],
             [
               'Types',
               'u8 · i8 · u16 · i16 · u32 · i32 · u64 · i64 · f32 · f64 · little/big endian',
             ],
+            ['Integrations', 'Digital twin memory-region bindings'],
             [
-              'Integrations',
-              'Modbus mirror (monitor one-way · simulator two-way) · digital-twin bindings',
+              'Map size',
+              'Free 64 KB · Starter 1 MB · Pro 16 MB · Enterprise unlimited (per map)',
+            ],
+          ],
+        },
+      },
+
+      media: {
+        title: 'From upload to streaming, your team’s footage in one place.',
+        intro:
+          'The video library keeps original files and HLS streaming assets together. Formats that will not play are encoded to HLS by a converter on your agent, recordings from a camera, phone, or screen can be watched while they record, and sensitive footage is encrypted with AES-128.',
+        sections: [
+          {
+            title: 'Encode in the browser or on an agent.',
+            body: 'Step one of the upload picks HLS streaming or keeping the original, then the encoding: browser only, converter when needed, or converter for everything. Advanced settings tune quality (CRF), encoding speed, hardware acceleration, resolution and frame-rate caps, and audio — and files handed to the converter keep processing on the agent after you close the tab.',
+          },
+          {
+            title: 'Watch while it records.',
+            body: 'Record this browser’s camera or a screen or window, or connect a phone with a QR code. Two-second pieces upload while recording, so viewers watch nearly live, and the sessions page manages recordings in progress and past ones.',
+          },
+          {
+            title: 'Playlists, subtitles, chapters, 360°.',
+            body: 'Organize footage in a playlist gallery, edit subtitles (ASS, SRT, VTT), and set chapters from timestamps in the description. 360° and VR video plays on a sphere and in WebXR headsets, and unencrypted videos share with public links.',
+          },
+        ],
+        specs: {
+          rows: [
+            [
+              'Upload',
+              'HLS streaming · original files · browser remux · agent converter · CLI cvp video upload',
+            ],
+            [
+              'Encoding',
+              'CRF 18/23/28/custom · NVENC · QSV · VAAPI · VideoToolbox · resolution and frame-rate caps',
+            ],
+            [
+              'Recording',
+              'Camera · screen or window · phone (QR) · watch while recording · sessions',
+            ],
+            [
+              'Security',
+              'AES-128 HLS encryption (Pro and up) · public links (unencrypted videos)',
+            ],
+            [
+              'Playback',
+              'Subtitle editor · chapters · playlists · 360°/VR · view counts',
             ],
           ],
         },

@@ -19,12 +19,13 @@ import {cn} from '@/lib/utils';
  * Collectors timeline (`/proj/:id/collectors/timeline`): `TransportBar`,
  * `TimelineTracks` (tick header + one `TimelineTrack` per stream with a
  * sparkline or sample frames over its `AvailabilityBar`), the legend, and the
- * opened track below as a `ViewerFrame`.
+ * opened track below as a `ViewerFrame`. Streams come from the sources the
+ * app can create today: simulator collectors and a recorded ModbusTCP device.
  */
 
 const COPY = {
   ko: {
-    title: 'Collectors',
+    title: '수집기',
     tabs: {overview: '개요', list: '수집기', timeline: '타임라인', storage: '저장소'},
     spans: ['15분', '1시간', '6시간', '24시간'],
     now: '지금',
@@ -39,11 +40,11 @@ const COPY = {
     fromAgent: '에이전트에서 가져옴',
     openHistory: '기록에서 열기',
     names: {
-      gate: '정문 교차로 CCTV',
-      vision: '라인 2 비전 검사',
-      press: '프레스 2호기',
-      oven: '건조로 온도',
-      mes: '라인 PLC 이벤트 수신',
+      gate: 'SIM-01 영상',
+      vision: 'SIM-02 프레임',
+      press: 'Line 1 sim',
+      oven: 'Line 1 sim',
+      mes: 'SIM-03 레코드',
     },
   },
   en: {
@@ -72,11 +73,11 @@ const COPY = {
     fromAgent: 'Pulled from the agent',
     openHistory: 'Open in history',
     names: {
-      gate: 'Front gate CCTV',
-      vision: 'Line 2 inspection',
-      press: 'Press #2',
-      oven: 'Drying oven temp',
-      mes: 'Line PLC event inbox',
+      gate: 'SIM-01 video',
+      vision: 'SIM-02 frames',
+      press: 'Line 1 sim',
+      oven: 'Line 1 sim',
+      mes: 'SIM-03 records',
     },
   },
 } as const;
@@ -197,7 +198,7 @@ export function MockCollectorsTimeline() {
   const tracks: Track[] = [
     {
       name: c.names.gate,
-      stream: 'cam-1',
+      stream: 'main',
       payload: 'video',
       open: true,
       ranges: [
@@ -220,7 +221,7 @@ export function MockCollectorsTimeline() {
     },
     {
       name: c.names.press,
-      stream: 'pressure',
+      stream: 'main',
       payload: 'timeseries',
       spark: series(1.3),
       gap: [0.31, 0.37],
@@ -231,14 +232,14 @@ export function MockCollectorsTimeline() {
     },
     {
       name: c.names.oven,
-      stream: 'temp',
+      stream: 'main-1m',
       payload: 'timeseries',
       spark: series(4.1).map(v => 0.35 + v * 0.4),
       ranges: [[0, 1, 'cloud']],
     },
     {
       name: c.names.mes,
-      stream: 'events',
+      stream: 'records',
       payload: 'record',
       ranges: [
         [0.04, 0.22, 'cloud'],
@@ -339,7 +340,7 @@ export function MockCollectorsTimeline() {
             <ul className="flex flex-col divide-y divide-border">
               {tracks.map(track => (
                 <li
-                  key={track.stream}
+                  key={`${track.name}-${track.stream}`}
                   className="grid grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)] items-center gap-x-2.5 py-1.5 @3xl:grid-cols-[minmax(0,11rem)_minmax(0,1fr)]"
                 >
                   <div className="flex min-w-0 items-center gap-1.5">
@@ -408,7 +409,7 @@ export function MockCollectorsTimeline() {
         {/* opened viewers */}
         <section className="grid grid-cols-1 gap-3 @4xl:grid-cols-2">
           {[
-            {name: c.names.gate, stream: 'cam-1', src: '/mockdata/davis-crossing.webp'},
+            {name: c.names.gate, stream: 'main', src: '/mockdata/davis-crossing.webp'},
             {name: c.names.vision, stream: 'frames', src: '/mockdata/vt2.webp'},
           ].map((viewer, i) => (
             <div

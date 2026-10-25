@@ -1,93 +1,90 @@
-import type {ComponentType} from 'react';
+import {lazy, type ComponentType, type LazyExoticComponent} from 'react';
 
 import type {MockKey} from '@/lib/site';
 
-import {MockAgentApps} from './agent-apps';
-import {MockAgentInstall} from './agent-install';
-import {MockAgentList} from './agent-list';
-import {MockApiSnippet} from './api-snippet';
-import {MockAppsGallery} from './apps-gallery';
-import {MockAutoLabelReview} from './auto-label-review';
-import {MockAutoSegment} from './auto-segment';
-import {MockCollectorsOverview} from './collectors-overview';
-import {MockCollectorsTimeline} from './collectors-timeline';
-import {MockDatasetGrid} from './dataset-grid';
-import {MockDatasetQa} from './dataset-qa';
-import {MockExperimentRun} from './experiment-run';
-import {MockFiles} from './files';
-import {MockGraphEditor} from './graph-editor';
-import {MockGridTable} from './grid-table';
-import {MockImageEditor} from './image-editor';
-import {MockIssuePanel} from './issue-panel';
-import {MockKeypointPreset} from './keypoint-preset';
-import {MockLicensePanel} from './license-panel';
-import {MockMapView} from './map-view';
-import {MockMeetingDetail} from './meeting-detail';
-import {MockMeetingRoom} from './meeting-room';
-import {MockMemoryHex} from './memory-hex';
-import {MockMlflowRuns} from './mlflow-runs';
-import {MockMlopsOverview} from './mlops-overview';
-import {MockModbusOverview} from './modbus-overview';
-import {MockPointCloudEditor} from './point-cloud-editor';
-import {MockPointceptAutoLabel} from './pointcept-autolabel';
-import {MockRegistry} from './registry';
-import {MockRfdetrInference} from './rfdetr-inference';
-import {MockSampleGallery} from './sample-gallery';
-import {MockSignatureDetail} from './signatures';
-import {MockStore} from './store';
-import {MockTimeseriesEditor} from './timeseries-editor';
-import {MockTokenPanel} from './token-panel';
-import {MockTrainingWizard} from './training-wizard';
-import {MockTsColumnMapping} from './ts-column-mapping';
-import {MockTwinEditor} from './twin-editor';
-import {MockUploadWizard} from './upload-wizard';
-import {MockUsage} from './usage-panel';
-import {MockVideoLibrary} from './video-library';
-import {MockVideoTimeline} from './video-timeline';
-import {MockWiki} from './wiki';
+type MockModule = Promise<{default: ComponentType}>;
 
-export const MOCKS: Record<MockKey, ComponentType> = {
-  imageEditor: MockImageEditor,
-  autoLabelReview: MockAutoLabelReview,
-  keypointPreset: MockKeypointPreset,
-  videoTimeline: MockVideoTimeline,
-  pointCloudEditor: MockPointCloudEditor,
-  pointceptAutoLabel: MockPointceptAutoLabel,
-  autoSegment: MockAutoSegment,
-  timeseriesEditor: MockTimeseriesEditor,
-  tsColumnMapping: MockTsColumnMapping,
-  issuePanel: MockIssuePanel,
-  datasetGrid: MockDatasetGrid,
-  sampleGallery: MockSampleGallery,
-  uploadWizard: MockUploadWizard,
-  datasetQa: MockDatasetQa,
-  trainingWizard: MockTrainingWizard,
-  experimentRun: MockExperimentRun,
-  rfdetrInference: MockRfdetrInference,
-  mlopsOverview: MockMlopsOverview,
-  mlflowRuns: MockMlflowRuns,
-  usage: MockUsage,
-  files: MockFiles,
-  wiki: MockWiki,
-  videoLibrary: MockVideoLibrary,
-  tokenPanel: MockTokenPanel,
-  licensePanel: MockLicensePanel,
-  apiSnippet: MockApiSnippet,
-  agentList: MockAgentList,
-  agentApps: MockAgentApps,
-  agentInstall: MockAgentInstall,
-  modbusOverview: MockModbusOverview,
-  collectorsOverview: MockCollectorsOverview,
-  collectorsTimeline: MockCollectorsTimeline,
-  twinEditor: MockTwinEditor,
-  appsGallery: MockAppsGallery,
-  graphEditor: MockGraphEditor,
-  gridTable: MockGridTable,
-  mapView: MockMapView,
-  meetingDetail: MockMeetingDetail,
-  meetingRoom: MockMeetingRoom,
-  signatureDetail: MockSignatureDetail,
-  memoryHex: MockMemoryHex,
-  registry: MockRegistry,
-  store: MockStore,
+/** Adapts a module's named mock export to the `{default}` shape `lazy()` takes. */
+function named<K extends string>(
+  load: () => Promise<Record<K, ComponentType>>,
+  name: K,
+): () => MockModule {
+  return () => load().then(module => ({default: module[name]}));
+}
+
+/**
+ * Loader per mock. Every mock is its own chunk: a page only downloads the
+ * screens it shows, and `MockSlot` defers even those until they near the
+ * viewport. Keep keys in sync with `MockKey` in `lib/site.ts`.
+ */
+export const MOCK_LOADERS: Record<MockKey, () => MockModule> = {
+  imageEditor: named(() => import('./image-editor'), 'MockImageEditor'),
+  autoLabelReview: named(() => import('./auto-label-review'), 'MockAutoLabelReview'),
+  keypointPreset: named(() => import('./keypoint-preset'), 'MockKeypointPreset'),
+  videoTimeline: named(() => import('./video-timeline'), 'MockVideoTimeline'),
+  pointCloudEditor: named(() => import('./point-cloud-editor'), 'MockPointCloudEditor'),
+  pointceptAutoLabel: named(
+    () => import('./pointcept-autolabel'),
+    'MockPointceptAutoLabel',
+  ),
+  autoSegment: named(() => import('./auto-segment'), 'MockAutoSegment'),
+  labelRules: named(() => import('./label-rules'), 'MockLabelRules'),
+  timeseriesEditor: named(() => import('./timeseries-editor'), 'MockTimeseriesEditor'),
+  tsColumnMapping: named(() => import('./ts-column-mapping'), 'MockTsColumnMapping'),
+  issuePanel: named(() => import('./issue-panel'), 'MockIssuePanel'),
+  datasetGrid: named(() => import('./dataset-grid'), 'MockDatasetGrid'),
+  sampleGallery: named(() => import('./sample-gallery'), 'MockSampleGallery'),
+  uploadWizard: named(() => import('./upload-wizard'), 'MockUploadWizard'),
+  datasetQa: named(() => import('./dataset-qa'), 'MockDatasetQa'),
+  trainingWizard: named(() => import('./training-wizard'), 'MockTrainingWizard'),
+  inferenceOverview: named(() => import('./infer-overview'), 'MockInferOverview'),
+  inferenceFeature: named(() => import('./infer-feature'), 'MockInferFeature'),
+  mlopsOverview: named(() => import('./mlops-overview'), 'MockMlopsOverview'),
+  mlopsRuns: named(() => import('./mlops-runs'), 'MockMlopsRuns'),
+  mlopsRun: named(() => import('./mlops-run'), 'MockMlopsRun'),
+  mlopsModels: named(() => import('./mlops-models'), 'MockMlopsModels'),
+  usage: named(() => import('./usage-panel'), 'MockUsage'),
+  files: named(() => import('./files'), 'MockFiles'),
+  wiki: named(() => import('./wiki'), 'MockWiki'),
+  videoLibrary: named(() => import('./video-library'), 'MockVideoLibrary'),
+  videoUpload: named(() => import('./video-upload'), 'MockVideoUpload'),
+  tokenPanel: named(() => import('./token-panel'), 'MockTokenPanel'),
+  s3Credentials: named(() => import('./s3-credentials'), 'MockS3Credentials'),
+  licensePanel: named(() => import('./license-panel'), 'MockLicensePanel'),
+  apiSnippet: named(() => import('./api-snippet'), 'MockApiSnippet'),
+  agentList: named(() => import('./agent-list'), 'MockAgentList'),
+  agentApps: named(() => import('./agent-apps'), 'MockAgentApps'),
+  agentCompat: named(() => import('./agent-compat'), 'MockAgentCompat'),
+  agentInstall: named(() => import('./agent-install'), 'MockAgentInstall'),
+  modbusDevices: named(() => import('./modbus-devices'), 'MockModbusDevices'),
+  modbusTags: named(() => import('./modbus-tags'), 'MockModbusTags'),
+  collectorsOverview: named(
+    () => import('./collectors-overview'),
+    'MockCollectorsOverview',
+  ),
+  collectorsTimeline: named(
+    () => import('./collectors-timeline'),
+    'MockCollectorsTimeline',
+  ),
+  twinEditor: named(() => import('./twin-editor'), 'MockTwinEditor'),
+  appsGallery: named(() => import('./apps-gallery'), 'MockAppsGallery'),
+  graphEditor: named(() => import('./graph-editor'), 'MockGraphEditor'),
+  gridTable: named(() => import('./grid-table'), 'MockGridTable'),
+  mapView: named(() => import('./map-view'), 'MockMapView'),
+  meetingDetail: named(() => import('./meeting-detail'), 'MockMeetingDetail'),
+  meetingRoom: named(() => import('./meeting-room'), 'MockMeetingRoom'),
+  signatureDetail: named(() => import('./signatures'), 'MockSignatureDetail'),
+  memoryHex: named(() => import('./memory-hex'), 'MockMemoryHex'),
+  registry: named(() => import('./registry'), 'MockRegistry'),
+  store: named(() => import('./store'), 'MockStore'),
+  accountSecurity: named(() => import('./account-security'), 'MockAccountSecurity'),
 };
+
+export const MOCKS = Object.fromEntries(
+  Object.entries(MOCK_LOADERS).map(([key, load]) => [key, lazy(load)]),
+) as Record<MockKey, LazyExoticComponent<ComponentType>>;
+
+/** Starts downloading a mock's chunk ahead of render (e.g. on tab hover). */
+export function preloadMock(key: MockKey): void {
+  void MOCK_LOADERS[key]();
+}

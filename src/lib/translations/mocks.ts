@@ -16,7 +16,7 @@ export const mocks = {
           datasets: '데이터셋',
           wiki: '위키',
           videos: '동영상',
-          apps: '어플리케이션',
+          apps: '애플리케이션',
           tokens: '액세스 토큰',
           license: '제품키',
           members: '멤버',

@@ -1,11 +1,14 @@
 import {
+  CalendarRange,
   ChevronDown,
   Film,
   Heart,
   LayoutDashboard,
   LayoutGrid,
   List,
+  ListFilter,
   ListVideo,
+  Loader2,
   Lock,
   MessageSquare,
   MoreVertical,
@@ -13,6 +16,7 @@ import {
   Radio,
   Sparkles,
   Upload,
+  X,
 } from 'lucide-react';
 
 import {MockAppFrame, MockButton, useNavLabel} from '@/components/mocks/app-frame';
@@ -20,7 +24,13 @@ import {MockBadge} from '@/components/mocks/mock-ui';
 import {useLanguage} from '@/lib/i18n';
 import {cn} from '@/lib/utils';
 
-/** Real frames from Wikimedia Commons "Dashcam Recording (urban)" (CC0). */
+/**
+ * 동영상 › 전체 목록 (`/proj/:id/videos?tab=all`): the library tabs, toolbar
+ * (search · play all · filter · period · sort | view), the 처리 중 section
+ * with converter jobs from `_IngestJobCards.tsx` (stage + progress, the
+ * NVENC fallback note), then `VideoCard`s. Thumbnails are real frames from
+ * Wikimedia Commons "Dashcam Recording (urban)" (CC0).
+ */
 const THUMBS = ['/mockdata/vt1.webp', '/mockdata/vt2.webp', '/mockdata/vt3.webp'];
 
 const COPY = {
@@ -28,11 +38,32 @@ const COPY = {
     tabs: ['추천 목록', '즐겨찾기', '재생 목록', '전체 목록', '업로드', '스트리밍'],
     upload: '업로드',
     search: '동영상 검색…',
-    sort: '최신순',
+    sort: '업로드 날짜',
+    filter: '필터',
+    period: '기간',
     playAll: '모두 재생',
     live: 'LIVE',
     liveName: '1번 게이트 카메라',
     views: (n: string) => `조회수 ${n}회`,
+    uploader: '김하늘',
+    processing: '처리 중',
+    jobs: [
+      {
+        name: 'Line C — night shift.mkv',
+        meta: '2.2 GB · gpu-node-01',
+        stage: '인코딩 42%',
+        pct: 42,
+        note: '하드웨어 인코더(NVENC)를 사용할 수 없어 소프트웨어로 인코딩합니다.',
+      },
+      {
+        name: 'Drone survey.mov',
+        meta: '820.2 MB · gpu-node-01',
+        stage: '변환기 대기',
+        pct: 0,
+        note: '',
+      },
+    ],
+    stop: '멈추기',
   },
   en: {
     tabs: [
@@ -45,11 +76,32 @@ const COPY = {
     ],
     upload: 'Upload',
     search: 'Search videos…',
-    sort: 'Newest first',
+    sort: 'Upload date',
+    filter: 'Filter',
+    period: 'Period',
     playAll: 'Play all',
     live: 'LIVE',
     liveName: 'Gate 1 camera',
     views: (n: string) => `${n} views`,
+    uploader: 'Haneul Kim',
+    processing: 'Processing',
+    jobs: [
+      {
+        name: 'Line C — night shift.mkv',
+        meta: '2.2 GB · gpu-node-01',
+        stage: 'Encoding 42%',
+        pct: 42,
+        note: 'NVENC is unavailable, so the video is encoded in software.',
+      },
+      {
+        name: 'Drone survey.mov',
+        meta: '820.2 MB · gpu-node-01',
+        stage: 'Waiting for the converter',
+        pct: 0,
+        note: '',
+      },
+    ],
+    stop: 'Stop',
   },
 } as const;
 
@@ -131,6 +183,12 @@ export function MockVideoLibrary() {
         <MockButton icon={Play} className="h-7">
           {c.playAll}
         </MockButton>
+        <MockButton icon={ListFilter} className="hidden h-7 @3xl:inline-flex">
+          {c.filter}
+        </MockButton>
+        <MockButton icon={CalendarRange} className="hidden h-7 @4xl:inline-flex">
+          {c.period}
+        </MockButton>
         <span className="ml-auto flex shrink-0 items-center gap-0.5">
           {[LayoutGrid, LayoutDashboard, List].map((Icon, i) => (
             <span
@@ -144,6 +202,49 @@ export function MockVideoLibrary() {
             </span>
           ))}
         </span>
+      </div>
+
+      {/* 처리 중: converter jobs, before the asset exists */}
+      <div className="mt-3">
+        <p className="mb-1.5 flex items-center gap-1.5 text-[10.5px] font-semibold">
+          {c.processing}
+          <span className="font-normal text-muted-foreground tabular-nums">2</span>
+        </p>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-3 @3xl:grid-cols-3 @5xl:grid-cols-4">
+          {c.jobs.map(job => (
+            <div key={job.name}>
+              <div className="relative flex aspect-video flex-col items-center justify-center gap-1 overflow-hidden rounded-lg border border-dashed border-border bg-muted/50">
+                <Loader2 className="size-4 text-muted-foreground motion-safe:animate-spin" />
+                <span className="text-[9.5px] text-muted-foreground tabular-nums">
+                  {job.stage}
+                </span>
+                <span className="absolute inset-x-0 bottom-0 h-px bg-border">
+                  <span
+                    className="block h-full bg-foreground"
+                    style={{width: `${job.pct}%`}}
+                  />
+                </span>
+              </div>
+              <div className="flex items-start gap-1 pt-1.5">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[11px] leading-snug font-medium">
+                    {job.name}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground">{job.meta}</p>
+                  {job.note && (
+                    <p className="mt-0.5 line-clamp-2 text-[8.5px] text-amber-700 dark:text-amber-400">
+                      {job.note}
+                    </p>
+                  )}
+                </div>
+                <span className="inline-flex shrink-0 items-center gap-0.5 text-[9px] text-muted-foreground">
+                  <X className="size-2.5" />
+                  {c.stop}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* VideoCard grid */}
@@ -185,6 +286,7 @@ export function MockVideoLibrary() {
                 <p className="truncate text-[11px] leading-snug font-medium">
                   {clip.name}
                 </p>
+                <p className="text-[9px] text-muted-foreground">{c.uploader}</p>
                 <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[9px] text-muted-foreground">
                   <span>{c.views(clip.views)}</span>
                   {clip.comments > 0 && (
@@ -193,7 +295,7 @@ export function MockVideoLibrary() {
                       {clip.comments}
                     </span>
                   )}
-                  <span className="hidden @3xl:inline">1920×1080</span>
+                  <span className="hidden @3xl:inline">1280×720</span>
                   <MockBadge
                     tone="secondary"
                     className="px-1 py-0 text-[8px] uppercase"

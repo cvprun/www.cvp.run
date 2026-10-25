@@ -1,22 +1,56 @@
 import {Link} from 'react-router-dom';
 
+import {LanguageSwitcher} from '@/components/language-switcher';
 import {Logo} from '@/components/logo';
+import {ModeToggle} from '@/components/mode-toggle';
 import {NewsletterForm} from '@/components/newsletter-form';
 import {useLanguage} from '@/lib/i18n';
 import {NEWSLETTER_API_URL} from '@/lib/newsletter';
-import {FEATURE_PAGES, paths} from '@/lib/site';
+import {appLink, FEATURE_GROUPS, pagesIn, paths, type FeaturePageDef} from '@/lib/site';
+
+type FooterLink = {to: string; label: string; external?: boolean};
+
+function FooterColumn({title, links}: {title: string; links: FooterLink[]}) {
+  return (
+    <div>
+      <h3 className="text-sm font-semibold">{title}</h3>
+      <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+        {links.map(link => (
+          <li key={link.to}>
+            {link.external ? (
+              <a href={link.to} className="transition-colors hover:text-foreground">
+                {link.label}
+              </a>
+            ) : (
+              <Link to={link.to} className="transition-colors hover:text-foreground">
+                {link.label}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function Footer() {
   const {t} = useLanguage();
+  const toLinks = (pages: FeaturePageDef[]): FooterLink[] =>
+    pages.map(page => ({to: page.path, label: t.pageMeta[page.slug].label}));
 
-  const labeling = FEATURE_PAGES.filter(p => p.category === 'labeling');
-  const platform = FEATURE_PAGES.filter(p => p.category === 'platform');
-  const more = FEATURE_PAGES.filter(p => p.category === 'more');
+  const more = pagesIn('more');
+  const signin = appLink('/signin');
+  const resources: FooterLink[] = [
+    {to: paths.pricing, label: t.footer.pricing},
+    {to: paths.changelog, label: t.footer.changelog},
+    {to: paths.security, label: t.footer.security},
+    ...(signin ? [{to: signin, label: t.nav.login, external: true}] : []),
+  ];
 
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="flex flex-col gap-10 md:flex-row md:justify-between">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="flex flex-col gap-12">
           <div className="max-w-sm">
             <Logo />
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -33,74 +67,35 @@ export function Footer() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-12 sm:gap-16">
-            <div>
-              <h3 className="text-sm font-semibold">{t.footer.labelingTitle}</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                {labeling.map(page => (
-                  <li key={page.slug}>
-                    <Link
-                      to={page.path}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {t.pageMeta[page.slug].label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold">{t.footer.platformTitle}</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                {platform.map(page => (
-                  <li key={page.slug}>
-                    <Link
-                      to={page.path}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {t.pageMeta[page.slug].label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold">{t.footer.moreTitle}</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                {more.map(page => (
-                  <li key={page.slug}>
-                    <Link
-                      to={page.path}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      {t.pageMeta[page.slug].label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold">{t.footer.companyTitle}</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li>
-                  <Link
-                    to={paths.pricing}
-                    className="transition-colors hover:text-foreground"
-                  >
-                    {t.footer.pricing}
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-border pt-10 sm:grid-cols-3 lg:grid-cols-6">
+            <FooterColumn
+              title={t.footer.labelingTitle}
+              links={toLinks(pagesIn('labeling'))}
+            />
+            <FooterColumn
+              title={t.footer.platformTitle}
+              links={toLinks(pagesIn('platform'))}
+            />
+            {FEATURE_GROUPS.map(group => (
+              <FooterColumn
+                key={group}
+                title={t.nav.groups[group]}
+                links={toLinks(more.filter(page => page.group === group))}
+              />
+            ))}
+            <FooterColumn title={t.footer.resourcesTitle} links={resources} />
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>{t.footer.copyright}</span>
-          <span className="text-xs">{t.footer.roadmapNote}</span>
+        <div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1">
+            <span>{t.footer.copyright}</span>
+            <span className="text-xs">{t.footer.roadmapNote}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <ModeToggle />
+          </div>
         </div>
       </div>
     </footer>

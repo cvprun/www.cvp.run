@@ -4,7 +4,7 @@ export const pricing = {
     pricingPage: {
       title: '팀의 성장에 맞춰 확장하는 가격.',
       description:
-        '무료로 시작하고 필요할 때 업그레이드할 수 있습니다. 모든 유료 플랜은 월 단위로 결제되며 언제든지 해지할 수 있습니다.',
+        '무료로 시작하고 필요할 때 업그레이드할 수 있습니다. 유료 플랜은 월간 또는 연간으로 결제하며 언제든지 해지할 수 있습니다.',
       betaNote:
         '베타 가격입니다. 정식 출시 시 변경될 수 있으며, 기존 구독자에게는 현재 가격이 유지됩니다.',
       perMonth: '/월',
@@ -32,6 +32,18 @@ export const pricing = {
       },
 
       browserOnly: '브라우저 실행 한정',
+      groups: {
+        usage: '사용량',
+        workspace: '워크스페이스',
+        field: '현장 · 트윈',
+        build: '개발 · ML',
+        included: '모든 플랜에 포함',
+        features: '플랜별 기능',
+      },
+      compareTitle: '플랜 비교',
+      enterpriseTitle: '맞춤형 플랜이 필요하십니까?',
+      enterpriseBody:
+        'Enterprise 플랜은 맞춤 한도, 전용 인프라, SSO, 계약 SLA 등을 영업팀과 협의해 제공합니다.',
       rows: {
         members: '멤버',
         storage: '스토리지',
@@ -42,15 +54,22 @@ export const pricing = {
         twinScenes: '디지털 트윈 씬',
         wikiPages: '위키 페이지',
         gridRows: '그리드 행 (그리드당)',
+        gridColumns: '그리드 컬럼 (그리드당)',
+        graphs: '그래프',
+        twinRecordings: '디지털 트윈 기록',
         memoryMaps: '메모리 맵',
+        memoryMapSize: '메모리 맵 크기 (맵당)',
+        modbusInterval: 'ModbusTCP 갱신 주기 하한',
+        noFloor: '제한 없음',
         mapFeatures: '지도 피처',
         licenseKeys: '제품키',
         labeling: '이미지 · 비디오 · 3D · 시계열 라벨링',
-        aiLabeling: '에이전트 AI 라벨링 · 학습 (토큰 미소모)',
-        agents: '에이전트 · 에이전트 앱',
+        aiLabeling: '자체 에이전트의 자동 라벨링 · 학습 · 추론',
+        agents: '에이전트 · ModbusTCP · 수집기',
         review: '리뷰 & 이슈 스레드',
         wiki: '위키 · 파일 · 동영상 · 그리드',
-        tokens: 'CLI · 액세스 토큰(MLflow · 레지스트리)',
+        tokens: 'CLI · 액세스 토큰(MLflow · 레지스트리 · S3)',
+        accountSecurity: '2단계 인증 · 세션 관리',
         videoEncryption: '동영상 암호화 (AES-128)',
         prioritySupport: '우선 지원',
         auditLogs: '감사 로그',
@@ -60,7 +79,7 @@ export const pricing = {
 
       tokensTitle: '사용한 만큼만 토큰으로 정산.',
       tokensDescription:
-        '플랜 한도를 초과한 사용량과 클라우드 AI 기능은 프로젝트 토큰으로 정산합니다. 1 토큰은 1센트이며, 지출 한도를 설정하면 초과 과금 대신 사용이 중지됩니다. 자체 에이전트에서 실행되는 AI 라벨링과 학습에는 토큰이 소모되지 않습니다.',
+        '플랜 한도를 초과한 사용량과 클라우드 AI 기능은 프로젝트 토큰으로 정산합니다. 1 토큰은 1센트이며, 지출 한도를 설정하면 초과 과금 대신 사용이 거부됩니다. 자체 에이전트에서 실행되는 추론·AI 라벨링·학습 자체에는 토큰이 소모되지 않습니다.',
       tokensUnit: (n: string) => `${n} 토큰`,
       tokenUses: [
         ['에이전트 통신량 초과', '100 MB 당 1 토큰'],
@@ -81,16 +100,28 @@ export const pricing = {
           a: '필요하지 않습니다. 이메일 가입만으로 시작할 수 있으며, 유료 플랜으로 업그레이드하기 전까지 결제 정보를 요구하지 않습니다.',
         },
         {
+          q: '연간 결제도 지원합니까?',
+          a: '지원합니다. 프로젝트의 결제 화면에서 월간과 연간 중 결제 주기를 선택할 수 있으며, 결제는 Paddle을 통해 처리됩니다.',
+        },
+        {
+          q: '추론과 학습에도 토큰이 소모됩니까?',
+          a: '자체 에이전트에서 실행되는 추론과 학습에는 토큰이 소모되지 않습니다. 다만 에이전트와 주고받는 데이터는 에이전트 통신량에 포함되며, 플랜 포함량을 초과한 부분만 토큰으로 정산됩니다.',
+        },
+        {
+          q: '한도에 도달하면 어떻게 됩니까?',
+          a: '새 항목을 만드는 것만 제한되고 기존 데이터는 그대로 유지됩니다. 사용량이 한도의 70%에 도달하면 사용량 화면에 안내가 표시되며, 비용 제어에서 알림 기준을 지정할 수 있습니다.',
+        },
+        {
           q: '라벨과 데이터를 언제든지 내보낼 수 있습니까?',
-          a: '가능합니다. 라벨은 표준 포맷(COCO·YOLO·Labeled PLY·SemanticKITTI·CSV 등)으로 내보낼 수 있고, 파일은 원본 그대로 다운로드할 수 있습니다. 특정 플랫폼에 종속되지 않도록 하는 것이 CVP의 원칙입니다.',
+          a: '가능합니다. 라벨은 표준 포맷(COCO·YOLO·Labeled PLY·SemanticKITTI·CSV 등)으로 내보낼 수 있고, 파일은 원본 그대로 다운로드하거나 S3 호환 클라이언트로 내려받을 수 있습니다. 특정 플랫폼에 종속되지 않도록 하는 것이 CVP의 원칙입니다.',
         },
         {
           q: '플랜을 업그레이드하거나 다운그레이드하면 어떻게 됩니까?',
           a: '변경 사항은 즉시 반영되며, 남은 기간의 요금은 일할 계산(비례 배분)됩니다. 다운그레이드로 한도를 초과하게 되면 기존 데이터는 유지되고 새 항목 생성만 제한됩니다.',
         },
         {
-          q: '환불 정책은 어떻게 됩니까?',
-          a: '결제 후 14일 이내에 미사용에 준하는 경우 전액 환불해 드립니다. 환불 요청은 문의 채널로 접수해 주십시오.',
+          q: '구독을 해지하면 환불됩니까?',
+          a: '현재 결제 주기가 끝날 때 해지하거나, 즉시 해지하고 남은 기간을 일할 계산해 환불받을 수 있습니다. 환불은 검토를 거쳐 처리됩니다.',
         },
         {
           q: '베타 이후 가격이 인상되면 기존 구독료도 인상됩니까?',
@@ -108,7 +139,7 @@ export const pricing = {
     pricingPage: {
       title: 'Pricing that grows only as your team does.',
       description:
-        'Start free and upgrade when you need to. Paid plans are monthly and cancellable anytime.',
+        'Start free and upgrade when you need to. Paid plans bill monthly or yearly and cancel anytime.',
       betaNote:
         'Beta pricing — subject to change at GA; existing subscribers keep their price.',
       perMonth: '/mo',
@@ -136,6 +167,18 @@ export const pricing = {
       },
 
       browserOnly: 'In-browser only',
+      groups: {
+        usage: 'Usage',
+        workspace: 'Workspace',
+        field: 'Field · twin',
+        build: 'Build · ML',
+        included: 'Included in every plan',
+        features: 'Plan features',
+      },
+      compareTitle: 'Compare plans',
+      enterpriseTitle: 'Need a custom plan?',
+      enterpriseBody:
+        'Enterprise offers bespoke limits, dedicated infrastructure, SSO, and contractual SLAs, arranged with our sales team.',
       rows: {
         members: 'Members',
         storage: 'Storage',
@@ -146,15 +189,22 @@ export const pricing = {
         twinScenes: 'Digital twin scenes',
         wikiPages: 'Wiki pages',
         gridRows: 'Grid rows (per grid)',
+        gridColumns: 'Grid columns (per grid)',
+        graphs: 'Graphs',
+        twinRecordings: 'Digital twin recordings',
         memoryMaps: 'Memory maps',
+        memoryMapSize: 'Memory map size (per map)',
+        modbusInterval: 'ModbusTCP update interval floor',
+        noFloor: 'No floor',
         mapFeatures: 'Map features',
         licenseKeys: 'Product keys',
         labeling: 'Image · video · 3D · time-series labeling',
-        aiLabeling: 'Agent AI labeling & training (no tokens)',
-        agents: 'Agents & agent apps',
+        aiLabeling: 'Auto-labeling, training & inference on your agents',
+        agents: 'Agents · ModbusTCP · collectors',
         review: 'Review & issue threads',
         wiki: 'Wiki · files · video · grids',
-        tokens: 'CLI · access tokens (MLflow, registries)',
+        tokens: 'CLI · access tokens (MLflow, registries, S3)',
+        accountSecurity: 'Two-factor authentication · sessions',
         videoEncryption: 'Video encryption (AES-128)',
         prioritySupport: 'Priority support',
         auditLogs: 'Audit logs',
@@ -164,7 +214,7 @@ export const pricing = {
 
       tokensTitle: 'Pay for what you use, in tokens.',
       tokensDescription:
-        'Usage beyond your plan and cloud AI features settle in project tokens. One token is one cent, and a spend cap stops usage instead of charging. AI labeling and training on your own agents never use tokens.',
+        'Usage beyond your plan and cloud AI features settle in project tokens. One token is one cent, and a spend cap rejects usage instead of charging. Inference, AI labeling, and training on your own agents use no tokens themselves.',
       tokensUnit: (n: string) => `${n} tokens`,
       tokenUses: [
         ['Agent traffic overage', '1 token per 100 MB'],
@@ -188,16 +238,28 @@ export const pricing = {
           a: 'No. Sign up with email only — we never ask for payment details until you upgrade.',
         },
         {
+          q: 'Can I pay yearly?',
+          a: 'Yes. Pick monthly or yearly billing on the project’s billing screen; payments are processed by Paddle.',
+        },
+        {
+          q: 'Do inference and training use tokens?',
+          a: 'Inference and training on your own agents use no tokens. Data exchanged with agents counts toward agent traffic, and only the part beyond your plan’s allowance settles in tokens.',
+        },
+        {
+          q: 'What happens when I hit a limit?',
+          a: 'Only creating new items is blocked — existing data stays. The usage screen gives a heads-up at 70% of a limit, and cost control lets you set alert thresholds.',
+        },
+        {
           q: 'Can I take my labels and data out anytime?',
-          a: 'Yes. Labels export to standard formats (COCO, YOLO, Labeled PLY, SemanticKITTI, CSV, and more) and files download as-is. Leaving without lock-in is the principle.',
+          a: 'Yes. Labels export to standard formats (COCO, YOLO, Labeled PLY, SemanticKITTI, CSV, and more), and files download as-is or through S3-compatible clients. Leaving without lock-in is the principle.',
         },
         {
           q: 'What happens when I upgrade or downgrade?',
           a: 'Changes apply immediately with prorated billing. If a downgrade puts you over a limit, existing data is kept — only new creation is restricted.',
         },
         {
-          q: 'What is the refund policy?',
-          a: 'Full refund within 14 days of payment for effectively unused subscriptions. Reach out through the contact channel.',
+          q: 'Do I get a refund if I cancel?',
+          a: 'Cancel at the end of the current billing period, or cancel now and get a day-based prorated refund for the rest. Refunds are reviewed before processing.',
         },
         {
           q: 'If beta prices go up, does my subscription?',

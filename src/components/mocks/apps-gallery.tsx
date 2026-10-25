@@ -43,7 +43,7 @@ type AppKey =
 
 const COPY = {
   ko: {
-    search: '어플리케이션 검색…',
+    search: '애플리케이션 검색…',
     tags: '태그',
     groupLabel: '그룹 기준',
     groupCategory: '카테고리별',

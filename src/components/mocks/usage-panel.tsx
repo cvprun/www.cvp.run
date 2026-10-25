@@ -40,7 +40,11 @@ const COPY = {
       grid_columns: '그리드 컬럼',
       grid_rows: '그리드 행',
       wiki_pages: '위키 페이지',
+      twin_recordings: '디지털 트윈 기록',
+      graphs: '그래프',
+      memory_map_bytes: '메모리 맵 크기',
     },
+    perMap: '맵 1개당 한도 · 가장 큰 맵 기준',
   },
   en: {
     title: 'Usage',
@@ -73,7 +77,11 @@ const COPY = {
       grid_columns: 'Grid columns',
       grid_rows: 'Grid rows',
       wiki_pages: 'Wiki pages',
+      twin_recordings: 'Digital twin recordings',
+      graphs: 'Graphs',
+      memory_map_bytes: 'Memory map size',
     },
+    perMap: 'Per-map limit · shows the largest map',
   },
 } as const;
 
@@ -403,24 +411,46 @@ export function MockUsage() {
           <MetricCard label={c.m.members} value="8" limit="30" percent={27} />
           <MetricCard
             label={c.m.grid_rows}
-            value="8,240"
-            limit="10,000"
+            value="82,400"
+            limit="100,000"
             percent={82}
             hint={c.perGrid}
           />
           <MetricCard
             label={c.m.grid_columns}
-            value="42"
-            limit="100"
+            value="126"
+            limit="300"
             percent={42}
             hint={c.perGrid}
             className="hidden @4xl:block"
           />
           <MetricCard
             label={c.m.wiki_pages}
-            value="46"
-            limit="500"
+            value="94"
+            limit="1,000"
             percent={9}
+            className="hidden @4xl:block"
+          />
+          <MetricCard
+            label={c.m.twin_recordings}
+            value="312"
+            limit="2,000"
+            percent={16}
+            className="hidden @4xl:block"
+          />
+          <MetricCard
+            label={c.m.graphs}
+            value="38"
+            limit="1,000"
+            percent={4}
+            className="hidden @4xl:block"
+          />
+          <MetricCard
+            label={c.m.memory_map_bytes}
+            value="2.1 MB"
+            limit="16 MB"
+            percent={13}
+            hint={c.perMap}
             className="hidden @4xl:block"
           />
         </div>

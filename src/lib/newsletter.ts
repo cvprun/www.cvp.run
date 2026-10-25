@@ -14,7 +14,7 @@ export const NEWSLETTER_API_URL: string | undefined =
 export const TURNSTILE_SITE_KEY: string | undefined = import.meta.env
   .VITE_TURNSTILE_SITE_KEY as string | undefined;
 
-export type NewsletterSource = 'www-footer' | 'www-cta';
+export type NewsletterSource = 'www-footer' | 'www-cta' | 'www-changelog';
 
 async function post(path: string, body: Record<string, unknown>): Promise<boolean> {
   if (!NEWSLETTER_API_URL) {

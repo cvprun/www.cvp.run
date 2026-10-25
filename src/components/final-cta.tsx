@@ -5,13 +5,14 @@ import {NEWSLETTER_API_URL} from '@/lib/newsletter';
 import {cn} from '@/lib/utils';
 
 /** Closing call-to-action band shared by every page. The newsletter column
- * only renders when the signup form itself can render. */
-export function FinalCta() {
+ * only renders when the signup form itself can render. `tinted` lets a page
+ * keep its alternating section backgrounds. */
+export function FinalCta({tinted = true}: {tinted?: boolean}) {
   const {t} = useLanguage();
   const withNewsletter = Boolean(NEWSLETTER_API_URL);
 
   return (
-    <section className="border-t border-border bg-muted/20">
+    <section className={cn('border-t border-border', tinted && 'bg-muted/20')}>
       <div
         className={cn(
           'mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 sm:py-24',
